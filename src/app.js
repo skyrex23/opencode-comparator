@@ -922,76 +922,94 @@ function applyQuickPick(name) {
 	$("#f-sort").value = STATE.filters.sort;
 }
 
+async function tryFetchLiveCatalog() {
+	try {
+		const res = await fetch(LIVE.models);
+		if (!res.ok) return null;
+		const json = await res.json();
+		const ids = Array.isArray(json?.data) ? json.data.map((m) => m?.id).filter(Boolean) : null;
+		return ids ? new Set(ids) : null;
+	} catch {
+		return null;
+	}
+}
+
+async function fetchLiveSnapshot() {
+	const [api, budgetsRes, liveIds] = await Promise.all([
+		fetch(LIVE.modelsDev).then((r) => {
+			if (!r.ok) throw new Error(`HTTP ${r.status} from ${LIVE.modelsDev}`);
+			return r.json();
+		}),
+		fetch(budgetsUrl(), { cache: "no-store" }).then((r) => (r.ok ? r.json() : { models: {} })),
+		tryFetchLiveCatalog()
+	]);
+	const provider = api["opencode-go"];
+	if (!provider?.models) throw new Error("models.dev response missing opencode-go");
+	const budgets = budgetsRes.models || {};
+	const curatedActive = new Set(Object.keys(budgets));
+
+	const models = [];
+	for (const [id, m] of Object.entries(provider.models)) {
+		const inLive = liveIds ? liveIds.has(id) : true;
+		const curatedA = curatedActive.has(id);
+		const status =
+			curatedA && inLive ? "active" : curatedA ? "preview-or-removed" : inLive ? "legacy" : "deprecated";
+		models.push({
+			id,
+			name: m.name || id,
+			family: m.family || null,
+			lab: labFromFamily(m.family, id),
+			description: m.description || null,
+			releaseDate: m.release_date || null,
+			lastUpdated: m.last_updated || null,
+			openWeights: !!m.open_weights,
+			knowledgeCutoff: m.knowledge || null,
+			modalities: {
+				input: Array.isArray(m.modalities?.input) ? [...m.modalities.input].sort() : [],
+				output: Array.isArray(m.modalities?.output) ? [...m.modalities.output].sort() : []
+			},
+			capabilities: {
+				reasoning: !!m.reasoning,
+				toolCall: !!m.tool_call,
+				structuredOutput: !!m.structured_output,
+				temperature: m.temperature !== false,
+				attachment: !!m.attachment
+			},
+			context: m.limit?.context ?? null,
+			outputLimit: m.limit?.output ?? null,
+			cost: {
+				input: m.cost?.input ?? null,
+				output: m.cost?.output ?? null,
+				cacheRead: m.cost?.cache_read ?? null,
+				cacheWrite: m.cost?.cache_write ?? null
+			},
+			monthlyBudgetUsd: budgets[id]?.monthlyBudgetUsd ?? null,
+			estimatedRequests: budgets[id]?.estimatedRequests || null,
+			budgetNotes: budgets[id]?.notes || null,
+			inLiveCatalog: inLive,
+			curatedActive: curatedA,
+			status
+		});
+	}
+	models.sort((a, b) => {
+		const order = { active: 0, legacy: 1, "preview-or-removed": 2, deprecated: 3 };
+		if (order[a.status] !== order[b.status]) return order[a.status] - order[b.status];
+		return (b.releaseDate || "").localeCompare(a.releaseDate || "");
+	});
+	return { models, liveCatalogReached: liveIds !== null };
+}
+
 async function refreshFromNetwork() {
 	const btn = $("#btn-refresh");
 	btn.disabled = true;
 	btn.classList.add("skeleton");
 	try {
-		const [api, oc, budgetsRes] = await Promise.all([
-			fetch(LIVE.modelsDev).then((r) => r.json()),
-			fetch(LIVE.models).then((r) => r.json()),
-			fetch(budgetsUrl(), { cache: "no-store" }).then((r) => (r.ok ? r.json() : { models: {} }))
-		]);
-		const provider = api["opencode-go"];
-		if (!provider?.models) throw new Error("models.dev response missing opencode-go");
-		const liveIds = new Set(oc.data.map((m) => m.id));
-		const budgets = budgetsRes.models || {};
-		const curatedActive = new Set(Object.keys(budgets));
-
-		const models = [];
-		for (const [id, m] of Object.entries(provider.models)) {
-			const inLive = liveIds.has(id);
-			const curatedA = curatedActive.has(id);
-			const status =
-				curatedA && inLive ? "active" : curatedA ? "preview-or-removed" : inLive ? "legacy" : "deprecated";
-			models.push({
-				id,
-				name: m.name || id,
-				family: m.family || null,
-				lab: labFromFamily(m.family, id),
-				description: m.description || null,
-				releaseDate: m.release_date || null,
-				lastUpdated: m.last_updated || null,
-				openWeights: !!m.open_weights,
-				knowledgeCutoff: m.knowledge || null,
-				modalities: {
-					input: Array.isArray(m.modalities?.input) ? [...m.modalities.input].sort() : [],
-					output: Array.isArray(m.modalities?.output) ? [...m.modalities.output].sort() : []
-				},
-				capabilities: {
-					reasoning: !!m.reasoning,
-					toolCall: !!m.tool_call,
-					structuredOutput: !!m.structured_output,
-					temperature: m.temperature !== false,
-					attachment: !!m.attachment
-				},
-				context: m.limit?.context ?? null,
-				outputLimit: m.limit?.output ?? null,
-				cost: {
-					input: m.cost?.input ?? null,
-					output: m.cost?.output ?? null,
-					cacheRead: m.cost?.cache_read ?? null,
-					cacheWrite: m.cost?.cache_write ?? null
-				},
-				monthlyBudgetUsd: budgets[id]?.monthlyBudgetUsd ?? null,
-				estimatedRequests: budgets[id]?.estimatedRequests || null,
-				budgetNotes: budgets[id]?.notes || null,
-				inLiveCatalog: inLive,
-				curatedActive: curatedA,
-				status
-			});
-		}
-		models.sort((a, b) => {
-			const order = { active: 0, legacy: 1, "preview-or-removed": 2, deprecated: 3 };
-			if (order[a.status] !== order[b.status]) return order[a.status] - order[b.status];
-			return (b.releaseDate || "").localeCompare(a.releaseDate || "");
-		});
-
+		const { models, liveCatalogReached } = await fetchLiveSnapshot();
 		STATE.data = {
 			fetchedAt: new Date().toISOString(),
 			sources: [
 				{ name: "models.dev (api.json)", url: LIVE.modelsDev },
-				{ name: "OpenCode Go catalog", url: LIVE.models },
+				{ name: "OpenCode Go catalog", url: LIVE.models, ok: liveCatalogReached },
 				{ name: "data/budgets.json", url: "internal/curated" }
 			],
 			subscription: STATE.data.subscription,
@@ -1001,7 +1019,8 @@ async function refreshFromNetwork() {
 		renderKpis();
 		renderBrand();
 		applyAndRender();
-		toast(`Refreshed · ${models.length} models`, "ok");
+		const note = liveCatalogReached ? "" : " · live catalog unavailable, trusted models.dev provider";
+		toast(`Refreshed · ${models.length} models${note}`, "ok");
 	} catch (e) {
 		console.error(e);
 		toast(`Refresh failed: ${e.message}. Using cached snapshot.`, "error");
@@ -1024,67 +1043,14 @@ function showBootError(msg) {
 		btn.disabled = true;
 		btn.classList.add("skeleton");
 		try {
-			const [api, oc, budgetsRes] = await Promise.all([
-				fetch(LIVE.modelsDev).then((r) => r.json()),
-				fetch(LIVE.models).then((r) => r.json()),
-				fetch(budgetsUrl(), { cache: "no-store" }).then((r) => (r.ok ? r.json() : { models: {} }))
-			]);
-			const provider = api["opencode-go"];
-			if (!provider?.models) throw new Error("models.dev response missing opencode-go");
-			const liveIds = new Set(oc.data.map((m) => m.id));
-			const budgets = budgetsRes.models || {};
-			const curatedActive = new Set(Object.keys(budgets));
-			const models = [];
-			for (const [id, m] of Object.entries(provider.models)) {
-				const inLive = liveIds.has(id);
-				const curatedA = curatedActive.has(id);
-				const status =
-					curatedA && inLive ? "active" : curatedA ? "preview-or-removed" : inLive ? "legacy" : "deprecated";
-				models.push({
-					id,
-					name: m.name || id,
-					family: m.family || null,
-					lab: labFromFamily(m.family, id),
-					description: m.description || null,
-					releaseDate: m.release_date || null,
-					lastUpdated: m.last_updated || null,
-					openWeights: !!m.open_weights,
-					knowledgeCutoff: m.knowledge || null,
-					modalities: {
-						input: Array.isArray(m.modalities?.input) ? [...m.modalities.input].sort() : [],
-						output: Array.isArray(m.modalities?.output) ? [...m.modalities.output].sort() : []
-					},
-					capabilities: {
-						reasoning: !!m.reasoning,
-						toolCall: !!m.tool_call,
-						structuredOutput: !!m.structured_output,
-						temperature: m.temperature !== false,
-						attachment: !!m.attachment
-					},
-					context: m.limit?.context ?? null,
-					outputLimit: m.limit?.output ?? null,
-					cost: {
-						input: m.cost?.input ?? null,
-						output: m.cost?.output ?? null,
-						cacheRead: m.cost?.cache_read ?? null,
-						cacheWrite: m.cost?.cache_write ?? null
-					},
-					monthlyBudgetUsd: budgets[id]?.monthlyBudgetUsd ?? null,
-					estimatedRequests: budgets[id]?.estimatedRequests || null,
-					budgetNotes: budgets[id]?.notes || null,
-					inLiveCatalog: inLive,
-					curatedActive: curatedA,
-					status
-				});
-			}
-			models.sort((a, b) => {
-				const order = { active: 0, legacy: 1, "preview-or-removed": 2, deprecated: 3 };
-				if (order[a.status] !== order[b.status]) return order[a.status] - order[b.status];
-				return (b.releaseDate || "").localeCompare(a.releaseDate || "");
-			});
+			const { models, liveCatalogReached } = await fetchLiveSnapshot();
 			STATE.data = {
 				fetchedAt: new Date().toISOString(),
-				sources: STATE.data.sources,
+				sources: [
+					{ name: "models.dev (api.json)", url: LIVE.modelsDev },
+					{ name: "OpenCode Go catalog", url: LIVE.models, ok: liveCatalogReached },
+					{ name: "data/budgets.json", url: "internal/curated" }
+				],
 				subscription: {
 					monthlyUsd: 10,
 					limitUsd: { fiveHours: 12, weekly: 30, monthly: 60 }
