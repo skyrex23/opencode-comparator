@@ -1,0 +1,16 @@
+{
+	"name": "opencode-go-comparator",
+	"version": "0.1.0",
+	"private": true,
+	"description": "Compare OpenCode Go models, pricing, and value for coding tasks.",
+	"type": "module",
+	"scripts": {
+		"refresh": "node scripts/fetch-models.mjs",
+		"serve": "node scripts/serve.mjs",
+		"start": "npm run refresh && npm run serve",
+		"format": "prettier --write --print-width 120 --prose-wrap always \"**/*.{md,html,css,mjs,js,json}\""
+	},
+	"engines": {
+		"node": ">=20"
+	}
+}

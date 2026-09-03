@@ -1,0 +1,423 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="color-scheme" content="dark" />
+		<title>OpenCode Go Comparator — pick the best model for the job</title>
+		<meta
+			name="description"
+			content="Compare every model in the OpenCode Go $10/month subscription: price per 1M tokens, context window, capabilities and value-for-money for coding tasks."
+		/>
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"
+			rel="stylesheet"
+		/>
+		<link rel="stylesheet" href="./styles.css" />
+		<link
+			rel="icon"
+			href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2300d68f'/%3E%3Cpath d='M16 40 L26 22 L34 36 L42 18 L52 44' stroke='%230b1015' stroke-width='4' fill='none' stroke-linejoin='round' stroke-linecap='round'/%3E%3C/svg%3E"
+		/>
+	</head>
+	<body>
+		<header class="topbar">
+			<div class="topbar__inner">
+				<a class="brand" href="#">
+					<span class="brand__mark" aria-hidden="true"></span>
+					<div>
+						<div class="brand__title">OpenCode Go Comparator</div>
+						<div class="brand__sub" id="brand-sub">Loading...</div>
+					</div>
+				</a>
+				<nav class="topbar__actions">
+					<button id="btn-refresh" class="btn btn--ghost" type="button" title="Re-fetch from public APIs">
+						<span class="btn__icon" aria-hidden="true">&#x21bb;</span>
+						<span>Refresh data</span>
+					</button>
+					<a
+						class="btn btn--ghost"
+						href="https://opencode.ai/docs/go/"
+						target="_blank"
+						rel="noopener noreferrer"
+					>
+						<span>Go docs</span>
+						<span aria-hidden="true">&#x2197;</span>
+					</a>
+				</nav>
+			</div>
+		</header>
+
+		<section class="hero">
+			<div class="hero__inner">
+				<div class="hero__copy">
+					<span class="hero__eyebrow">For OpenCode Go subscribers</span>
+					<h1>Pick the right model for each coding task.</h1>
+					<p class="hero__lede">
+						OpenCode Go gives you <strong>$60/month of usage</strong> across
+						<strong>26 curated open coding models</strong>. Every model has a different price, context size,
+						capability profile and a hard monthly allowance. This page lets you compare them side-by-side
+						and see which one fits the job without burning your $12/5h cap.
+					</p>
+					<div class="hero__cta">
+						<button class="btn btn--primary" id="cta-explore" type="button">
+							Explore the lineup &darr;
+						</button>
+						<button class="btn btn--ghost" id="cta-how" type="button">How OpenCode Go works</button>
+					</div>
+				</div>
+				<div class="hero__kpis" id="hero-kpis">
+					<div class="kpi skeleton">
+						<div class="kpi__label">Subscription</div>
+						<div class="kpi__value">—</div>
+					</div>
+					<div class="kpi skeleton">
+						<div class="kpi__label">Active models</div>
+						<div class="kpi__value">—</div>
+					</div>
+					<div class="kpi skeleton">
+						<div class="kpi__label">Reusable usage</div>
+						<div class="kpi__value">—</div>
+					</div>
+					<div class="kpi skeleton">
+						<div class="kpi__label">Cheapest output</div>
+						<div class="kpi__value">—</div>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<section class="explainer" id="explainer" hidden>
+			<div class="explainer__inner">
+				<button class="explainer__close" id="explainer-close" type="button" aria-label="Close">&times;</button>
+				<h2>How OpenCode Go works</h2>
+				<div class="explainer__grid">
+					<div class="explainer__card">
+						<h3>You pay $10/month flat</h3>
+						<p>
+							Go is a subscription, not pay-per-token. You get one API key that talks to every model in
+							the lineup. No juggling provider accounts.
+						</p>
+					</div>
+					<div class="explainer__card">
+						<h3>There are three hard caps</h3>
+						<p>
+							Usage is metered in dollars: <strong>$12 per rolling 5-hour window</strong>,
+							<strong>$30 per week</strong>, <strong>$60 per month</strong>. When a cap is hit, requests
+							are rejected until it resets.
+						</p>
+					</div>
+					<div class="explainer__card">
+						<h3>Each model has its own budget</h3>
+						<p>
+							Premium models (Grok, Kimi K3, GPT 5.6 Luna, etc.) are limited to
+							<strong>$15/month</strong>; some mid-tier models to <strong>$30/month</strong>; standard
+							open coders to the full <strong>$60/month</strong>. The page shows you this on every row.
+						</p>
+					</div>
+					<div class="explainer__card">
+						<h3>"Requests per 5h" is your real budget</h3>
+						<p>
+							Official estimates based on observed token patterns: a Kimi K3 call costs ~$0.07/request so
+							you get ~110 requests/5h. A DeepSeek V4 Flash call costs ~$0.0015 so you get ~7,600. Mix
+							cheap and premium models to make the most of the cap.
+						</p>
+					</div>
+					<div class="explainer__card">
+						<h3>Privacy varies by model</h3>
+						<p>
+							Most Go models list <strong>zero-day retention</strong>. The closed ones (Grok, GPT 5.6
+							Luna) retain logs for 30 days. The <strong>Muse Contributor</strong> tier can use your
+							prompts for training and is region-limited.
+						</p>
+					</div>
+					<div class="explainer__card">
+						<h3>Pick by job, not by name</h3>
+						<p>
+							Use the <em>Quick picks</em> below for common scenarios, or the filters to dial in context
+							size, capabilities (reasoning, tool calls, attachments) and price ceiling.
+						</p>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<main class="layout" id="lineup">
+			<aside class="filters" aria-label="Filters">
+				<div class="filters__card">
+					<div class="filters__row">
+						<label class="field field--grow">
+							<span class="field__label">Search</span>
+							<input
+								id="f-search"
+								type="search"
+								placeholder="kimi, deepseek, glm..."
+								autocomplete="off"
+							/>
+						</label>
+					</div>
+
+					<div class="filters__row">
+						<div class="field">
+							<span class="field__label">Status</span>
+							<div class="field__row">
+								<label class="check"
+									><input type="checkbox" id="f-active" checked /><span>Active only</span></label
+								>
+								<label class="check"
+									><input type="checkbox" id="f-legacy" /><span>+ legacy</span></label
+								>
+							</div>
+						</div>
+					</div>
+
+					<div class="filters__row">
+						<div class="field">
+							<span class="field__label">Lab</span>
+							<div id="f-labs" class="chips"></div>
+						</div>
+					</div>
+
+					<div class="filters__row filters__row--split">
+						<label class="field">
+							<span class="field__label">Context &ge;</span>
+							<div class="range">
+								<input id="f-context" type="range" min="0" max="1048576" step="1024" value="0" />
+								<div class="range__labels">
+									<span>0</span>
+									<output id="f-context-out">any</output>
+									<span>1M</span>
+								</div>
+							</div>
+						</label>
+						<label class="field">
+							<span class="field__label">Output $/1M &le;</span>
+							<div class="range">
+								<input id="f-max-output-price" type="range" min="0" max="15" step="0.1" value="15" />
+								<div class="range__labels">
+									<span>$0</span>
+									<output id="f-max-output-price-out">any</output>
+									<span>$15</span>
+								</div>
+							</div>
+						</label>
+					</div>
+
+					<div class="filters__row">
+						<div class="field">
+							<span class="field__label">Capabilities</span>
+							<div class="field__row field__row--wrap">
+								<label class="check" title="Extended thinking / chain-of-thought"
+									><input type="checkbox" id="f-reasoning" /><span>Reasoning</span></label
+								>
+								<label class="check" title="Can invoke tools / functions"
+									><input type="checkbox" id="f-tools" /><span>Tool calls</span></label
+								>
+								<label class="check" title="Can return JSON-schema output"
+									><input type="checkbox" id="f-structured" /><span>Structured</span></label
+								>
+								<label class="check" title="Accepts images, PDFs, audio"
+									><input type="checkbox" id="f-attachment" /><span>Attachments</span></label
+								>
+								<label class="check" title="Model weights are publicly available"
+									><input type="checkbox" id="f-open" /><span>Open weights</span></label
+								>
+							</div>
+						</div>
+					</div>
+
+					<div class="filters__row">
+						<div class="field">
+							<span class="field__label">Quick picks</span>
+							<div class="quickpicks">
+								<button class="chip chip--pick" data-pick="premium" type="button">
+									Premium quality
+								</button>
+								<button class="chip chip--pick" data-pick="workhorse" type="button">
+									High-volume workhorse
+								</button>
+								<button class="chip chip--pick" data-pick="longctx" type="button">
+									Long context (1M+)
+								</button>
+								<button class="chip chip--pick" data-pick="budget" type="button">
+									Cheapest per request
+								</button>
+								<button class="chip chip--pick" data-pick="allround" type="button">
+									Balanced all-rounder
+								</button>
+							</div>
+						</div>
+					</div>
+
+					<div class="filters__row">
+						<button id="f-reset" class="btn btn--ghost btn--small" type="button">Reset filters</button>
+					</div>
+				</div>
+			</aside>
+
+			<section class="content">
+				<div class="content__head">
+					<div class="content__title">
+						<h2>The lineup</h2>
+						<p class="content__sub">
+							Click any model to see the full breakdown, or tick up to 4 rows to compare side-by-side.
+						</p>
+					</div>
+					<div class="content__controls">
+						<div class="seg" role="tablist" aria-label="View">
+							<button class="seg__btn is-active" data-view="table" type="button" aria-pressed="true">
+								Table
+							</button>
+							<button class="seg__btn" data-view="cards" type="button" aria-pressed="false">Cards</button>
+						</div>
+						<label class="field field--inline">
+							<span class="field__label">Sort</span>
+							<select id="f-sort">
+								<option value="requestsMonth-desc">Requests / month (high to low)</option>
+								<option value="outputCost-asc">Output $/1M (low to high)</option>
+								<option value="outputCost-desc">Output $/1M (high to low)</option>
+								<option value="inputCost-asc">Input $/1M (low to high)</option>
+								<option value="context-desc">Context (high to low)</option>
+								<option value="releaseDate-desc">Release date (newest)</option>
+								<option value="valueScore-desc">Value score (best value)</option>
+							</select>
+						</label>
+					</div>
+				</div>
+
+				<div class="content__meta">
+					<span id="result-count" class="badge">0 models</span>
+					<span id="active-pills" class="pills"></span>
+				</div>
+
+				<div id="empty" class="empty" hidden>
+					<h3>No models match your filters</h3>
+					<p>Try clearing some filters or lowering the max output price.</p>
+					<button class="btn btn--ghost" id="empty-reset" type="button">Reset filters</button>
+				</div>
+
+				<div class="table-wrap" id="table-wrap">
+					<table class="table" id="models-table">
+						<thead>
+							<tr>
+								<th class="th-check" scope="col">
+									<input id="cmp-all" type="checkbox" title="Add all visible" />
+								</th>
+								<th scope="col" class="th-model" data-sort="name">Model</th>
+								<th scope="col" class="th-cost" data-sort="inputCost-asc">In $/1M</th>
+								<th scope="col" class="th-cost" data-sort="outputCost-asc">Out $/1M</th>
+								<th scope="col" class="th-cost">Cache read</th>
+								<th scope="col" class="th-context" data-sort="context-desc">Context</th>
+								<th scope="col" class="th-budget">Tier</th>
+								<th scope="col" class="th-requests" data-sort="requestsMonth-desc">Req / mo</th>
+								<th scope="col" class="th-caps">Caps</th>
+								<th scope="col" class="th-score" data-sort="valueScore-desc">Value</th>
+							</tr>
+						</thead>
+						<tbody id="models-body"></tbody>
+					</table>
+				</div>
+
+				<div id="cards-wrap" class="cards" hidden></div>
+			</section>
+		</main>
+
+		<div class="cmpbar" id="cmpbar" hidden>
+			<div class="cmpbar__inner">
+				<div class="cmpbar__head">
+					<h2><span id="cmp-count">0</span> selected for comparison</h2>
+					<div class="cmpbar__head-actions">
+						<button class="btn btn--ghost btn--small" id="cmp-clear" type="button">Clear</button>
+						<button class="btn btn--primary btn--small" id="cmp-open" type="button">
+							Open comparison &rarr;
+						</button>
+					</div>
+				</div>
+				<div class="cmpbar__chips" id="cmp-chips"></div>
+			</div>
+		</div>
+
+		<dialog id="detail" class="dialog">
+			<form method="dialog" class="dialog__inner">
+				<header class="dialog__head">
+					<div>
+						<h2 id="detail-name">Model</h2>
+						<p id="detail-sub" class="dialog__sub"></p>
+					</div>
+					<div class="dialog__head-actions">
+						<label class="check check--inline">
+							<input id="detail-compare" type="checkbox" />
+							<span>Add to compare</span>
+						</label>
+						<button class="btn btn--ghost btn--small" type="submit" value="close" aria-label="Close">
+							&times;
+						</button>
+					</div>
+				</header>
+				<div class="dialog__body" id="detail-body"></div>
+			</form>
+		</dialog>
+
+		<dialog id="compare" class="dialog dialog--wide">
+			<form method="dialog" class="dialog__inner">
+				<header class="dialog__head">
+					<div>
+						<h2>Side-by-side comparison</h2>
+						<p class="dialog__sub" id="compare-sub"></p>
+					</div>
+					<button class="btn btn--ghost btn--small" type="submit" value="close" aria-label="Close">
+						&times;
+					</button>
+				</header>
+				<div class="dialog__body" id="compare-body"></div>
+			</form>
+		</dialog>
+
+		<div id="boot-error" class="boot-error" hidden>
+			<div class="boot-error__inner">
+				<h2>Could not load the snapshot</h2>
+				<p id="boot-error-msg"></p>
+				<div class="boot-error__actions">
+					<button class="btn btn--primary" id="boot-error-retry" type="button">Try again</button>
+					<button class="btn btn--ghost" id="boot-error-network" type="button">Refresh from network</button>
+				</div>
+				<details class="boot-error__details">
+					<summary>What should I check?</summary>
+					<ul>
+						<li>Make sure the dev server is running: <code>npm run serve</code>.</li>
+						<li>
+							If you opened the HTML file directly, browsers block <code>fetch()</code> for local files.
+							Always use the server URL.
+						</li>
+						<li>Check the browser console (F12) for the underlying error.</li>
+					</ul>
+				</details>
+			</div>
+		</div>
+
+		<div class="toast" id="toast" hidden></div>
+
+		<footer class="footer">
+			<div class="footer__inner">
+				<div>
+					Data from
+					<a href="https://models.dev/" target="_blank" rel="noopener noreferrer">models.dev</a>
+					and
+					<a href="https://opencode.ai/docs/go/" target="_blank" rel="noopener noreferrer"
+						>opencode.ai/docs/go</a
+					>. Snapshot last updated <span id="footer-time">—</span>.
+				</div>
+				<div class="footer__links">
+					<a href="https://github.com/anomalyco/opencode" target="_blank" rel="noopener noreferrer"
+						>OpenCode repo</a
+					>
+					<span class="footer__sep">·</span>
+					<a href="https://opencode.ai/go" target="_blank" rel="noopener noreferrer">Subscribe</a>
+				</div>
+			</div>
+		</footer>
+
+		<script src="./app.js" type="module"></script>
+	</body>
+</html>

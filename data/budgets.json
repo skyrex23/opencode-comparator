@@ -1,0 +1,114 @@
+{
+	"$schema": "Subscription tiers and request estimates from the official OpenCode Go documentation (https://opencode.ai/docs/go/). Update when the lineup or limits change.",
+	"notes": "OpenCode Go bills in dollars. The hard caps are $12 / 5h, $30 / week, $60 / month, but each model is also capped to a per-model monthly allocation: $15 for premium models, $30 for select mid-tier, $60 for standard open coders. Request counts come from the official docs and assume a typical agent-coding request mix.",
+	"models": {
+		"grok-4.6": {
+			"monthlyBudgetUsd": 15,
+			"estimatedRequests": { "fiveHours": 169, "weekly": 423, "monthly": 845 }
+		},
+		"gpt-5.6-luna": {
+			"monthlyBudgetUsd": 15,
+			"estimatedRequests": { "fiveHours": 2050, "weekly": 5100, "monthly": 10250 }
+		},
+		"glm-5.3": {
+			"monthlyBudgetUsd": 15,
+			"estimatedRequests": { "fiveHours": 220, "weekly": 540, "monthly": 1080 }
+		},
+		"kimi-k3": {
+			"monthlyBudgetUsd": 15,
+			"estimatedRequests": { "fiveHours": 110, "weekly": 250, "monthly": 490 }
+		},
+		"qwen3.8-max": {
+			"monthlyBudgetUsd": 15,
+			"estimatedRequests": { "fiveHours": 160, "weekly": 400, "monthly": 810 }
+		},
+		"deepseek-v4-pro": {
+			"monthlyBudgetUsd": 15,
+			"estimatedRequests": { "fiveHours": 3450, "weekly": 8550, "monthly": 17150 }
+		},
+		"deepseek-v4-flash-vision-exp": {
+			"monthlyBudgetUsd": 15,
+			"estimatedRequests": { "fiveHours": 3800, "weekly": 9500, "monthly": 18900 }
+		},
+		"mimo-v2.5-pro": {
+			"monthlyBudgetUsd": 15,
+			"estimatedRequests": { "fiveHours": 3250, "weekly": 8150, "monthly": 16300 }
+		},
+		"hy4-preview": {
+			"monthlyBudgetUsd": 15,
+			"estimatedRequests": { "fiveHours": 1350, "weekly": 3380, "monthly": 6750 }
+		},
+		"deepseek-v4-flash": {
+			"monthlyBudgetUsd": 30,
+			"estimatedRequests": { "fiveHours": 7600, "weekly": 19000, "monthly": 38000 }
+		},
+		"qwen3.8-flash": {
+			"monthlyBudgetUsd": 30,
+			"estimatedRequests": { "fiveHours": 5400, "weekly": 13500, "monthly": 27000 }
+		},
+		"qwen3.7-max": {
+			"monthlyBudgetUsd": 30,
+			"estimatedRequests": { "fiveHours": 170, "weekly": 420, "monthly": 840 }
+		},
+		"glm-5.3-flash": {
+			"monthlyBudgetUsd": 60,
+			"estimatedRequests": { "fiveHours": 3160, "weekly": 7900, "monthly": 15800 },
+			"notes": "2x usage multiplier per official docs."
+		},
+		"glm-5.2": {
+			"monthlyBudgetUsd": 60,
+			"estimatedRequests": { "fiveHours": 880, "weekly": 2150, "monthly": 4300 }
+		},
+		"glm-5.1": {
+			"monthlyBudgetUsd": 60,
+			"estimatedRequests": { "fiveHours": 880, "weekly": 2150, "monthly": 4300 }
+		},
+		"kimi-k2.7-code": {
+			"monthlyBudgetUsd": 60,
+			"estimatedRequests": { "fiveHours": 1350, "weekly": 3380, "monthly": 6750 }
+		},
+		"kimi-k2.6": {
+			"monthlyBudgetUsd": 60,
+			"estimatedRequests": { "fiveHours": 1150, "weekly": 2880, "monthly": 5750 }
+		},
+		"qwen3.7-plus": {
+			"monthlyBudgetUsd": 60,
+			"estimatedRequests": { "fiveHours": 4300, "weekly": 10800, "monthly": 21600 }
+		},
+		"qwen3.6-plus": {
+			"monthlyBudgetUsd": 60,
+			"estimatedRequests": { "fiveHours": 3300, "weekly": 8200, "monthly": 16300 }
+		},
+		"minimax-m3": {
+			"monthlyBudgetUsd": 60,
+			"estimatedRequests": { "fiveHours": 3200, "weekly": 8000, "monthly": 16000 }
+		},
+		"minimax-m2.7": {
+			"monthlyBudgetUsd": 60,
+			"estimatedRequests": { "fiveHours": 3400, "weekly": 8500, "monthly": 17000 }
+		},
+		"mimo-v2.5": {
+			"monthlyBudgetUsd": 60,
+			"estimatedRequests": { "fiveHours": 30100, "weekly": 75200, "monthly": 150400 }
+		},
+		"longcat-2.0": {
+			"monthlyBudgetUsd": 60,
+			"estimatedRequests": { "fiveHours": 11400, "weekly": 28500, "monthly": 57000 }
+		},
+		"hy3": {
+			"monthlyBudgetUsd": 60,
+			"estimatedRequests": { "fiveHours": 4300, "weekly": 10750, "monthly": 21500 },
+			"notes": "8x usage multiplier per official docs."
+		},
+		"muse-spark-1.3-contributor": {
+			"monthlyBudgetUsd": 60,
+			"estimatedRequests": { "fiveHours": 45300, "weekly": 113250, "monthly": 226500 },
+			"notes": "Contributor tier; Meta may train on prompts/completions. Limited regions."
+		},
+		"muse-spark-1.2-contributor": {
+			"monthlyBudgetUsd": 60,
+			"estimatedRequests": { "fiveHours": 45300, "weekly": 113250, "monthly": 226500 },
+			"notes": "Contributor tier; Meta may train on prompts/completions. Limited regions."
+		}
+	}
+}
