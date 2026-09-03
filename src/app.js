@@ -59,9 +59,10 @@ const fmt = {
 	},
 	tokens(n) {
 		if (n == null) return "—";
-		if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(n % 1_000_000 === 0 ? 0 : 1)}M`;
-		if (n >= 1000) return `${Math.round(n / 1000)}K`;
-		return String(n);
+		const r = Math.round(n / 50000) * 50000;
+		if (r >= 1_000_000) return `${(r / 1_000_000).toFixed(r % 1_000_000 === 0 ? 0 : 2)}M`;
+		if (r >= 1000) return `${Math.round(r / 1000)}K`;
+		return String(r);
 	},
 	date(d) {
 		if (!d) return "—";
