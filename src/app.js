@@ -32,6 +32,7 @@ const STATE = {
 	selected: new Set(),
 	filters: {
 		search: "",
+		plans: new Set(["go", "free"]),
 		activeOnly: true,
 		includeLegacy: false,
 		labs: new Set(),
@@ -91,10 +92,14 @@ function valueScore(m) {
 	const requests = m.estimatedRequests?.monthly ?? 0;
 	const context = m.context ?? 0;
 	const reasoningBoost = m.capabilities?.reasoning ? 1.25 : 1;
-	const outputTokensPerDollar = 1_000_000 / Math.max(outCost, 0.0001);
 	const contextBonus = Math.log10(Math.max(context, 1000)) / 6;
 	const requestBonus = requests > 0 ? Math.log10(requests) / 5 : 0;
-	const score = (outputTokensPerDollar / 1000) * 0.6 + contextBonus * 30 + requestBonus * 40;
+	let costComponent = 0;
+	if (outCost > 0) {
+		const outputTokensPerDollar = 1_000_000 / outCost;
+		costComponent = (outputTokensPerDollar / 1000) * 0.6;
+	}
+	const score = costComponent + contextBonus * 30 + requestBonus * 40;
 	return score * reasoningBoost;
 }
 
@@ -142,6 +147,12 @@ function tierTag(m) {
 	return `<span class="tag tag--standard">$60 tier</span>`;
 }
 
+function planTag(m) {
+	return m.plan === "go"
+		? `<span class="tag tag--go" title="Included in the $10/mo OpenCode Go subscription">Go</span>`
+		: `<span class="tag tag--free" title="Available without a Go subscription">Free</span>`;
+}
+
 function capabilityIcons(m) {
 	const caps = [
 		{ key: "reasoning", label: "Reasoning — extended thinking / chain-of-thought", glyph: "R" },
@@ -165,6 +176,12 @@ function contextBar(m) {
 }
 
 function valueCell(m) {
+	if (m.plan === "free") {
+		return `<div class="value-cell">
+			<span class="value-cell__score value-cell__score--high">Free</span>
+			<span class="value-cell__bar"><span class="value-cell__bar-fill value-cell__bar-fill--high" style="width:100%"></span></span>
+		</div>`;
+	}
 	const score = valueScore(m);
 	const tier = valueTier(score);
 	const pct = Math.min(100, (score / 120) * 100);
@@ -185,7 +202,7 @@ function rowHTML(m) {
 				<div class="model-cell">
 					<span class="model-cell__name" data-detail="${m.id}">${m.name}</span>
 					<span class="model-cell__meta">
-						${statusTag(m)} ${weightsTag(m)}
+						${planTag(m)} ${statusTag(m)} ${weightsTag(m)}
 						<span class="dot">·</span>
 						<span>${m.lab || "—"}</span>
 						${m.releaseDate ? `<span class="dot">·</span><span>${fmt.date(m.releaseDate)}</span>` : ""}
@@ -215,7 +232,7 @@ function cardHTML(m) {
 					<div class="card__title" data-detail="${m.id}">${m.name}</div>
 					<div class="card__lab">${m.lab || "—"} · ${m.id}</div>
 				</div>
-				<div class="card__tags">${statusTag(m)} ${weightsTag(m)}</div>
+				<div class="card__tags">${planTag(m)} ${statusTag(m)} ${weightsTag(m)}</div>
 			</div>
 			${m.description ? `<p class="card__desc">${m.description}</p>` : ""}
 			<div class="card__metrics">
@@ -239,7 +256,7 @@ function cardHTML(m) {
 			<div class="card__metrics-row">
 				<div class="card__caps">${capabilityIcons(m)}</div>
 				<div class="value-cell">
-					<span class="value-cell__score value-cell__score--${valueTier(score)}">Value ${score.toFixed(0)}</span>
+					<span class="value-cell__score value-cell__score--${m.plan === "free" ? "high" : valueTier(score)}">Value ${m.plan === "free" ? "Free" : score.toFixed(0)}</span>
 				</div>
 			</div>
 			<div class="card__actions">
@@ -253,6 +270,7 @@ function applyFilters() {
 	const f = STATE.filters;
 	const q = f.search.trim().toLowerCase();
 	let arr = STATE.data.models.filter((m) => {
+		if (!f.plans.has(m.plan)) return false;
 		if (f.activeOnly && m.status !== "active") return false;
 		if (!f.activeOnly && !f.includeLegacy && m.status === "legacy") return false;
 		if (!f.includeLegacy && m.status === "deprecated") return false;
@@ -354,6 +372,9 @@ function renderPills() {
 	const f = STATE.filters;
 	const pills = [];
 	if (f.search) pills.push({ k: "search", label: `q: ${f.search}` });
+	if (f.plans.size === 1 && f.plans.has("go")) pills.push({ k: "plan:free", label: "Go only" });
+	else if (f.plans.size === 1 && f.plans.has("free")) pills.push({ k: "plan:go", label: "Free only" });
+	else if (f.plans.size === 0) pills.push({ k: "plans", label: "no plans selected" });
 	if (!f.activeOnly) pills.push({ k: "activeOnly", label: "show all" });
 	if (f.includeLegacy) pills.push({ k: "includeLegacy", label: "+ deprecated" });
 	for (const lab of f.labs) pills.push({ k: `lab:${lab}`, label: lab });
@@ -711,6 +732,14 @@ function bindFilters() {
 		STATE.filters.search = e.target.value;
 		applyAndRender();
 	});
+	$("#f-plan-go").addEventListener("change", (e) => {
+		togglePlan("go", e.target.checked);
+		applyAndRender();
+	});
+	$("#f-plan-free").addEventListener("change", (e) => {
+		togglePlan("free", e.target.checked);
+		applyAndRender();
+	});
 	$("#f-active").addEventListener("change", (e) => {
 		STATE.filters.activeOnly = e.target.checked;
 		applyAndRender();
@@ -810,6 +839,7 @@ function bindFilters() {
 function resetFilters() {
 	STATE.filters = {
 		search: "",
+		plans: new Set(["go", "free"]),
 		activeOnly: true,
 		includeLegacy: false,
 		labs: new Set(),
@@ -823,6 +853,8 @@ function resetFilters() {
 		sort: "requestsMonth-desc"
 	};
 	$("#f-search").value = "";
+	$("#f-plan-go").checked = true;
+	$("#f-plan-free").checked = true;
 	$("#f-active").checked = true;
 	$("#f-legacy").checked = false;
 	$("#f-context").value = 0;
@@ -839,10 +871,25 @@ function resetFilters() {
 	applyAndRender();
 }
 
+function togglePlan(plan, on) {
+	if (on) STATE.filters.plans.add(plan);
+	else STATE.filters.plans.delete(plan);
+}
+
 function clearFilter(k) {
 	if (k === "search") {
 		STATE.filters.search = "";
 		$("#f-search").value = "";
+	} else if (k === "plans") {
+		STATE.filters.plans = new Set(["go", "free"]);
+		$("#f-plan-go").checked = true;
+		$("#f-plan-free").checked = true;
+	} else if (k === "plan:go") {
+		togglePlan("go", true);
+		$("#f-plan-go").checked = true;
+	} else if (k === "plan:free") {
+		togglePlan("free", true);
+		$("#f-plan-free").checked = true;
 	} else if (k === "activeOnly") {
 		STATE.filters.activeOnly = true;
 		$("#f-active").checked = true;
@@ -882,6 +929,7 @@ function applyQuickPick(name) {
 	clearFilter("structured");
 	clearFilter("attachment");
 	clearFilter("openWeights");
+	clearFilter("plans");
 	STATE.filters.labs.clear();
 	$$("[data-lab]").forEach((b) => b.setAttribute("aria-pressed", "false"));
 
@@ -934,6 +982,11 @@ async function tryFetchLiveCatalog() {
 	}
 }
 
+function isFreeModel(m) {
+	const cost = m.cost || {};
+	return (cost.input === 0 || cost.input == null) && (cost.output === 0 || cost.output == null);
+}
+
 async function fetchLiveSnapshot() {
 	const [api, budgetsRes, liveIds] = await Promise.all([
 		fetch(LIVE.modelsDev).then((r) => {
@@ -943,17 +996,15 @@ async function fetchLiveSnapshot() {
 		fetch(budgetsUrl(), { cache: "no-store" }).then((r) => (r.ok ? r.json() : { models: {} })),
 		tryFetchLiveCatalog()
 	]);
-	const provider = api["opencode-go"];
-	if (!provider?.models) throw new Error("models.dev response missing opencode-go");
+	const goProvider = api["opencode-go"];
+	const freeProvider = api["opencode"];
+	if (!goProvider?.models) throw new Error("models.dev response missing opencode-go");
 	const budgets = budgetsRes.models || {};
-	const curatedActive = new Set(Object.keys(budgets));
 
 	const models = [];
-	for (const [id, m] of Object.entries(provider.models)) {
+	for (const [id, m] of Object.entries(goProvider.models)) {
 		const inLive = liveIds ? liveIds.has(id) : true;
-		const curatedA = curatedActive.has(id);
-		const status =
-			curatedA && inLive ? "active" : curatedA ? "preview-or-removed" : inLive ? "legacy" : "deprecated";
+		const status = inLive ? "active" : "preview-or-removed";
 		models.push({
 			id,
 			name: m.name || id,
@@ -987,11 +1038,55 @@ async function fetchLiveSnapshot() {
 			estimatedRequests: budgets[id]?.estimatedRequests || null,
 			budgetNotes: budgets[id]?.notes || null,
 			inLiveCatalog: inLive,
-			curatedActive: curatedA,
+			plan: "go",
 			status
 		});
 	}
+	if (freeProvider?.models) {
+		for (const [id, m] of Object.entries(freeProvider.models)) {
+			if (!isFreeModel(m)) continue;
+			if (m.status === "deprecated") continue;
+			models.push({
+				id,
+				name: m.name || id,
+				family: m.family || null,
+				lab: labFromFamily(m.family, id),
+				description: m.description || null,
+				releaseDate: m.release_date || null,
+				lastUpdated: m.last_updated || null,
+				openWeights: !!m.open_weights,
+				knowledgeCutoff: m.knowledge || null,
+				modalities: {
+					input: Array.isArray(m.modalities?.input) ? [...m.modalities.input].sort() : [],
+					output: Array.isArray(m.modalities?.output) ? [...m.modalities.output].sort() : []
+				},
+				capabilities: {
+					reasoning: !!m.reasoning,
+					toolCall: !!m.tool_call,
+					structuredOutput: !!m.structured_output,
+					temperature: m.temperature !== false,
+					attachment: !!m.attachment
+				},
+				context: m.limit?.context ?? null,
+				outputLimit: m.limit?.output ?? null,
+				cost: {
+					input: m.cost?.input ?? null,
+					output: m.cost?.output ?? null,
+					cacheRead: m.cost?.cache_read ?? null,
+					cacheWrite: m.cost?.cache_write ?? null
+				},
+				monthlyBudgetUsd: null,
+				estimatedRequests: null,
+				budgetNotes: null,
+				inLiveCatalog: false,
+				plan: "free",
+				status: m.status || "active"
+			});
+		}
+	}
 	models.sort((a, b) => {
+		const planOrder = { go: 0, free: 1 };
+		if (planOrder[a.plan] !== planOrder[b.plan]) return planOrder[a.plan] - planOrder[b.plan];
 		const order = { active: 0, legacy: 1, "preview-or-removed": 2, deprecated: 3 };
 		if (order[a.status] !== order[b.status]) return order[a.status] - order[b.status];
 		return (b.releaseDate || "").localeCompare(a.releaseDate || "");

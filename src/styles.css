@@ -949,6 +949,17 @@ input[type="range"] {
 	border: 1px solid var(--line);
 }
 
+.tag--go {
+	background: var(--accent-soft);
+	color: var(--accent);
+}
+
+.tag--free {
+	background: rgba(107, 124, 145, 0.18);
+	color: var(--text-dim);
+	border: 1px solid var(--line);
+}
+
 .caps {
 	display: flex;
 	gap: 4px;

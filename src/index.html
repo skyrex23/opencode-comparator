@@ -160,6 +160,20 @@
 
 					<div class="filters__row">
 						<div class="field">
+							<span class="field__label">Subscription</span>
+							<div class="field__row">
+								<label class="check" title="Models included in the $10/mo OpenCode Go plan"
+									><input type="checkbox" id="f-plan-go" checked /><span>Go</span></label
+								>
+								<label class="check" title="Models available without a Go subscription"
+									><input type="checkbox" id="f-plan-free" checked /><span>Free</span></label
+								>
+							</div>
+						</div>
+					</div>
+
+					<div class="filters__row">
+						<div class="field">
 							<span class="field__label">Status</span>
 							<div class="field__row">
 								<label class="check"
@@ -293,7 +307,7 @@
 
 				<div id="empty" class="empty" hidden>
 					<h3>No models match your filters</h3>
-					<p>Try clearing some filters or lowering the max output price.</p>
+					<p>Try clearing some filters, enabling Free models, or lowering the max output price.</p>
 					<button class="btn btn--ghost" id="empty-reset" type="button">Reset filters</button>
 				</div>
 

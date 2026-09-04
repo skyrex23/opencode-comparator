@@ -14,8 +14,8 @@ snapshot from public sources on demand (the `Refresh data` button) or via `npm r
 - **Two views.** Sortable/filterable table for at-a-glance comparison, and a card grid for browsing.
 - **Per-model tier.** Each row is tagged with its OpenCode Go monthly allocation (`$15` premium, `$30` mid, `$60`
   standard) plus the official request counts per 5-hour, weekly and monthly windows.
-- **Filters.** Search by name/lab, filter by lab, status, capability (reasoning, tool calls, structured output,
-  attachments, open weights), minimum context, and maximum output price.
+- **Filters.** Search by name/lab, filter by subscription (Go models vs free tier), lab, status, capability (reasoning,
+  tool calls, structured output, attachments, open weights), minimum context, and maximum output price.
 - **Quick picks.** One-click presets: `Premium quality`, `High-volume workhorse`, `Long context (1M+)`,
   `Cheapest per request`, `Balanced all-rounder`.
 - **Detail drawer.** Click any model for description, modalities, capabilities, release date and a value score.

@@ -88,6 +88,65 @@ function buildSnapshot() {
 	};
 }
 
+function isFree(m) {
+	const cost = m.cost || {};
+	return (cost.input === 0 || cost.input == null) && (cost.output === 0 || cost.output == null);
+}
+
+function buildModel(m, opts) {
+	const { plan, inLiveCatalog, budget } = opts;
+	const limit = m.limit || {};
+	const cost = m.cost || {};
+	const caps = {
+		reasoning: !!m.reasoning,
+		toolCall: !!m.tool_call,
+		structuredOutput: !!m.structured_output,
+		temperature: m.temperature !== false,
+		attachment: !!m.attachment
+	};
+	const modalities = normalizeModalities(m.modalities);
+	const estimatedRequests = budget.estimatedRequests || null;
+	const monthlyBudgetUsd = budget.monthlyBudgetUsd ?? null;
+	const budgetNotes = budget.notes || null;
+
+	let status = m.status || null;
+	if (plan === "go") {
+		if (inLiveCatalog && status !== "deprecated") status = "active";
+		else if (inLiveCatalog) status = "active";
+		else status = status || "preview-or-removed";
+	} else {
+		status = status || "active";
+	}
+
+	return {
+		id: m.id,
+		name: m.name || m.id,
+		family: m.family || null,
+		lab: labFromFamily(m.family, m.id),
+		description: m.description || null,
+		releaseDate: m.release_date || null,
+		lastUpdated: m.last_updated || null,
+		openWeights: !!m.open_weights,
+		knowledgeCutoff: m.knowledge || null,
+		modalities,
+		capabilities: caps,
+		context: cleanNumber(limit.context),
+		outputLimit: cleanNumber(limit.output),
+		cost: {
+			input: cleanNumber(cost.input),
+			output: cleanNumber(cost.output),
+			cacheRead: cleanNumber(cost.cache_read),
+			cacheWrite: cleanNumber(cost.cache_write)
+		},
+		monthlyBudgetUsd,
+		estimatedRequests,
+		budgetNotes,
+		inLiveCatalog,
+		plan,
+		status
+	};
+}
+
 async function main() {
 	const out = buildSnapshot();
 
@@ -97,73 +156,34 @@ async function main() {
 		import(BUDGETS_FILE, { with: { type: "json" } }).then((m) => m.default)
 	]);
 
-	const provider = apiAll["opencode-go"];
-	if (!provider || !provider.models) {
+	const goProvider = apiAll["opencode-go"];
+	if (!goProvider || !goProvider.models) {
 		throw new Error('models.dev api.json is missing the "opencode-go" provider.');
 	}
+	const freeProvider = apiAll["opencode"];
 	const liveIds = new Set(ocCatalog.data.map((m) => m.id));
 
 	const budgets = budgetsRaw.models || {};
-	const curatedActiveIds = new Set(Object.keys(budgets));
 
 	const models = [];
-	for (const [id, m] of Object.entries(provider.models)) {
-		const limit = m.limit || {};
-		const cost = m.cost || {};
-		const caps = {
-			reasoning: !!m.reasoning,
-			toolCall: !!m.tool_call,
-			structuredOutput: !!m.structured_output,
-			temperature: m.temperature !== false,
-			attachment: !!m.attachment
-		};
-		const modalities = normalizeModalities(m.modalities);
-		const budget = budgets[id] || {};
-		const estimatedRequests = budget.estimatedRequests || null;
-		const monthlyBudgetUsd = budget.monthlyBudgetUsd ?? null;
-		const budgetNotes = budget.notes || null;
-
-		const inLiveCatalog = liveIds.has(id);
-		const curatedActive = curatedActiveIds.has(id);
-		let status;
-		if (curatedActive && inLiveCatalog) status = "active";
-		else if (curatedActive && !inLiveCatalog) status = "preview-or-removed";
-		else if (!curatedActive && inLiveCatalog) status = "legacy";
-		else status = "deprecated";
-
-		models.push({
-			id,
-			name: m.name || id,
-			family: m.family || null,
-			lab: labFromFamily(m.family, id),
-			description: m.description || null,
-			releaseDate: m.release_date || null,
-			lastUpdated: m.last_updated || null,
-			openWeights: !!m.open_weights,
-			knowledgeCutoff: m.knowledge || null,
-			modalities,
-			capabilities: caps,
-			context: cleanNumber(limit.context),
-			outputLimit: cleanNumber(limit.output),
-			cost: {
-				input: cleanNumber(cost.input),
-				output: cleanNumber(cost.output),
-				cacheRead: cleanNumber(cost.cache_read),
-				cacheWrite: cleanNumber(cost.cache_write)
-			},
-			monthlyBudgetUsd,
-			estimatedRequests,
-			budgetNotes,
-			inLiveCatalog,
-			curatedActive,
-			status
-		});
+	for (const [id, m] of Object.entries(goProvider.models)) {
+		models.push(buildModel(m, { plan: "go", inLiveCatalog: liveIds.has(id), budget: budgets[id] || {} }));
+	}
+	if (freeProvider && freeProvider.models) {
+		for (const [id, m] of Object.entries(freeProvider.models)) {
+			if (!isFree(m)) continue;
+			if (m.status === "deprecated") continue;
+			models.push(buildModel(m, { plan: "free", inLiveCatalog: false, budget: {} }));
+		}
 	}
 
 	models.sort((a, b) => {
-		const aLive = a.inLiveCatalog ? 0 : 1;
-		const bLive = b.inLiveCatalog ? 0 : 1;
-		if (aLive !== bLive) return aLive - bLive;
+		const planOrder = { go: 0, free: 1 };
+		if (planOrder[a.plan] !== planOrder[b.plan]) return planOrder[a.plan] - planOrder[b.plan];
+		const statusOrder = { active: 0, legacy: 1, "preview-or-removed": 2, deprecated: 3 };
+		const sa = statusOrder[a.status] ?? 9;
+		const sb = statusOrder[b.status] ?? 9;
+		if (sa !== sb) return sa - sb;
 		const ar = a.releaseDate || "";
 		const br = b.releaseDate || "";
 		if (ar !== br) return br.localeCompare(ar);
@@ -175,8 +195,8 @@ async function main() {
 	await mkdir(dirname(OUT), { recursive: true });
 	await writeFile(OUT, `${JSON.stringify(out, null, "\t")}\n`, "utf8");
 
-	const counts = models.reduce((acc, m) => ((acc[m.status] = (acc[m.status] || 0) + 1), acc), {});
-	console.log(`Wrote ${OUT}\n` + `  models total: ${models.length}\n` + `  status counts: ${JSON.stringify(counts)}`);
+	const counts = models.reduce((acc, m) => ((acc[`${m.plan}:${m.status}`] = (acc[`${m.plan}:${m.status}`] || 0) + 1), acc), {});
+	console.log(`Wrote ${OUT}\n` + `  models total: ${models.length}\n` + `  plan:status counts: ${JSON.stringify(counts)}`);
 }
 
 main().catch((err) => {
