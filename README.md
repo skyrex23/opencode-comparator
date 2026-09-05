@@ -20,7 +20,7 @@ snapshot from public sources on demand (the `Refresh data` button) or via `npm r
   calls, structured output, attachments, open weights), minimum context, and maximum output price.
 - **Quick picks.** One-click presets: `Premium quality`, `High-volume workhorse`, `Long context (1M+)`,
   `Cheapest per request`, `Balanced all-rounder`.
-- **Detail drawer.** Click any model for description, modalities, capabilities, release date and a value score.
+- **Detail drawer.** Click any model for description, modalities, capabilities, release date and a score.
 - **Side-by-side comparison.** Tick up to 4 rows to pin them in the comparison bar; the comparison view highlights
   best/worst values across pricing, context, requests and capabilities.
 - **Boot error screen.** If the snapshot fails to load, you get a clear error message and a "try again" / "refresh from
@@ -77,9 +77,9 @@ to rebuild `data/models.json`.
 └── ...
 ```
 
-## How the value score works
+## How the score works
 
-`valueScore = (1_000_000 / outputCost) * 0.0006 + log10(context) / 6 * 30 + log10(monthlyRequests) / 5 * 40`
+`score = (1_000_000 / outputCost) * 0.0006 + log10(context) / 6 * 30 + log10(monthlyRequests) / 5 * 40`
 
 with a `1.25x` boost when the model supports `reasoning`. It is a rough heuristic designed to fit on a 0-100-ish scale;
 it favours models with low output price, long context and a high monthly request budget. Use it to spot outliers, not as

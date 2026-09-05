@@ -89,7 +89,7 @@ function toast(msg, kind = "ok") {
 	}, 3500);
 }
 
-function valueScore(m) {
+function score(m) {
 	if (m.cost?.output == null) return 0;
 	const outCost = m.cost.output;
 	const requests = m.estimatedRequests?.monthly ?? 0;
@@ -106,7 +106,7 @@ function valueScore(m) {
 	return score * reasoningBoost;
 }
 
-function valueTier(score) {
+function scoreTier(score) {
 	if (score >= 80) return "high";
 	if (score >= 40) return "mid";
 	return "low";
@@ -187,18 +187,18 @@ function contextBar(m) {
 	return `<span class="${cls}"><span class="bar__fill" style="width:${pct}%"></span></span><span class="bar-text">${fmt.tokens(m.context)}</span>`;
 }
 
-function valueCell(m) {
+function scoreCell(m) {
 	if (m.plan === "free") {
 		return `<div class="value-cell">
 			<span class="value-cell__score value-cell__score--high">Free</span>
 			<span class="value-cell__bar"><span class="value-cell__bar-fill value-cell__bar-fill--high" style="width:100%"></span></span>
 		</div>`;
 	}
-	const score = valueScore(m);
-	const tier = valueTier(score);
-	const pct = Math.min(100, (score / 120) * 100);
+	const s = score(m);
+	const tier = scoreTier(s);
+	const pct = Math.min(100, (s / 120) * 100);
 	return `<div class="value-cell">
-		<span class="value-cell__score value-cell__score--${tier}">${score.toFixed(0)}</span>
+		<span class="value-cell__score value-cell__score--${tier}">${s.toFixed(0)}</span>
 		<span class="value-cell__bar"><span class="value-cell__bar-fill value-cell__bar-fill--${tier}" style="width:${pct}%"></span></span>
 	</div>`;
 }
@@ -294,13 +294,13 @@ const COLUMNS = [
 		cellHtml: (m) => `<span class="${m.releaseDate ? "" : "num--dim"}">${fmt.date(m.releaseDate)}</span>`
 	},
 	{
-		id: "valueScore",
-		label: "Value",
+		id: "score",
+		label: "Score",
 		thClass: "th-score",
 		sortable: true,
 		defaultDir: "desc",
-		sortKey: (m) => valueScore(m),
-		cellHtml: (m) => valueCell(m)
+		sortKey: (m) => score(m),
+		cellHtml: (m) => scoreCell(m)
 	}
 ];
 
@@ -730,8 +730,8 @@ function openDetail(id) {
 				<div class="sub">per 5h window · ${req.weekly?.toLocaleString() ?? "—"} per week</div>
 			</div>
 			<div class="detail-card">
-				<h3>Value score</h3>
-				<div class="num-big">${valueScore(m).toFixed(0)}</div>
+				<h3>Score</h3>
+				<div class="num-big">${score(m).toFixed(0)}</div>
 				<div class="sub">composite of price, context and request budget</div>
 			</div>
 			<div class="detail-card">
@@ -839,7 +839,7 @@ function openCompare() {
 		{ label: "Attachments", pick: (m) => (m.capabilities?.attachment ? "yes" : "no") },
 		{ label: "Modalities in", pick: (m) => m.modalities.input.join(", ") || "—" },
 		{ label: "Released", pick: (m) => fmt.date(m.releaseDate), bestFn: (m) => m.releaseDate || "", bestDir: "max" },
-		{ label: "Value score", pick: (m) => valueScore(m).toFixed(0), bestFn: (m) => valueScore(m), bestDir: "max" }
+		{ label: "Score", pick: (m) => score(m).toFixed(0), bestFn: (m) => score(m), bestDir: "max" }
 	];
 
 	const grid = $("#compare-body");
@@ -1129,7 +1129,7 @@ function applyQuickPick(name) {
 				openWeights: false,
 				minOutputPrice: 0,
 				maxOutputPrice: MAX_OUTPUT_PRICE,
-				sort: { field: "valueScore", dir: "desc" }
+				sort: { field: "score", dir: "desc" }
 			});
 			STATE.filters.minContext = 512000;
 			$("#f-context-min").value = "512000";
@@ -1160,7 +1160,7 @@ function applyQuickPick(name) {
 				showDeprecated: false,
 				reasoning: true,
 				tools: true,
-				sort: { field: "valueScore", dir: "desc" }
+				sort: { field: "score", dir: "desc" }
 			});
 			break;
 	}

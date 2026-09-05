@@ -348,22 +348,93 @@
 								<th class="th-check" scope="col">
 									<input id="cmp-all" type="checkbox" title="Add all visible" />
 								</th>
-								<th scope="col" class="th-model" data-col="name" data-sort="name">Model</th>
-								<th scope="col" class="th-cost" data-col="inputCost" data-sort="inputCost">In $/1M</th>
-								<th scope="col" class="th-cost" data-col="outputCost" data-sort="outputCost">
+								<th
+									scope="col"
+									class="th-model"
+									data-col="name"
+									data-sort="name"
+									title="Model name — click a row to open the full breakdown"
+								>
+									Model
+								</th>
+								<th
+									scope="col"
+									class="th-cost"
+									data-col="inputCost"
+									data-sort="inputCost"
+									title="Input price per 1M tokens — what you pay for the prompts you send"
+								>
+									In $/1M
+								</th>
+								<th
+									scope="col"
+									class="th-cost"
+									data-col="outputCost"
+									data-sort="outputCost"
+									title="Output price per 1M tokens — what you pay for the model's replies"
+								>
 									Out $/1M
 								</th>
-								<th scope="col" class="th-cost" data-col="cacheRead">Cache read</th>
-								<th scope="col" class="th-context" data-col="context" data-sort="context">Context</th>
-								<th scope="col" class="th-budget" data-col="tier">Tier</th>
-								<th scope="col" class="th-requests" data-col="requestsMonth" data-sort="requestsMonth">
+								<th
+									scope="col"
+									class="th-cost"
+									data-col="cacheRead"
+									title="Cache-read price per 1M tokens — discounted rate when the prompt is reused from cache"
+								>
+									Cache read
+								</th>
+								<th
+									scope="col"
+									class="th-context"
+									data-col="context"
+									data-sort="context"
+									title="Maximum context window — the largest prompt the model can read in one call"
+								>
+									Context
+								</th>
+								<th
+									scope="col"
+									class="th-budget"
+									data-col="tier"
+									title="Go plan budget cap that applies to this model ($15 / $30 / $60 per month)"
+								>
+									Tier
+								</th>
+								<th
+									scope="col"
+									class="th-requests"
+									data-col="requestsMonth"
+									data-sort="requestsMonth"
+									title="Estimated requests per month under the Go plan."
+								>
 									Req / mo
 								</th>
-								<th scope="col" class="th-caps" data-col="caps">Caps</th>
-								<th scope="col" class="th-date" data-col="releaseDate" data-sort="releaseDate">
+								<th
+									scope="col"
+									class="th-caps"
+									data-col="caps"
+									title="Capabilities — R reasoning · T tool calls · S structured output · A attachments"
+								>
+									Caps
+								</th>
+								<th
+									scope="col"
+									class="th-date"
+									data-col="releaseDate"
+									data-sort="releaseDate"
+									title="Public release date of the model"
+								>
 									Released
 								</th>
-								<th scope="col" class="th-score" data-col="valueScore" data-sort="valueScore">Value</th>
+								<th
+									scope="col"
+									class="th-score"
+									data-col="score"
+									data-sort="score"
+									title="Combines output cost, context size and monthly request budget. Higher is better."
+								>
+									Score
+								</th>
 							</tr>
 						</thead>
 						<tbody id="models-body"></tbody>
