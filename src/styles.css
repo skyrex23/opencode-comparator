@@ -642,25 +642,6 @@ input[type="range"] {
 	min-width: 0;
 }
 
-.content__head {
-	display: flex;
-	align-items: flex-start;
-	justify-content: space-between;
-	gap: 16px;
-	flex-wrap: wrap;
-}
-
-.content__title h2 {
-	font-size: 22px;
-	margin-bottom: 4px;
-}
-
-.content__sub {
-	margin: 0;
-	font-size: 13px;
-	color: var(--text-dim);
-}
-
 .content__controls {
 	display: flex;
 	gap: 12px;
