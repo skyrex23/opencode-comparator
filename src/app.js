@@ -34,8 +34,8 @@ const STATE = {
 	filters: {
 		search: "",
 		plans: new Set(["go", "zen", "free"]),
-		activeOnly: true,
-		includeLegacy: false,
+		showActive: true,
+		showDeprecated: false,
 		labs: new Set(),
 		minContext: 0,
 		maxContext: null,
@@ -327,10 +327,8 @@ function applyFilters() {
 	const q = f.search.trim().toLowerCase();
 	let arr = STATE.data.models.filter((m) => {
 		if (!f.plans.has(m.plan)) return false;
-		if (f.activeOnly && m.status !== "active") return false;
-		if (!f.activeOnly && !f.includeLegacy && m.status === "legacy") return false;
-		if (!f.includeLegacy && m.status === "deprecated") return false;
-		if (f.includeLegacy && m.status === "deprecated") return true;
+		if (m.status === "active" && !f.showActive) return false;
+		if (m.status === "deprecated" && !f.showDeprecated) return false;
 		if (q) {
 			const hay = `${m.name} ${m.id} ${m.lab} ${m.family || ""}`.toLowerCase();
 			if (!hay.includes(q)) return false;
@@ -421,8 +419,11 @@ function renderPills() {
 					: "plan:go,plan:zen";
 		pills.push({ k, label: singlePlanLabels[planKeys[0]] });
 	} else if (f.plans.size === 0) pills.push({ k: "plans", label: "no plans selected" });
-	if (!f.activeOnly) pills.push({ k: "activeOnly", label: "show all" });
-	if (f.includeLegacy) pills.push({ k: "includeLegacy", label: "+ deprecated" });
+	const checkedStatuses = [];
+	if (f.showActive) checkedStatuses.push("active");
+	if (f.showDeprecated) checkedStatuses.push("deprecated");
+	if (checkedStatuses.length === 0) pills.push({ k: "statuses", label: "no statuses" });
+	for (const s of checkedStatuses) pills.push({ k: `status:${s}`, label: s });
 	for (const lab of f.labs) pills.push({ k: `lab:${lab}`, label: lab });
 	if (f.minContext > 0) pills.push({ k: "contextMin", label: `ctx ≥ ${fmt.tokens(f.minContext)}` });
 	if (f.maxContext != null) pills.push({ k: "contextMax", label: `ctx ≤ ${fmt.tokens(f.maxContext)}` });
@@ -906,11 +907,11 @@ function bindFilters() {
 		applyAndRender();
 	});
 	$("#f-active").addEventListener("change", (e) => {
-		STATE.filters.activeOnly = e.target.checked;
+		STATE.filters.showActive = e.target.checked;
 		applyAndRender();
 	});
 	$("#f-legacy").addEventListener("change", (e) => {
-		STATE.filters.includeLegacy = e.target.checked;
+		STATE.filters.showDeprecated = e.target.checked;
 		applyAndRender();
 	});
 	$("#f-context-min").addEventListener("change", (e) => {
@@ -1000,8 +1001,8 @@ function resetFilters() {
 	STATE.filters = {
 		search: "",
 		plans: new Set(["go", "zen", "free"]),
-		activeOnly: true,
-		includeLegacy: false,
+		showActive: true,
+		showDeprecated: false,
 		labs: new Set(),
 		minContext: 0,
 		maxContext: null,
@@ -1063,12 +1064,20 @@ function clearFilter(k) {
 		togglePlan("free", true);
 		$("#f-plan-zen").checked = true;
 		$("#f-plan-free").checked = true;
-	} else if (k === "activeOnly") {
-		STATE.filters.activeOnly = true;
+	} else if (k === "statuses") {
+		STATE.filters.showActive = true;
+		STATE.filters.showDeprecated = false;
 		$("#f-active").checked = true;
-	} else if (k === "includeLegacy") {
-		STATE.filters.includeLegacy = false;
 		$("#f-legacy").checked = false;
+	} else if (k.startsWith("status:")) {
+		const s = k.slice(7);
+		if (s === "active") {
+			STATE.filters.showActive = false;
+			$("#f-active").checked = false;
+		} else if (s === "deprecated") {
+			STATE.filters.showDeprecated = false;
+			$("#f-legacy").checked = false;
+		}
 	} else if (k === "contextMin") {
 		STATE.filters.minContext = 0;
 		$("#f-context-min").value = "0";
@@ -1101,8 +1110,7 @@ function applyQuickPick(name) {
 	clearFilter("contextMax");
 	clearFilter("outputPriceMin");
 	clearFilter("outputPrice");
-	clearFilter("activeOnly");
-	clearFilter("includeLegacy");
+	clearFilter("statuses");
 	clearFilter("reasoning");
 	clearFilter("tools");
 	clearFilter("structured");
@@ -1115,7 +1123,8 @@ function applyQuickPick(name) {
 	switch (name) {
 		case "premium":
 			set({
-				activeOnly: true,
+				showActive: true,
+				showDeprecated: false,
 				reasoning: true,
 				openWeights: false,
 				minOutputPrice: 0,
@@ -1127,7 +1136,8 @@ function applyQuickPick(name) {
 			break;
 		case "workhorse":
 			set({
-				activeOnly: true,
+				showActive: true,
+				showDeprecated: false,
 				minOutputPrice: 0,
 				maxOutputPrice: 1.5,
 				sort: { field: "requestsMonth", dir: "desc" }
@@ -1135,22 +1145,28 @@ function applyQuickPick(name) {
 			$("#f-output-max").value = "1.5";
 			break;
 		case "longctx":
-			set({ activeOnly: true, sort: { field: "context", dir: "desc" } });
+			set({ showActive: true, showDeprecated: false, sort: { field: "context", dir: "desc" } });
 			STATE.filters.minContext = 1000000;
 			$("#f-context-min").value = "1000000";
 			break;
 		case "budget":
-			set({ activeOnly: true, sort: { field: "outputCost", dir: "asc" } });
+			set({ showActive: true, showDeprecated: false, sort: { field: "outputCost", dir: "asc" } });
 			STATE.filters.maxOutputPrice = 1;
 			$("#f-output-max").value = "1";
 			break;
 		case "allround":
-			set({ activeOnly: true, reasoning: true, tools: true, sort: { field: "valueScore", dir: "desc" } });
+			set({
+				showActive: true,
+				showDeprecated: false,
+				reasoning: true,
+				tools: true,
+				sort: { field: "valueScore", dir: "desc" }
+			});
 			break;
 	}
 
-	$("#f-active").checked = STATE.filters.activeOnly;
-	$("#f-legacy").checked = STATE.filters.includeLegacy;
+	$("#f-active").checked = STATE.filters.showActive;
+	$("#f-legacy").checked = STATE.filters.showDeprecated;
 	$("#f-reasoning").checked = STATE.filters.reasoning;
 	$("#f-tools").checked = STATE.filters.tools;
 	$("#f-structured").checked = STATE.filters.structured;
