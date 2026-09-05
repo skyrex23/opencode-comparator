@@ -302,12 +302,23 @@ code {
 	border-radius: var(--radius);
 	padding: 18px;
 	transition: all 0.2s ease;
+	cursor: pointer;
 }
 
 .kpi:hover {
 	border-color: var(--accent);
 	transform: translateY(-2px);
 	box-shadow: var(--shadow-sm);
+}
+
+.kpi:focus-visible {
+	outline: 2px solid var(--accent);
+	outline-offset: 2px;
+}
+
+.kpi--active {
+	border-color: var(--accent);
+	background: linear-gradient(180deg, var(--bg-elev), var(--accent-soft));
 }
 
 .kpi__label {

@@ -626,47 +626,87 @@ function renderLabs() {
 
 function renderKpis() {
 	const active = STATE.data.models.filter((m) => m.status === "active");
-	const zenActive = active.filter((m) => m.plan === "zen");
-	const cheapest = active
-		.filter((m) => m.cost?.output != null)
-		.reduce((min, m) => (m.cost.output < min.cost.output ? m : min), active[0] || {});
-	const monthlyUsd = STATE.data.subscription.monthlyUsd;
-	const usageUsd = STATE.data.subscription.limitUsd.monthly;
+	const countByPlan = {
+		free: active.filter((m) => m.plan === "free").length,
+		go: active.filter((m) => m.plan === "go").length,
+		zen: active.filter((m) => m.plan === "zen").length
+	};
+	const providerCount = new Set(active.map((m) => m.lab).filter(Boolean)).size;
+	const subMonthly = STATE.data.subscription?.monthlyUsd;
+	const subCap = STATE.data.subscription?.limitUsd?.monthly;
+	const plans = STATE.filters.plans;
+	let activeKey = null;
+	if (plans.size === 3) activeKey = "active";
+	else if (plans.size === 1) activeKey = [...plans][0];
 
 	const kpis = [
 		{
-			label: "Go subscription",
-			value: `$${monthlyUsd}/mo`,
-			sub: `$${usageUsd} of reusable usage included`,
-			accent: true
-		},
-		{
+			key: "active",
 			label: "Active models",
 			value: String(active.length),
-			sub: `${STATE.data.models.length} total in catalog`
+			sub: providerCount > 0 ? `From ${providerCount} providers` : "—"
 		},
 		{
+			key: "free",
+			label: "Free models",
+			value: String(countByPlan.free),
+			sub: "No subscription needed"
+		},
+		{
+			key: "go",
+			label: "Go models",
+			value: String(countByPlan.go),
+			sub:
+				subMonthly != null && subCap != null
+					? `$${subMonthly}/mo · $${subCap} monthly cap`
+					: "Monthly subscription"
+		},
+		{
+			key: "zen",
 			label: "Zen models",
-			value: String(zenActive.length),
-			sub: STATE.data.zen?.billing ? "pay-as-you-go, no monthly cap" : "pay-as-you-go per 1M tokens"
-		},
-		{
-			label: "Cheapest output",
-			value: cheapest?.cost?.output != null ? fmt.money(cheapest.cost.output) : "—",
-			sub: cheapest?.name || "—"
+			value: String(countByPlan.zen),
+			sub: "Pay-as-you-go, no monthly cap"
 		}
 	];
 	const host = $("#hero-kpis");
 	host.innerHTML = kpis
 		.map(
 			(k) => `
-			<div class="kpi">
+			<div class="kpi${k.key === activeKey ? " kpi--active" : ""}" data-kpi="${k.key}" role="button" tabindex="0" aria-label="Filter lineup by ${k.label.toLowerCase()}">
 				<div class="kpi__label">${k.label}</div>
 				<div class="kpi__value ${k.accent ? "kpi__value--accent" : ""}">${k.value}</div>
 				${k.sub ? `<div class="kpi__sub">${k.sub}</div>` : ""}
 			</div>`
 		)
 		.join("");
+}
+
+function setKpiFilter(plan) {
+	const plans = plan ? [plan] : ["free", "go", "zen"];
+	STATE.filters.plans = new Set(plans);
+	$("#f-plan-free").checked = plans.includes("free");
+	$("#f-plan-go").checked = plans.includes("go");
+	$("#f-plan-zen").checked = plans.includes("zen");
+	applyAndRender();
+}
+
+function bindKpis() {
+	const host = $("#hero-kpis");
+	const activate = (card) => {
+		const key = card.dataset.kpi;
+		setKpiFilter(key === "active" ? null : key);
+	};
+	host.addEventListener("click", (e) => {
+		const card = e.target.closest("[data-kpi]");
+		if (card) activate(card);
+	});
+	host.addEventListener("keydown", (e) => {
+		if (e.key !== "Enter" && e.key !== " ") return;
+		const card = e.target.closest("[data-kpi]");
+		if (!card) return;
+		e.preventDefault();
+		activate(card);
+	});
 }
 
 function renderBrand() {
@@ -677,6 +717,7 @@ function renderBrand() {
 function applyAndRender() {
 	applyFilters();
 	render();
+	renderKpis();
 }
 
 function openDetail(id) {
@@ -1375,6 +1416,7 @@ function boot() {
 	renderKpis();
 	renderBrand();
 	bindFilters();
+	bindKpis();
 	applyAndRender();
 	$("#btn-refresh").addEventListener("click", refreshFromNetwork);
 }
