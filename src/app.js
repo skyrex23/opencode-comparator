@@ -1,10 +1,9 @@
 /**
  * OpenCode Go Comparator
  *
- * Loads the snapshot from data/models.json, renders a sortable/filterable table
- * (and an alternate card grid) of every Go model with its price, context,
- * capabilities and value for coding. Up to 4 rows can be pinned for a
- * side-by-side comparison.
+ * Loads the snapshot from data/models.json and renders a sortable, filterable
+ * table of every Go model with its price, context, capabilities and value for
+ * coding. Up to 4 rows can be pinned for a side-by-side comparison.
  *
  * The header "Refresh data" button re-fetches the live OpenCode Go catalog and
  * models.dev metadata in the browser and rebuilds the UI without a reload.
@@ -27,7 +26,6 @@ const LIVE = {
 
 const STATE = {
 	data: null,
-	view: "table",
 	filtered: [],
 	selected: new Set(),
 	filters: {
@@ -311,52 +309,6 @@ function rowHTML(m) {
 		</tr>`;
 }
 
-function cardHTML(m) {
-	const req = m.estimatedRequests || {};
-	const selected = STATE.selected.has(m.id) ? "is-selected" : "";
-	const legacyCls = m.status === "legacy" ? "is-legacy" : m.status === "deprecated" ? "is-deprecated" : "";
-	const score = valueScore(m);
-	return `
-		<article class="card ${selected} ${legacyCls}" data-id="${m.id}">
-			<div class="card__head">
-				<div>
-					<div class="card__title" data-detail="${m.id}">${m.name}</div>
-					<div class="card__lab">${m.lab || "—"} · ${m.id}</div>
-				</div>
-				<div class="card__tags">${planTag(m)} ${statusTag(m)} ${weightsTag(m)}</div>
-			</div>
-			${m.description ? `<p class="card__desc">${m.description}</p>` : ""}
-			<div class="card__metrics">
-				<div class="card__metric">
-					<span class="card__metric-label">In $ / 1M</span>
-					<span class="card__metric-value">${fmt.money(m.cost?.input)}</span>
-				</div>
-				<div class="card__metric">
-					<span class="card__metric-label">Out $ / 1M</span>
-					<span class="card__metric-value card__metric-value--accent">${fmt.money(m.cost?.output)}</span>
-				</div>
-				<div class="card__metric">
-					<span class="card__metric-label">Context</span>
-					<span class="card__metric-value">${fmt.tokens(m.context)}</span>
-				</div>
-				<div class="card__metric">
-					<span class="card__metric-label">Req / mo</span>
-					<span class="card__metric-value">${req.monthly?.toLocaleString() ?? "—"}</span>
-				</div>
-			</div>
-			<div class="card__metrics-row">
-				<div class="card__caps">${capabilityIcons(m)}</div>
-				<div class="value-cell">
-					<span class="value-cell__score value-cell__score--${m.plan === "free" ? "high" : valueTier(score)}">Value ${m.plan === "free" ? "Free" : score.toFixed(0)}</span>
-				</div>
-			</div>
-			<div class="card__actions">
-				${tierTag(m)}
-				<button class="btn btn--ghost btn--small" data-detail="${m.id}" type="button" style="margin-left:auto">Details</button>
-			</div>
-		</article>`;
-}
-
 function applyFilters() {
 	const f = STATE.filters;
 	const q = f.search.trim().toLowerCase();
@@ -405,21 +357,12 @@ function renderTable() {
 	body.innerHTML = STATE.filtered.map(rowHTML).join("");
 }
 
-function renderCards() {
-	const host = $("#cards-wrap");
-	host.innerHTML = STATE.filtered.map(cardHTML).join("");
-}
-
 function render() {
 	const empty = STATE.filtered.length === 0;
 	$("#empty").hidden = !empty;
-	$("#table-wrap").hidden = empty || STATE.view !== "table";
-	$("#cards-wrap").hidden = empty || STATE.view !== "cards";
+	$("#table-wrap").hidden = empty;
 
-	if (!empty) {
-		if (STATE.view === "table") renderTable();
-		else renderCards();
-	}
+	if (!empty) renderTable();
 
 	$("#result-count").textContent = `${STATE.filtered.length} of ${STATE.data.models.length} models`;
 	renderPills();
@@ -976,18 +919,6 @@ function bindFilters() {
 	$$("[data-remove]").forEach((btn) => {
 		btn.addEventListener("click", () => {
 			STATE.selected.delete(btn.getAttribute("data-remove"));
-			render();
-		});
-	});
-
-	$$("[data-view]").forEach((btn) => {
-		btn.addEventListener("click", () => {
-			STATE.view = btn.getAttribute("data-view");
-			$$("[data-view]").forEach((b) => {
-				const active = b.getAttribute("data-view") === STATE.view;
-				b.classList.toggle("is-active", active);
-				b.setAttribute("aria-pressed", String(active));
-			});
 			render();
 		});
 	});

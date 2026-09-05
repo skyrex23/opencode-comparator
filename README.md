@@ -11,7 +11,8 @@ snapshot from public sources on demand (the `Refresh data` button) or via `npm r
 - **Hero & KPI cards.** Subscription price, active models count, reusable usage, and cheapest output price at a glance.
 - **"How OpenCode Go works" explainer.** Collapsible panel that explains the dollar caps, per-model tiers and what
   request counts really mean.
-- **Two views.** Sortable/filterable table for at-a-glance comparison, and a card grid for browsing.
+- **Sortable/filterable table.** At-a-glance comparison of every Go model with toggleable columns, sticky header and
+  side-by-side selection.
 - **Per-model tier.** Each row is tagged with its OpenCode Go monthly allocation (`$15` premium, `$30` mid, `$60`
   standard) plus the official request counts per 5-hour, weekly and monthly windows.
 - **Filters.** Search by name/lab, filter by subscription (Go models vs free tier), lab, status, capability (reasoning,
@@ -65,9 +66,9 @@ to rebuild `data/models.json`.
 │   ├── fetch-models.mjs     regenerates data/models.json from the public APIs
 │   └── serve.mjs            tiny static file server for local dev
 ├── src/
-│   ├── index.html           page markup (hero, KPIs, filters, table, cards)
+│   ├── index.html           page markup (hero, KPIs, filters, table)
 │   ├── styles.css           dark dashboard theme
-│   └── app.js               table/cards, filters, detail drawer, comparison
+│   └── app.js               table, filters, detail drawer, comparison
 ├── package.json
 ├── README.md
 └── ...
