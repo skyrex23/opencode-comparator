@@ -667,10 +667,7 @@ function renderKpis() {
 }
 
 function renderBrand() {
-	const active = STATE.data.models.filter((m) => m.status === "active").length;
-	const zenActive = STATE.data.models.filter((m) => m.status === "active" && m.plan === "zen").length;
-	$("#brand-sub").textContent =
-		`${active} active models (${zenActive} Zen) · $${STATE.data.subscription.monthlyUsd}/mo Go · updated ${fmt.datetime(STATE.data.fetchedAt)}`;
+	$("#brand-sub").textContent = `Updated ${fmt.datetime(STATE.data.fetchedAt)}`;
 	$("#footer-time").textContent = fmt.datetime(STATE.data.fetchedAt);
 }
 
