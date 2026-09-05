@@ -675,6 +675,10 @@ input[type="range"] {
 	flex-wrap: wrap;
 }
 
+.content__meta .col-toggle {
+	margin-left: auto;
+}
+
 .badge {
 	background: var(--bg-elev);
 	border: 1px solid var(--line);
