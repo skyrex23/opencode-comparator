@@ -162,11 +162,14 @@
 						<div class="field">
 							<span class="field__label">Subscription</span>
 							<div class="field__row">
+								<label class="check" title="Models available without a Go or Zen subscription"
+									><input type="checkbox" id="f-plan-free" checked /><span>Free</span></label
+								>
 								<label class="check" title="Models included in the $10/mo OpenCode Go plan"
 									><input type="checkbox" id="f-plan-go" checked /><span>Go</span></label
 								>
-								<label class="check" title="Models available without a Go subscription"
-									><input type="checkbox" id="f-plan-free" checked /><span>Free</span></label
+								<label class="check" title="OpenCode Zen gateway, pay-as-you-go per 1M tokens"
+									><input type="checkbox" id="f-plan-zen" checked /><span>Zen</span></label
 								>
 							</div>
 						</div>
@@ -208,11 +211,11 @@
 						<label class="field">
 							<span class="field__label">Output $/1M &le;</span>
 							<div class="range">
-								<input id="f-max-output-price" type="range" min="0" max="15" step="0.1" value="15" />
+								<input id="f-max-output-price" type="range" min="0" max="200" step="0.1" value="200" />
 								<div class="range__labels">
 									<span>$0</span>
 									<output id="f-max-output-price-out">any</output>
-									<span>$15</span>
+									<span>$200</span>
 								</div>
 							</div>
 						</label>

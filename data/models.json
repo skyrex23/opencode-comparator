@@ -1,5 +1,5 @@
 {
-	"fetchedAt": "2026-09-04T15:41:12.479Z",
+	"fetchedAt": "2026-09-05T00:36:31.806Z",
 	"sources": [
 		{
 			"name": "models.dev (api.json)",
@@ -8,6 +8,10 @@
 		{
 			"name": "OpenCode Go catalog",
 			"url": "https://opencode.ai/zen/go/v1/models"
+		},
+		{
+			"name": "OpenCode Zen catalog",
+			"url": "https://opencode.ai/zen/v1/models"
 		},
 		{
 			"name": "data/budgets.json",
@@ -24,6 +28,10 @@
 		"billing": "Dollar-metered; per-model monthly allocation may be lower than the $60 cap.",
 		"docs": "https://opencode.ai/docs/go/"
 	},
+	"zen": {
+		"billing": "Pay-as-you-go at the listed per-1M-token rates; optional monthly limits and auto-reload.",
+		"docs": "https://opencode.ai/docs/zen/"
+	},
 	"models": [
 		{
 			"id": "omen-alpha",
@@ -36,8 +44,13 @@
 			"openWeights": false,
 			"knowledgeCutoff": null,
 			"modalities": {
-				"input": ["image", "text"],
-				"output": ["text"]
+				"input": [
+					"image",
+					"text"
+				],
+				"output": [
+					"text"
+				]
 			},
 			"capabilities": {
 				"reasoning": true,
@@ -72,8 +85,16 @@
 			"openWeights": false,
 			"knowledgeCutoff": null,
 			"modalities": {
-				"input": ["audio", "image", "pdf", "text", "video"],
-				"output": ["text"]
+				"input": [
+					"audio",
+					"image",
+					"pdf",
+					"text",
+					"video"
+				],
+				"output": [
+					"text"
+				]
 			},
 			"capabilities": {
 				"reasoning": true,
@@ -112,8 +133,12 @@
 			"openWeights": true,
 			"knowledgeCutoff": null,
 			"modalities": {
-				"input": ["text"],
-				"output": ["text"]
+				"input": [
+					"text"
+				],
+				"output": [
+					"text"
+				]
 			},
 			"capabilities": {
 				"reasoning": true,
@@ -152,8 +177,15 @@
 			"openWeights": false,
 			"knowledgeCutoff": null,
 			"modalities": {
-				"input": ["image", "pdf", "text", "video"],
-				"output": ["text"]
+				"input": [
+					"image",
+					"pdf",
+					"text",
+					"video"
+				],
+				"output": [
+					"text"
+				]
 			},
 			"capabilities": {
 				"reasoning": true,
@@ -192,8 +224,14 @@
 			"openWeights": false,
 			"knowledgeCutoff": null,
 			"modalities": {
-				"input": ["image", "text", "video"],
-				"output": ["text"]
+				"input": [
+					"image",
+					"text",
+					"video"
+				],
+				"output": [
+					"text"
+				]
 			},
 			"capabilities": {
 				"reasoning": true,
@@ -232,8 +270,13 @@
 			"openWeights": false,
 			"knowledgeCutoff": null,
 			"modalities": {
-				"input": ["image", "text"],
-				"output": ["text"]
+				"input": [
+					"image",
+					"text"
+				],
+				"output": [
+					"text"
+				]
 			},
 			"capabilities": {
 				"reasoning": true,
@@ -272,8 +315,12 @@
 			"openWeights": true,
 			"knowledgeCutoff": null,
 			"modalities": {
-				"input": ["text"],
-				"output": ["text"]
+				"input": [
+					"text"
+				],
+				"output": [
+					"text"
+				]
 			},
 			"capabilities": {
 				"reasoning": true,
@@ -312,8 +359,13 @@
 			"openWeights": false,
 			"knowledgeCutoff": "2026-02-01",
 			"modalities": {
-				"input": ["image", "text"],
-				"output": ["text"]
+				"input": [
+					"image",
+					"text"
+				],
+				"output": [
+					"text"
+				]
 			},
 			"capabilities": {
 				"reasoning": true,
@@ -352,8 +404,16 @@
 			"openWeights": false,
 			"knowledgeCutoff": null,
 			"modalities": {
-				"input": ["audio", "image", "pdf", "text", "video"],
-				"output": ["text"]
+				"input": [
+					"audio",
+					"image",
+					"pdf",
+					"text",
+					"video"
+				],
+				"output": [
+					"text"
+				]
 			},
 			"capabilities": {
 				"reasoning": true,
@@ -392,8 +452,14 @@
 			"openWeights": false,
 			"knowledgeCutoff": null,
 			"modalities": {
-				"input": ["image", "text", "video"],
-				"output": ["text"]
+				"input": [
+					"image",
+					"text",
+					"video"
+				],
+				"output": [
+					"text"
+				]
 			},
 			"capabilities": {
 				"reasoning": true,
@@ -432,8 +498,12 @@
 			"openWeights": true,
 			"knowledgeCutoff": "2025-05",
 			"modalities": {
-				"input": ["text"],
-				"output": ["text"]
+				"input": [
+					"text"
+				],
+				"output": [
+					"text"
+				]
 			},
 			"capabilities": {
 				"reasoning": true,
@@ -472,8 +542,14 @@
 			"openWeights": true,
 			"knowledgeCutoff": null,
 			"modalities": {
-				"input": ["image", "text", "video"],
-				"output": ["text"]
+				"input": [
+					"image",
+					"text",
+					"video"
+				],
+				"output": [
+					"text"
+				]
 			},
 			"capabilities": {
 				"reasoning": true,
@@ -512,8 +588,14 @@
 			"openWeights": false,
 			"knowledgeCutoff": "2026-02-16",
 			"modalities": {
-				"input": ["image", "pdf", "text"],
-				"output": ["text"]
+				"input": [
+					"image",
+					"pdf",
+					"text"
+				],
+				"output": [
+					"text"
+				]
 			},
 			"capabilities": {
 				"reasoning": true,
@@ -552,8 +634,13 @@
 			"openWeights": false,
 			"knowledgeCutoff": null,
 			"modalities": {
-				"input": ["image", "text"],
-				"output": ["text"]
+				"input": [
+					"image",
+					"text"
+				],
+				"output": [
+					"text"
+				]
 			},
 			"capabilities": {
 				"reasoning": true,
@@ -588,8 +675,12 @@
 			"openWeights": true,
 			"knowledgeCutoff": null,
 			"modalities": {
-				"input": ["text"],
-				"output": ["text"]
+				"input": [
+					"text"
+				],
+				"output": [
+					"text"
+				]
 			},
 			"capabilities": {
 				"reasoning": true,
@@ -628,8 +719,12 @@
 			"openWeights": false,
 			"knowledgeCutoff": null,
 			"modalities": {
-				"input": ["text"],
-				"output": ["text"]
+				"input": [
+					"text"
+				],
+				"output": [
+					"text"
+				]
 			},
 			"capabilities": {
 				"reasoning": true,
@@ -668,8 +763,12 @@
 			"openWeights": true,
 			"knowledgeCutoff": null,
 			"modalities": {
-				"input": ["text"],
-				"output": ["text"]
+				"input": [
+					"text"
+				],
+				"output": [
+					"text"
+				]
 			},
 			"capabilities": {
 				"reasoning": true,
@@ -708,8 +807,14 @@
 			"openWeights": true,
 			"knowledgeCutoff": "2025-01",
 			"modalities": {
-				"input": ["image", "text", "video"],
-				"output": ["text"]
+				"input": [
+					"image",
+					"text",
+					"video"
+				],
+				"output": [
+					"text"
+				]
 			},
 			"capabilities": {
 				"reasoning": true,
@@ -748,8 +853,14 @@
 			"openWeights": false,
 			"knowledgeCutoff": null,
 			"modalities": {
-				"input": ["image", "text", "video"],
-				"output": ["text"]
+				"input": [
+					"image",
+					"text",
+					"video"
+				],
+				"output": [
+					"text"
+				]
 			},
 			"capabilities": {
 				"reasoning": true,
@@ -788,8 +899,14 @@
 			"openWeights": true,
 			"knowledgeCutoff": "2025-01",
 			"modalities": {
-				"input": ["image", "text", "video"],
-				"output": ["text"]
+				"input": [
+					"image",
+					"text",
+					"video"
+				],
+				"output": [
+					"text"
+				]
 			},
 			"capabilities": {
 				"reasoning": true,
@@ -828,8 +945,12 @@
 			"openWeights": false,
 			"knowledgeCutoff": null,
 			"modalities": {
-				"input": ["text"],
-				"output": ["text"]
+				"input": [
+					"text"
+				],
+				"output": [
+					"text"
+				]
 			},
 			"capabilities": {
 				"reasoning": true,
@@ -868,8 +989,12 @@
 			"openWeights": true,
 			"knowledgeCutoff": "2025-05",
 			"modalities": {
-				"input": ["text"],
-				"output": ["text"]
+				"input": [
+					"text"
+				],
+				"output": [
+					"text"
+				]
 			},
 			"capabilities": {
 				"reasoning": true,
@@ -908,8 +1033,15 @@
 			"openWeights": true,
 			"knowledgeCutoff": "2024-12",
 			"modalities": {
-				"input": ["audio", "image", "text", "video"],
-				"output": ["text"]
+				"input": [
+					"audio",
+					"image",
+					"text",
+					"video"
+				],
+				"output": [
+					"text"
+				]
 			},
 			"capabilities": {
 				"reasoning": true,
@@ -948,8 +1080,12 @@
 			"openWeights": true,
 			"knowledgeCutoff": "2024-12",
 			"modalities": {
-				"input": ["text"],
-				"output": ["text"]
+				"input": [
+					"text"
+				],
+				"output": [
+					"text"
+				]
 			},
 			"capabilities": {
 				"reasoning": true,
@@ -988,8 +1124,14 @@
 			"openWeights": true,
 			"knowledgeCutoff": "2024-10",
 			"modalities": {
-				"input": ["image", "text", "video"],
-				"output": ["text"]
+				"input": [
+					"image",
+					"text",
+					"video"
+				],
+				"output": [
+					"text"
+				]
 			},
 			"capabilities": {
 				"reasoning": true,
@@ -1028,8 +1170,12 @@
 			"openWeights": true,
 			"knowledgeCutoff": "2025-04",
 			"modalities": {
-				"input": ["text"],
-				"output": ["text"]
+				"input": [
+					"text"
+				],
+				"output": [
+					"text"
+				]
 			},
 			"capabilities": {
 				"reasoning": true,
@@ -1068,8 +1214,14 @@
 			"openWeights": false,
 			"knowledgeCutoff": "2025-04",
 			"modalities": {
-				"input": ["image", "text", "video"],
-				"output": ["text"]
+				"input": [
+					"image",
+					"text",
+					"video"
+				],
+				"output": [
+					"text"
+				]
 			},
 			"capabilities": {
 				"reasoning": true,
@@ -1108,8 +1260,15 @@
 			"openWeights": true,
 			"knowledgeCutoff": "2024-12",
 			"modalities": {
-				"input": ["audio", "image", "pdf", "text"],
-				"output": ["text"]
+				"input": [
+					"audio",
+					"image",
+					"pdf",
+					"text"
+				],
+				"output": [
+					"text"
+				]
 			},
 			"capabilities": {
 				"reasoning": true,
@@ -1144,8 +1303,12 @@
 			"openWeights": true,
 			"knowledgeCutoff": "2024-12",
 			"modalities": {
-				"input": ["text"],
-				"output": ["text"]
+				"input": [
+					"text"
+				],
+				"output": [
+					"text"
+				]
 			},
 			"capabilities": {
 				"reasoning": true,
@@ -1180,8 +1343,12 @@
 			"openWeights": true,
 			"knowledgeCutoff": "2025-01",
 			"modalities": {
-				"input": ["text"],
-				"output": ["text"]
+				"input": [
+					"text"
+				],
+				"output": [
+					"text"
+				]
 			},
 			"capabilities": {
 				"reasoning": true,
@@ -1220,8 +1387,14 @@
 			"openWeights": false,
 			"knowledgeCutoff": "2025-04",
 			"modalities": {
-				"input": ["image", "text", "video"],
-				"output": ["text"]
+				"input": [
+					"image",
+					"text",
+					"video"
+				],
+				"output": [
+					"text"
+				]
 			},
 			"capabilities": {
 				"reasoning": true,
@@ -1256,8 +1429,12 @@
 			"openWeights": true,
 			"knowledgeCutoff": "2025-01",
 			"modalities": {
-				"input": ["text"],
-				"output": ["text"]
+				"input": [
+					"text"
+				],
+				"output": [
+					"text"
+				]
 			},
 			"capabilities": {
 				"reasoning": true,
@@ -1292,8 +1469,12 @@
 			"openWeights": true,
 			"knowledgeCutoff": "2025-04",
 			"modalities": {
-				"input": ["text"],
-				"output": ["text"]
+				"input": [
+					"text"
+				],
+				"output": [
+					"text"
+				]
 			},
 			"capabilities": {
 				"reasoning": true,
@@ -1328,8 +1509,14 @@
 			"openWeights": true,
 			"knowledgeCutoff": "2024-10",
 			"modalities": {
-				"input": ["image", "text", "video"],
-				"output": ["text"]
+				"input": [
+					"image",
+					"text",
+					"video"
+				],
+				"output": [
+					"text"
+				]
 			},
 			"capabilities": {
 				"reasoning": true,
@@ -1364,8 +1551,14 @@
 			"openWeights": false,
 			"knowledgeCutoff": null,
 			"modalities": {
-				"input": ["image", "text", "video"],
-				"output": ["text"]
+				"input": [
+					"image",
+					"text",
+					"video"
+				],
+				"output": [
+					"text"
+				]
 			},
 			"capabilities": {
 				"reasoning": true,
@@ -1390,6 +1583,2390 @@
 			"status": "deprecated"
 		},
 		{
+			"id": "gemini-3.8-flash",
+			"name": "Gemini 3.8 Flash",
+			"family": "gemini-flash",
+			"lab": "Google",
+			"description": "Google's most intelligent Flash model, engineered for long-horizon software engineering, autonomous agents, and complex enterprise workflows",
+			"releaseDate": "2026-09-02",
+			"lastUpdated": "2026-09-02",
+			"openWeights": false,
+			"knowledgeCutoff": null,
+			"modalities": {
+				"input": [
+					"audio",
+					"image",
+					"pdf",
+					"text",
+					"video"
+				],
+				"output": [
+					"text"
+				]
+			},
+			"capabilities": {
+				"reasoning": true,
+				"toolCall": true,
+				"structuredOutput": true,
+				"temperature": true,
+				"attachment": true
+			},
+			"context": 1048576,
+			"outputLimit": 65536,
+			"cost": {
+				"input": 1.5,
+				"output": 7.5,
+				"cacheRead": 0.15,
+				"cacheWrite": null
+			},
+			"monthlyBudgetUsd": null,
+			"estimatedRequests": null,
+			"budgetNotes": null,
+			"inLiveCatalog": true,
+			"plan": "zen",
+			"status": "active"
+		},
+		{
+			"id": "claude-fable-5-1",
+			"name": "Claude Fable 5.1",
+			"family": "claude-fable",
+			"lab": "Anthropic",
+			"description": "Claude model for demanding reasoning and long-horizon agentic work",
+			"releaseDate": "2026-09-01",
+			"lastUpdated": "2026-09-01",
+			"openWeights": false,
+			"knowledgeCutoff": "2026-06",
+			"modalities": {
+				"input": [
+					"image",
+					"pdf",
+					"text"
+				],
+				"output": [
+					"text"
+				]
+			},
+			"capabilities": {
+				"reasoning": true,
+				"toolCall": true,
+				"structuredOutput": false,
+				"temperature": false,
+				"attachment": true
+			},
+			"context": 1000000,
+			"outputLimit": 128000,
+			"cost": {
+				"input": 10,
+				"output": 50,
+				"cacheRead": 0.25,
+				"cacheWrite": 12.5
+			},
+			"monthlyBudgetUsd": null,
+			"estimatedRequests": null,
+			"budgetNotes": null,
+			"inLiveCatalog": true,
+			"plan": "zen",
+			"status": "active"
+		},
+		{
+			"id": "gemini-3.7-flash",
+			"name": "Gemini 3.7 Flash",
+			"family": "gemini-flash",
+			"lab": "Google",
+			"description": "High-efficiency Gemini model for agentic workflows, coding, and multimodal reasoning",
+			"releaseDate": "2026-08-13",
+			"lastUpdated": "2026-08-13",
+			"openWeights": false,
+			"knowledgeCutoff": "2026-03",
+			"modalities": {
+				"input": [
+					"audio",
+					"image",
+					"pdf",
+					"text",
+					"video"
+				],
+				"output": [
+					"text"
+				]
+			},
+			"capabilities": {
+				"reasoning": true,
+				"toolCall": true,
+				"structuredOutput": true,
+				"temperature": true,
+				"attachment": true
+			},
+			"context": 1048576,
+			"outputLimit": 65536,
+			"cost": {
+				"input": 1.5,
+				"output": 7.5,
+				"cacheRead": 0.15,
+				"cacheWrite": null
+			},
+			"monthlyBudgetUsd": null,
+			"estimatedRequests": null,
+			"budgetNotes": null,
+			"inLiveCatalog": true,
+			"plan": "zen",
+			"status": "active"
+		},
+		{
+			"id": "grok-4.6",
+			"name": "Grok 4.6",
+			"family": "grok",
+			"lab": "xAI",
+			"description": "xAI's frontier model for long-running agents, coding, knowledge work, and visual projects",
+			"releaseDate": "2026-08-12",
+			"lastUpdated": "2026-08-12",
+			"openWeights": false,
+			"knowledgeCutoff": "2026-02-01",
+			"modalities": {
+				"input": [
+					"image",
+					"text"
+				],
+				"output": [
+					"text"
+				]
+			},
+			"capabilities": {
+				"reasoning": true,
+				"toolCall": true,
+				"structuredOutput": true,
+				"temperature": true,
+				"attachment": true
+			},
+			"context": 500000,
+			"outputLimit": 500000,
+			"cost": {
+				"input": 2,
+				"output": 6,
+				"cacheRead": 0.5,
+				"cacheWrite": null
+			},
+			"monthlyBudgetUsd": null,
+			"estimatedRequests": null,
+			"budgetNotes": null,
+			"inLiveCatalog": true,
+			"plan": "zen",
+			"status": "active"
+		},
+		{
+			"id": "muse-spark-1.2",
+			"name": "Muse Spark 1.2",
+			"family": "muse",
+			"lab": "Meta",
+			"description": "Muse Spark 1.2 is a coding-focused update to Muse Spark 1.1 with improvements in code generation, complex debugging, codebase understanding, and end-to-end developer workflows.",
+			"releaseDate": "2026-08-05",
+			"lastUpdated": "2026-08-05",
+			"openWeights": false,
+			"knowledgeCutoff": null,
+			"modalities": {
+				"input": [
+					"audio",
+					"image",
+					"pdf",
+					"text",
+					"video"
+				],
+				"output": [
+					"text"
+				]
+			},
+			"capabilities": {
+				"reasoning": true,
+				"toolCall": true,
+				"structuredOutput": true,
+				"temperature": true,
+				"attachment": true
+			},
+			"context": 1048576,
+			"outputLimit": 131072,
+			"cost": {
+				"input": 1.25,
+				"output": 4.25,
+				"cacheRead": 0.15,
+				"cacheWrite": null
+			},
+			"monthlyBudgetUsd": null,
+			"estimatedRequests": null,
+			"budgetNotes": null,
+			"inLiveCatalog": true,
+			"plan": "zen",
+			"status": "active"
+		},
+		{
+			"id": "deepseek-v4-flash",
+			"name": "DeepSeek V4 Flash",
+			"family": "deepseek-flash",
+			"lab": "DeepSeek",
+			"description": "Official DeepSeek V4 Flash release with enhanced agentic capabilities and integrated DSpark speculative decoding",
+			"releaseDate": "2026-07-31",
+			"lastUpdated": "2026-07-31",
+			"openWeights": true,
+			"knowledgeCutoff": "2025-05",
+			"modalities": {
+				"input": [
+					"text"
+				],
+				"output": [
+					"text"
+				]
+			},
+			"capabilities": {
+				"reasoning": true,
+				"toolCall": true,
+				"structuredOutput": true,
+				"temperature": true,
+				"attachment": false
+			},
+			"context": 1000000,
+			"outputLimit": 384000,
+			"cost": {
+				"input": 0.14,
+				"output": 0.28,
+				"cacheRead": 0.028,
+				"cacheWrite": null
+			},
+			"monthlyBudgetUsd": null,
+			"estimatedRequests": null,
+			"budgetNotes": null,
+			"inLiveCatalog": true,
+			"plan": "zen",
+			"status": "active"
+		},
+		{
+			"id": "claude-opus-5",
+			"name": "Claude Opus 5",
+			"family": "claude-opus",
+			"lab": "Anthropic",
+			"description": "Strongest Claude Opus model for coding, agents, and professional work",
+			"releaseDate": "2026-07-24",
+			"lastUpdated": "2026-07-24",
+			"openWeights": false,
+			"knowledgeCutoff": "2026-05",
+			"modalities": {
+				"input": [
+					"image",
+					"pdf",
+					"text"
+				],
+				"output": [
+					"text"
+				]
+			},
+			"capabilities": {
+				"reasoning": true,
+				"toolCall": true,
+				"structuredOutput": false,
+				"temperature": false,
+				"attachment": true
+			},
+			"context": 1000000,
+			"outputLimit": 128000,
+			"cost": {
+				"input": 5,
+				"output": 25,
+				"cacheRead": 0.5,
+				"cacheWrite": 6.25
+			},
+			"monthlyBudgetUsd": null,
+			"estimatedRequests": null,
+			"budgetNotes": null,
+			"inLiveCatalog": true,
+			"plan": "zen",
+			"status": "active"
+		},
+		{
+			"id": "gemini-3.5-flash-lite",
+			"name": "Gemini 3.5 Flash Lite",
+			"family": "gemini-flash-lite",
+			"lab": "Google",
+			"description": "Fast Gemini model balancing multimodal reasoning, tool use, and cost",
+			"releaseDate": "2026-07-21",
+			"lastUpdated": "2026-07-21",
+			"openWeights": false,
+			"knowledgeCutoff": "2026-03",
+			"modalities": {
+				"input": [
+					"audio",
+					"image",
+					"pdf",
+					"text",
+					"video"
+				],
+				"output": [
+					"text"
+				]
+			},
+			"capabilities": {
+				"reasoning": true,
+				"toolCall": true,
+				"structuredOutput": true,
+				"temperature": true,
+				"attachment": true
+			},
+			"context": 1048576,
+			"outputLimit": 65536,
+			"cost": {
+				"input": 0.3,
+				"output": 2.5,
+				"cacheRead": 0.03,
+				"cacheWrite": null
+			},
+			"monthlyBudgetUsd": null,
+			"estimatedRequests": null,
+			"budgetNotes": null,
+			"inLiveCatalog": true,
+			"plan": "zen",
+			"status": "active"
+		},
+		{
+			"id": "gemini-3.6-flash",
+			"name": "Gemini 3.6 Flash",
+			"family": "gemini-flash",
+			"lab": "Google",
+			"description": "Fast Gemini model balancing multimodal reasoning, tool use, and cost",
+			"releaseDate": "2026-07-21",
+			"lastUpdated": "2026-07-21",
+			"openWeights": false,
+			"knowledgeCutoff": "2026-03",
+			"modalities": {
+				"input": [
+					"audio",
+					"image",
+					"pdf",
+					"text",
+					"video"
+				],
+				"output": [
+					"text"
+				]
+			},
+			"capabilities": {
+				"reasoning": true,
+				"toolCall": true,
+				"structuredOutput": true,
+				"temperature": true,
+				"attachment": true
+			},
+			"context": 1048576,
+			"outputLimit": 65536,
+			"cost": {
+				"input": 1.5,
+				"output": 7.5,
+				"cacheRead": 0.15,
+				"cacheWrite": null
+			},
+			"monthlyBudgetUsd": null,
+			"estimatedRequests": null,
+			"budgetNotes": null,
+			"inLiveCatalog": true,
+			"plan": "zen",
+			"status": "active"
+		},
+		{
+			"id": "kimi-k3",
+			"name": "Kimi K3",
+			"family": "kimi-k3",
+			"lab": "Moonshot AI",
+			"description": "Multimodal Kimi model with 1M context and toggleable max-effort thinking for long-horizon agent work",
+			"releaseDate": "2026-07-16",
+			"lastUpdated": "2026-07-16",
+			"openWeights": true,
+			"knowledgeCutoff": null,
+			"modalities": {
+				"input": [
+					"image",
+					"text",
+					"video"
+				],
+				"output": [
+					"text"
+				]
+			},
+			"capabilities": {
+				"reasoning": true,
+				"toolCall": true,
+				"structuredOutput": true,
+				"temperature": false,
+				"attachment": true
+			},
+			"context": 1048576,
+			"outputLimit": 131072,
+			"cost": {
+				"input": 3,
+				"output": 15,
+				"cacheRead": 0.3,
+				"cacheWrite": null
+			},
+			"monthlyBudgetUsd": null,
+			"estimatedRequests": null,
+			"budgetNotes": null,
+			"inLiveCatalog": true,
+			"plan": "zen",
+			"status": "active"
+		},
+		{
+			"id": "gpt-5.6-luna",
+			"name": "GPT-5.6 Luna",
+			"family": "gpt-luna",
+			"lab": "OpenAI",
+			"description": "Cost-efficient GPT-5.6 model for fast, high-volume workloads",
+			"releaseDate": "2026-07-09",
+			"lastUpdated": "2026-07-09",
+			"openWeights": false,
+			"knowledgeCutoff": "2026-02-16",
+			"modalities": {
+				"input": [
+					"image",
+					"pdf",
+					"text"
+				],
+				"output": [
+					"text"
+				]
+			},
+			"capabilities": {
+				"reasoning": true,
+				"toolCall": true,
+				"structuredOutput": true,
+				"temperature": false,
+				"attachment": true
+			},
+			"context": 1050000,
+			"outputLimit": 128000,
+			"cost": {
+				"input": 0.2,
+				"output": 1.2,
+				"cacheRead": 0.02,
+				"cacheWrite": 0.25
+			},
+			"monthlyBudgetUsd": null,
+			"estimatedRequests": null,
+			"budgetNotes": null,
+			"inLiveCatalog": true,
+			"plan": "zen",
+			"status": "active"
+		},
+		{
+			"id": "gpt-5.6-sol",
+			"name": "GPT-5.6 Sol (50% Off)",
+			"family": "gpt-sol",
+			"lab": "OpenAI",
+			"description": "Frontier GPT-5.6 model for complex professional work, coding, and agentic workflows",
+			"releaseDate": "2026-07-09",
+			"lastUpdated": "2026-07-09",
+			"openWeights": false,
+			"knowledgeCutoff": "2026-02-16",
+			"modalities": {
+				"input": [
+					"image",
+					"pdf",
+					"text"
+				],
+				"output": [
+					"text"
+				]
+			},
+			"capabilities": {
+				"reasoning": true,
+				"toolCall": true,
+				"structuredOutput": true,
+				"temperature": false,
+				"attachment": true
+			},
+			"context": 1050000,
+			"outputLimit": 128000,
+			"cost": {
+				"input": 2,
+				"output": 10,
+				"cacheRead": 0.2,
+				"cacheWrite": 2.5
+			},
+			"monthlyBudgetUsd": null,
+			"estimatedRequests": null,
+			"budgetNotes": null,
+			"inLiveCatalog": true,
+			"plan": "zen",
+			"status": "active"
+		},
+		{
+			"id": "gpt-5.6-terra",
+			"name": "GPT-5.6 Terra",
+			"family": "gpt-terra",
+			"lab": "OpenAI",
+			"description": "Balanced GPT-5.6 model for capable, cost-efficient everyday work",
+			"releaseDate": "2026-07-09",
+			"lastUpdated": "2026-07-09",
+			"openWeights": false,
+			"knowledgeCutoff": "2026-02-16",
+			"modalities": {
+				"input": [
+					"image",
+					"pdf",
+					"text"
+				],
+				"output": [
+					"text"
+				]
+			},
+			"capabilities": {
+				"reasoning": true,
+				"toolCall": true,
+				"structuredOutput": true,
+				"temperature": false,
+				"attachment": true
+			},
+			"context": 1050000,
+			"outputLimit": 128000,
+			"cost": {
+				"input": 2.5,
+				"output": 15,
+				"cacheRead": 0.25,
+				"cacheWrite": 3.125
+			},
+			"monthlyBudgetUsd": null,
+			"estimatedRequests": null,
+			"budgetNotes": null,
+			"inLiveCatalog": true,
+			"plan": "zen",
+			"status": "active"
+		},
+		{
+			"id": "grok-4.5",
+			"name": "Grok 4.5",
+			"family": "grok",
+			"lab": "xAI",
+			"description": "xAI's Grok model for chat, coding, agentic tools, and lower hallucination risk",
+			"releaseDate": "2026-07-08",
+			"lastUpdated": "2026-07-08",
+			"openWeights": false,
+			"knowledgeCutoff": null,
+			"modalities": {
+				"input": [
+					"image",
+					"text"
+				],
+				"output": [
+					"text"
+				]
+			},
+			"capabilities": {
+				"reasoning": true,
+				"toolCall": true,
+				"structuredOutput": true,
+				"temperature": true,
+				"attachment": true
+			},
+			"context": 500000,
+			"outputLimit": 500000,
+			"cost": {
+				"input": 2,
+				"output": 6,
+				"cacheRead": 0.3,
+				"cacheWrite": null
+			},
+			"monthlyBudgetUsd": null,
+			"estimatedRequests": null,
+			"budgetNotes": null,
+			"inLiveCatalog": true,
+			"plan": "zen",
+			"status": "active"
+		},
+		{
+			"id": "claude-sonnet-5",
+			"name": "Claude Sonnet 5",
+			"family": "claude-sonnet",
+			"lab": "Anthropic",
+			"description": "Everyday Claude agent model for coding, planning, browsing, and general work",
+			"releaseDate": "2026-06-30",
+			"lastUpdated": "2026-06-30",
+			"openWeights": false,
+			"knowledgeCutoff": "2026-01-31",
+			"modalities": {
+				"input": [
+					"image",
+					"pdf",
+					"text"
+				],
+				"output": [
+					"text"
+				]
+			},
+			"capabilities": {
+				"reasoning": true,
+				"toolCall": true,
+				"structuredOutput": false,
+				"temperature": false,
+				"attachment": true
+			},
+			"context": 1000000,
+			"outputLimit": 128000,
+			"cost": {
+				"input": 2,
+				"output": 10,
+				"cacheRead": 0.2,
+				"cacheWrite": 2.5
+			},
+			"monthlyBudgetUsd": null,
+			"estimatedRequests": null,
+			"budgetNotes": null,
+			"inLiveCatalog": true,
+			"plan": "zen",
+			"status": "active"
+		},
+		{
+			"id": "glm-5.2",
+			"name": "GLM-5.2",
+			"family": "glm",
+			"lab": "Zhipu AI",
+			"description": "Open flagship GLM for long-horizon coding agents and million-token context work",
+			"releaseDate": "2026-06-13",
+			"lastUpdated": "2026-06-13",
+			"openWeights": true,
+			"knowledgeCutoff": null,
+			"modalities": {
+				"input": [
+					"text"
+				],
+				"output": [
+					"text"
+				]
+			},
+			"capabilities": {
+				"reasoning": true,
+				"toolCall": true,
+				"structuredOutput": true,
+				"temperature": true,
+				"attachment": false
+			},
+			"context": 1000000,
+			"outputLimit": 131072,
+			"cost": {
+				"input": 1.4,
+				"output": 4.4,
+				"cacheRead": 0.26,
+				"cacheWrite": null
+			},
+			"monthlyBudgetUsd": null,
+			"estimatedRequests": null,
+			"budgetNotes": null,
+			"inLiveCatalog": true,
+			"plan": "zen",
+			"status": "active"
+		},
+		{
+			"id": "kimi-k2.7-code",
+			"name": "Kimi K2.7 Code",
+			"family": "kimi-k2",
+			"lab": "Moonshot AI",
+			"description": "Coding-focused Kimi model, stronger on long-horizon repo work with less overthinking",
+			"releaseDate": "2026-06-12",
+			"lastUpdated": "2026-06-12",
+			"openWeights": true,
+			"knowledgeCutoff": "2025-01",
+			"modalities": {
+				"input": [
+					"image",
+					"text",
+					"video"
+				],
+				"output": [
+					"text"
+				]
+			},
+			"capabilities": {
+				"reasoning": true,
+				"toolCall": true,
+				"structuredOutput": true,
+				"temperature": false,
+				"attachment": true
+			},
+			"context": 262144,
+			"outputLimit": 262144,
+			"cost": {
+				"input": 0.95,
+				"output": 4,
+				"cacheRead": 0.19,
+				"cacheWrite": null
+			},
+			"monthlyBudgetUsd": null,
+			"estimatedRequests": null,
+			"budgetNotes": null,
+			"inLiveCatalog": true,
+			"plan": "zen",
+			"status": "active"
+		},
+		{
+			"id": "claude-fable-5",
+			"name": "Claude Fable 5",
+			"family": "claude-fable",
+			"lab": "Anthropic",
+			"description": "Claude model for creative writing, analysis, and controlled agent workflows",
+			"releaseDate": "2026-06-09",
+			"lastUpdated": "2026-06-09",
+			"openWeights": false,
+			"knowledgeCutoff": "2026-01-31",
+			"modalities": {
+				"input": [
+					"image",
+					"pdf",
+					"text"
+				],
+				"output": [
+					"text"
+				]
+			},
+			"capabilities": {
+				"reasoning": true,
+				"toolCall": true,
+				"structuredOutput": false,
+				"temperature": false,
+				"attachment": true
+			},
+			"context": 1000000,
+			"outputLimit": 128000,
+			"cost": {
+				"input": 10,
+				"output": 50,
+				"cacheRead": 1,
+				"cacheWrite": 12.5
+			},
+			"monthlyBudgetUsd": null,
+			"estimatedRequests": null,
+			"budgetNotes": null,
+			"inLiveCatalog": true,
+			"plan": "zen",
+			"status": "active"
+		},
+		{
+			"id": "minimax-m3",
+			"name": "MiniMax-M3",
+			"family": "minimax",
+			"lab": "MiniMax",
+			"description": "MiniMax multimodal model for long-context coding, perception, and agent planning",
+			"releaseDate": "2026-06-01",
+			"lastUpdated": "2026-06-01",
+			"openWeights": true,
+			"knowledgeCutoff": null,
+			"modalities": {
+				"input": [
+					"image",
+					"text",
+					"video"
+				],
+				"output": [
+					"text"
+				]
+			},
+			"capabilities": {
+				"reasoning": true,
+				"toolCall": true,
+				"structuredOutput": false,
+				"temperature": true,
+				"attachment": true
+			},
+			"context": 512000,
+			"outputLimit": 128000,
+			"cost": {
+				"input": 0.3,
+				"output": 1.2,
+				"cacheRead": 0.06,
+				"cacheWrite": null
+			},
+			"monthlyBudgetUsd": null,
+			"estimatedRequests": null,
+			"budgetNotes": null,
+			"inLiveCatalog": true,
+			"plan": "zen",
+			"status": "active"
+		},
+		{
+			"id": "claude-opus-4-8",
+			"name": "Claude Opus 4.8",
+			"family": "claude-opus",
+			"lab": "Anthropic",
+			"description": "Top Claude Opus tier for the hardest reasoning, coding, and long-horizon agents",
+			"releaseDate": "2026-05-28",
+			"lastUpdated": "2026-05-28",
+			"openWeights": false,
+			"knowledgeCutoff": "2026-01",
+			"modalities": {
+				"input": [
+					"image",
+					"pdf",
+					"text"
+				],
+				"output": [
+					"text"
+				]
+			},
+			"capabilities": {
+				"reasoning": true,
+				"toolCall": true,
+				"structuredOutput": false,
+				"temperature": false,
+				"attachment": true
+			},
+			"context": 1000000,
+			"outputLimit": 128000,
+			"cost": {
+				"input": 5,
+				"output": 25,
+				"cacheRead": 0.5,
+				"cacheWrite": 6.25
+			},
+			"monthlyBudgetUsd": null,
+			"estimatedRequests": null,
+			"budgetNotes": null,
+			"inLiveCatalog": true,
+			"plan": "zen",
+			"status": "active"
+		},
+		{
+			"id": "gemini-3.5-flash",
+			"name": "Gemini 3.5 Flash",
+			"family": "gemini-flash",
+			"lab": "Google",
+			"description": "Fast Gemini model balancing multimodal reasoning, tool use, and cost",
+			"releaseDate": "2026-05-19",
+			"lastUpdated": "2026-05-19",
+			"openWeights": false,
+			"knowledgeCutoff": "2025-01",
+			"modalities": {
+				"input": [
+					"audio",
+					"image",
+					"pdf",
+					"text",
+					"video"
+				],
+				"output": [
+					"text"
+				]
+			},
+			"capabilities": {
+				"reasoning": true,
+				"toolCall": true,
+				"structuredOutput": true,
+				"temperature": true,
+				"attachment": true
+			},
+			"context": 1048576,
+			"outputLimit": 65536,
+			"cost": {
+				"input": 1.5,
+				"output": 9,
+				"cacheRead": 0.15,
+				"cacheWrite": null
+			},
+			"monthlyBudgetUsd": null,
+			"estimatedRequests": null,
+			"budgetNotes": null,
+			"inLiveCatalog": true,
+			"plan": "zen",
+			"status": "active"
+		},
+		{
+			"id": "deepseek-v4-pro",
+			"name": "DeepSeek V4 Pro",
+			"family": "deepseek-thinking",
+			"lab": "DeepSeek",
+			"description": "Open MoE flagship with million-token context for coding and long agent runs",
+			"releaseDate": "2026-04-24",
+			"lastUpdated": "2026-04-24",
+			"openWeights": true,
+			"knowledgeCutoff": "2025-05",
+			"modalities": {
+				"input": [
+					"text"
+				],
+				"output": [
+					"text"
+				]
+			},
+			"capabilities": {
+				"reasoning": true,
+				"toolCall": true,
+				"structuredOutput": true,
+				"temperature": true,
+				"attachment": false
+			},
+			"context": 1000000,
+			"outputLimit": 384000,
+			"cost": {
+				"input": 1.74,
+				"output": 3.84,
+				"cacheRead": 0.145,
+				"cacheWrite": null
+			},
+			"monthlyBudgetUsd": null,
+			"estimatedRequests": null,
+			"budgetNotes": null,
+			"inLiveCatalog": true,
+			"plan": "zen",
+			"status": "active"
+		},
+		{
+			"id": "gpt-5.5-pro",
+			"name": "GPT-5.5 Pro",
+			"family": "gpt-pro",
+			"lab": "OpenAI",
+			"description": "Frontier GPT model for professional reasoning, coding, and multimodal work",
+			"releaseDate": "2026-04-24",
+			"lastUpdated": "2026-04-24",
+			"openWeights": false,
+			"knowledgeCutoff": "2025-12-01",
+			"modalities": {
+				"input": [
+					"image",
+					"pdf",
+					"text"
+				],
+				"output": [
+					"text"
+				]
+			},
+			"capabilities": {
+				"reasoning": true,
+				"toolCall": true,
+				"structuredOutput": false,
+				"temperature": false,
+				"attachment": true
+			},
+			"context": 1050000,
+			"outputLimit": 128000,
+			"cost": {
+				"input": 30,
+				"output": 180,
+				"cacheRead": 30,
+				"cacheWrite": null
+			},
+			"monthlyBudgetUsd": null,
+			"estimatedRequests": null,
+			"budgetNotes": null,
+			"inLiveCatalog": true,
+			"plan": "zen",
+			"status": "active"
+		},
+		{
+			"id": "gpt-5.5",
+			"name": "GPT-5.5",
+			"family": "gpt",
+			"lab": "OpenAI",
+			"description": "Default frontier GPT for coding, computer use, research, and knowledge work",
+			"releaseDate": "2026-04-23",
+			"lastUpdated": "2026-04-23",
+			"openWeights": false,
+			"knowledgeCutoff": "2025-12-01",
+			"modalities": {
+				"input": [
+					"image",
+					"pdf",
+					"text"
+				],
+				"output": [
+					"text"
+				]
+			},
+			"capabilities": {
+				"reasoning": true,
+				"toolCall": true,
+				"structuredOutput": true,
+				"temperature": false,
+				"attachment": true
+			},
+			"context": 1050000,
+			"outputLimit": 128000,
+			"cost": {
+				"input": 5,
+				"output": 30,
+				"cacheRead": 0.5,
+				"cacheWrite": null
+			},
+			"monthlyBudgetUsd": null,
+			"estimatedRequests": null,
+			"budgetNotes": null,
+			"inLiveCatalog": true,
+			"plan": "zen",
+			"status": "active"
+		},
+		{
+			"id": "kimi-k2.6",
+			"name": "Kimi K2.6",
+			"family": "kimi-k2",
+			"lab": "Moonshot AI",
+			"description": "Kimi multimodal agent model for visual understanding, coding, and planning",
+			"releaseDate": "2026-04-21",
+			"lastUpdated": "2026-04-21",
+			"openWeights": true,
+			"knowledgeCutoff": "2024-10",
+			"modalities": {
+				"input": [
+					"image",
+					"text",
+					"video"
+				],
+				"output": [
+					"text"
+				]
+			},
+			"capabilities": {
+				"reasoning": true,
+				"toolCall": true,
+				"structuredOutput": false,
+				"temperature": true,
+				"attachment": true
+			},
+			"context": 262144,
+			"outputLimit": 65536,
+			"cost": {
+				"input": 0.95,
+				"output": 4,
+				"cacheRead": 0.16,
+				"cacheWrite": null
+			},
+			"monthlyBudgetUsd": null,
+			"estimatedRequests": null,
+			"budgetNotes": null,
+			"inLiveCatalog": true,
+			"plan": "zen",
+			"status": "active"
+		},
+		{
+			"id": "claude-opus-4-7",
+			"name": "Claude Opus 4.7",
+			"family": "claude-opus",
+			"lab": "Anthropic",
+			"description": "Flagship Claude model for deep reasoning, coding, and long-horizon agents",
+			"releaseDate": "2026-04-16",
+			"lastUpdated": "2026-04-16",
+			"openWeights": false,
+			"knowledgeCutoff": "2026-01-31",
+			"modalities": {
+				"input": [
+					"image",
+					"pdf",
+					"text"
+				],
+				"output": [
+					"text"
+				]
+			},
+			"capabilities": {
+				"reasoning": true,
+				"toolCall": true,
+				"structuredOutput": false,
+				"temperature": false,
+				"attachment": true
+			},
+			"context": 1000000,
+			"outputLimit": 128000,
+			"cost": {
+				"input": 5,
+				"output": 25,
+				"cacheRead": 0.5,
+				"cacheWrite": 6.25
+			},
+			"monthlyBudgetUsd": null,
+			"estimatedRequests": null,
+			"budgetNotes": null,
+			"inLiveCatalog": true,
+			"plan": "zen",
+			"status": "active"
+		},
+		{
+			"id": "grok-build-0.1",
+			"name": "Grok Build 0.1",
+			"family": "grok-build",
+			"lab": "xAI",
+			"description": "Fast Grok coding model tuned for agentic engineering and iterative edits",
+			"releaseDate": "2026-04-16",
+			"lastUpdated": "2026-04-16",
+			"openWeights": false,
+			"knowledgeCutoff": null,
+			"modalities": {
+				"input": [
+					"image",
+					"pdf",
+					"text"
+				],
+				"output": [
+					"text"
+				]
+			},
+			"capabilities": {
+				"reasoning": true,
+				"toolCall": true,
+				"structuredOutput": true,
+				"temperature": true,
+				"attachment": true
+			},
+			"context": 256000,
+			"outputLimit": 256000,
+			"cost": {
+				"input": 1,
+				"output": 2,
+				"cacheRead": 0.2,
+				"cacheWrite": null
+			},
+			"monthlyBudgetUsd": null,
+			"estimatedRequests": null,
+			"budgetNotes": null,
+			"inLiveCatalog": true,
+			"plan": "zen",
+			"status": "active"
+		},
+		{
+			"id": "glm-5.1",
+			"name": "GLM-5.1",
+			"family": "glm",
+			"lab": "Zhipu AI",
+			"description": "Flagship GLM model for hybrid reasoning, coding, and agentic engineering",
+			"releaseDate": "2026-04-07",
+			"lastUpdated": "2026-04-07",
+			"openWeights": true,
+			"knowledgeCutoff": "2025-04",
+			"modalities": {
+				"input": [
+					"text"
+				],
+				"output": [
+					"text"
+				]
+			},
+			"capabilities": {
+				"reasoning": true,
+				"toolCall": true,
+				"structuredOutput": false,
+				"temperature": true,
+				"attachment": false
+			},
+			"context": 204800,
+			"outputLimit": 131072,
+			"cost": {
+				"input": 1.4,
+				"output": 4.4,
+				"cacheRead": 0.26,
+				"cacheWrite": null
+			},
+			"monthlyBudgetUsd": null,
+			"estimatedRequests": null,
+			"budgetNotes": null,
+			"inLiveCatalog": true,
+			"plan": "zen",
+			"status": "active"
+		},
+		{
+			"id": "qwen3.6-plus",
+			"name": "Qwen3.6 Plus",
+			"family": "qwen3.6",
+			"lab": "Alibaba",
+			"description": "Multimodal reasoning model for visual analysis, planning, and tool use",
+			"releaseDate": "2026-04-02",
+			"lastUpdated": "2026-04-02",
+			"openWeights": false,
+			"knowledgeCutoff": "2025-04",
+			"modalities": {
+				"input": [
+					"image",
+					"text",
+					"video"
+				],
+				"output": [
+					"text"
+				]
+			},
+			"capabilities": {
+				"reasoning": true,
+				"toolCall": true,
+				"structuredOutput": false,
+				"temperature": true,
+				"attachment": true
+			},
+			"context": 262144,
+			"outputLimit": 65536,
+			"cost": {
+				"input": 0.5,
+				"output": 3,
+				"cacheRead": 0.05,
+				"cacheWrite": 0.625
+			},
+			"monthlyBudgetUsd": null,
+			"estimatedRequests": null,
+			"budgetNotes": null,
+			"inLiveCatalog": true,
+			"plan": "zen",
+			"status": "active"
+		},
+		{
+			"id": "minimax-m2.7",
+			"name": "MiniMax-M2.7",
+			"family": "minimax",
+			"lab": "MiniMax",
+			"description": "MiniMax model for chat, coding, office work, and agentic tasks",
+			"releaseDate": "2026-03-18",
+			"lastUpdated": "2026-03-18",
+			"openWeights": true,
+			"knowledgeCutoff": "2025-01",
+			"modalities": {
+				"input": [
+					"text"
+				],
+				"output": [
+					"text"
+				]
+			},
+			"capabilities": {
+				"reasoning": true,
+				"toolCall": true,
+				"structuredOutput": false,
+				"temperature": true,
+				"attachment": false
+			},
+			"context": 204800,
+			"outputLimit": 131072,
+			"cost": {
+				"input": 0.3,
+				"output": 1.2,
+				"cacheRead": 0.06,
+				"cacheWrite": null
+			},
+			"monthlyBudgetUsd": null,
+			"estimatedRequests": null,
+			"budgetNotes": null,
+			"inLiveCatalog": true,
+			"plan": "zen",
+			"status": "active"
+		},
+		{
+			"id": "gpt-5.4-mini",
+			"name": "GPT-5.4 Mini",
+			"family": "gpt-mini",
+			"lab": "OpenAI",
+			"description": "Compact GPT model for low-latency assistance and high-volume workloads",
+			"releaseDate": "2026-03-17",
+			"lastUpdated": "2026-03-17",
+			"openWeights": false,
+			"knowledgeCutoff": "2025-08-31",
+			"modalities": {
+				"input": [
+					"image",
+					"pdf",
+					"text"
+				],
+				"output": [
+					"text"
+				]
+			},
+			"capabilities": {
+				"reasoning": true,
+				"toolCall": true,
+				"structuredOutput": true,
+				"temperature": false,
+				"attachment": true
+			},
+			"context": 400000,
+			"outputLimit": 128000,
+			"cost": {
+				"input": 0.75,
+				"output": 4.5,
+				"cacheRead": 0.075,
+				"cacheWrite": null
+			},
+			"monthlyBudgetUsd": null,
+			"estimatedRequests": null,
+			"budgetNotes": null,
+			"inLiveCatalog": true,
+			"plan": "zen",
+			"status": "active"
+		},
+		{
+			"id": "gpt-5.4-nano",
+			"name": "GPT-5.4 Nano",
+			"family": "gpt-nano",
+			"lab": "OpenAI",
+			"description": "Compact GPT model for low-latency assistance and high-volume workloads",
+			"releaseDate": "2026-03-17",
+			"lastUpdated": "2026-03-17",
+			"openWeights": false,
+			"knowledgeCutoff": "2025-08-31",
+			"modalities": {
+				"input": [
+					"image",
+					"pdf",
+					"text"
+				],
+				"output": [
+					"text"
+				]
+			},
+			"capabilities": {
+				"reasoning": true,
+				"toolCall": true,
+				"structuredOutput": true,
+				"temperature": false,
+				"attachment": true
+			},
+			"context": 400000,
+			"outputLimit": 128000,
+			"cost": {
+				"input": 0.2,
+				"output": 1.25,
+				"cacheRead": 0.02,
+				"cacheWrite": null
+			},
+			"monthlyBudgetUsd": null,
+			"estimatedRequests": null,
+			"budgetNotes": null,
+			"inLiveCatalog": true,
+			"plan": "zen",
+			"status": "active"
+		},
+		{
+			"id": "gpt-5.4",
+			"name": "GPT-5.4",
+			"family": "gpt",
+			"lab": "OpenAI",
+			"description": "Agent-ready GPT for coding and computer-use workflows at a lower cost",
+			"releaseDate": "2026-03-05",
+			"lastUpdated": "2026-03-05",
+			"openWeights": false,
+			"knowledgeCutoff": "2025-08-31",
+			"modalities": {
+				"input": [
+					"image",
+					"pdf",
+					"text"
+				],
+				"output": [
+					"text"
+				]
+			},
+			"capabilities": {
+				"reasoning": true,
+				"toolCall": true,
+				"structuredOutput": true,
+				"temperature": true,
+				"attachment": true
+			},
+			"context": 1050000,
+			"outputLimit": 128000,
+			"cost": {
+				"input": 2.5,
+				"output": 15,
+				"cacheRead": 0.25,
+				"cacheWrite": null
+			},
+			"monthlyBudgetUsd": null,
+			"estimatedRequests": null,
+			"budgetNotes": null,
+			"inLiveCatalog": true,
+			"plan": "zen",
+			"status": "active"
+		},
+		{
+			"id": "gpt-5.4-pro",
+			"name": "GPT-5.4 Pro",
+			"family": "gpt-pro",
+			"lab": "OpenAI",
+			"description": "Frontier GPT model for professional reasoning, coding, and multimodal work",
+			"releaseDate": "2026-03-05",
+			"lastUpdated": "2026-03-05",
+			"openWeights": false,
+			"knowledgeCutoff": "2025-08-31",
+			"modalities": {
+				"input": [
+					"image",
+					"pdf",
+					"text"
+				],
+				"output": [
+					"text"
+				]
+			},
+			"capabilities": {
+				"reasoning": true,
+				"toolCall": true,
+				"structuredOutput": false,
+				"temperature": false,
+				"attachment": true
+			},
+			"context": 1050000,
+			"outputLimit": 128000,
+			"cost": {
+				"input": 30,
+				"output": 180,
+				"cacheRead": 30,
+				"cacheWrite": null
+			},
+			"monthlyBudgetUsd": null,
+			"estimatedRequests": null,
+			"budgetNotes": null,
+			"inLiveCatalog": true,
+			"plan": "zen",
+			"status": "active"
+		},
+		{
+			"id": "gpt-5.3-codex",
+			"name": "GPT-5.3 Codex",
+			"family": "gpt-codex",
+			"lab": "OpenAI",
+			"description": "Coding-optimized GPT model for repository edits, reviews, and agentic software work",
+			"releaseDate": "2026-02-24",
+			"lastUpdated": "2026-02-24",
+			"openWeights": false,
+			"knowledgeCutoff": "2025-08-31",
+			"modalities": {
+				"input": [
+					"image",
+					"pdf",
+					"text"
+				],
+				"output": [
+					"text"
+				]
+			},
+			"capabilities": {
+				"reasoning": true,
+				"toolCall": true,
+				"structuredOutput": true,
+				"temperature": false,
+				"attachment": true
+			},
+			"context": 400000,
+			"outputLimit": 128000,
+			"cost": {
+				"input": 1.75,
+				"output": 14,
+				"cacheRead": 0.175,
+				"cacheWrite": null
+			},
+			"monthlyBudgetUsd": null,
+			"estimatedRequests": null,
+			"budgetNotes": null,
+			"inLiveCatalog": true,
+			"plan": "zen",
+			"status": "active"
+		},
+		{
+			"id": "gemini-3.1-pro",
+			"name": "Gemini 3.1 Pro Preview",
+			"family": "gemini-pro",
+			"lab": "Google",
+			"description": "Advanced Gemini model for complex reasoning, coding, and multimodal analysis",
+			"releaseDate": "2026-02-19",
+			"lastUpdated": "2026-02-19",
+			"openWeights": false,
+			"knowledgeCutoff": "2025-01",
+			"modalities": {
+				"input": [
+					"audio",
+					"image",
+					"pdf",
+					"text",
+					"video"
+				],
+				"output": [
+					"text"
+				]
+			},
+			"capabilities": {
+				"reasoning": true,
+				"toolCall": true,
+				"structuredOutput": true,
+				"temperature": true,
+				"attachment": true
+			},
+			"context": 1048576,
+			"outputLimit": 65536,
+			"cost": {
+				"input": 2,
+				"output": 12,
+				"cacheRead": 0.2,
+				"cacheWrite": null
+			},
+			"monthlyBudgetUsd": null,
+			"estimatedRequests": null,
+			"budgetNotes": null,
+			"inLiveCatalog": true,
+			"plan": "zen",
+			"status": "active"
+		},
+		{
+			"id": "claude-sonnet-4-6",
+			"name": "Claude Sonnet 4.6",
+			"family": "claude-sonnet",
+			"lab": "Anthropic",
+			"description": "Balanced Claude model for coding, analysis, agent workflows, and cost control",
+			"releaseDate": "2026-02-17",
+			"lastUpdated": "2026-02-17",
+			"openWeights": false,
+			"knowledgeCutoff": "2025-08-31",
+			"modalities": {
+				"input": [
+					"image",
+					"pdf",
+					"text"
+				],
+				"output": [
+					"text"
+				]
+			},
+			"capabilities": {
+				"reasoning": true,
+				"toolCall": true,
+				"structuredOutput": false,
+				"temperature": true,
+				"attachment": true
+			},
+			"context": 1000000,
+			"outputLimit": 64000,
+			"cost": {
+				"input": 3,
+				"output": 15,
+				"cacheRead": 0.3,
+				"cacheWrite": 3.75
+			},
+			"monthlyBudgetUsd": null,
+			"estimatedRequests": null,
+			"budgetNotes": null,
+			"inLiveCatalog": true,
+			"plan": "zen",
+			"status": "active"
+		},
+		{
+			"id": "qwen3.5-plus",
+			"name": "Qwen3.5 Plus",
+			"family": "qwen3.5",
+			"lab": "Alibaba",
+			"description": "Multimodal reasoning model for visual analysis, planning, and tool use",
+			"releaseDate": "2026-02-16",
+			"lastUpdated": "2026-02-16",
+			"openWeights": false,
+			"knowledgeCutoff": "2025-04",
+			"modalities": {
+				"input": [
+					"image",
+					"text",
+					"video"
+				],
+				"output": [
+					"text"
+				]
+			},
+			"capabilities": {
+				"reasoning": true,
+				"toolCall": true,
+				"structuredOutput": false,
+				"temperature": true,
+				"attachment": true
+			},
+			"context": 262144,
+			"outputLimit": 65536,
+			"cost": {
+				"input": 0.2,
+				"output": 1.2,
+				"cacheRead": 0.02,
+				"cacheWrite": 0.25
+			},
+			"monthlyBudgetUsd": null,
+			"estimatedRequests": null,
+			"budgetNotes": null,
+			"inLiveCatalog": true,
+			"plan": "zen",
+			"status": "active"
+		},
+		{
+			"id": "gpt-5.3-codex-spark",
+			"name": "GPT-5.3 Codex Spark",
+			"family": "gpt-codex-spark",
+			"lab": "OpenAI",
+			"description": "Coding-optimized GPT model for repository edits, reviews, and agentic software work",
+			"releaseDate": "2026-02-12",
+			"lastUpdated": "2026-02-12",
+			"openWeights": false,
+			"knowledgeCutoff": "2025-08-31",
+			"modalities": {
+				"input": [
+					"text"
+				],
+				"output": [
+					"text"
+				]
+			},
+			"capabilities": {
+				"reasoning": true,
+				"toolCall": true,
+				"structuredOutput": true,
+				"temperature": false,
+				"attachment": false
+			},
+			"context": 128000,
+			"outputLimit": 128000,
+			"cost": {
+				"input": 1.75,
+				"output": 14,
+				"cacheRead": 0.175,
+				"cacheWrite": null
+			},
+			"monthlyBudgetUsd": null,
+			"estimatedRequests": null,
+			"budgetNotes": null,
+			"inLiveCatalog": true,
+			"plan": "zen",
+			"status": "active"
+		},
+		{
+			"id": "minimax-m2.5",
+			"name": "MiniMax-M2.5",
+			"family": "minimax",
+			"lab": "MiniMax",
+			"description": "MiniMax model for chat, coding, office work, and agentic tasks",
+			"releaseDate": "2026-02-12",
+			"lastUpdated": "2026-02-12",
+			"openWeights": true,
+			"knowledgeCutoff": "2025-01",
+			"modalities": {
+				"input": [
+					"text"
+				],
+				"output": [
+					"text"
+				]
+			},
+			"capabilities": {
+				"reasoning": true,
+				"toolCall": true,
+				"structuredOutput": false,
+				"temperature": true,
+				"attachment": false
+			},
+			"context": 204800,
+			"outputLimit": 131072,
+			"cost": {
+				"input": 0.3,
+				"output": 1.2,
+				"cacheRead": 0.06,
+				"cacheWrite": null
+			},
+			"monthlyBudgetUsd": null,
+			"estimatedRequests": null,
+			"budgetNotes": null,
+			"inLiveCatalog": true,
+			"plan": "zen",
+			"status": "active"
+		},
+		{
+			"id": "glm-5",
+			"name": "GLM-5",
+			"family": "glm",
+			"lab": "Zhipu AI",
+			"description": "Flagship GLM model for hybrid reasoning, coding, and agentic engineering",
+			"releaseDate": "2026-02-11",
+			"lastUpdated": "2026-02-11",
+			"openWeights": true,
+			"knowledgeCutoff": "2025-04",
+			"modalities": {
+				"input": [
+					"text"
+				],
+				"output": [
+					"text"
+				]
+			},
+			"capabilities": {
+				"reasoning": true,
+				"toolCall": true,
+				"structuredOutput": false,
+				"temperature": true,
+				"attachment": false
+			},
+			"context": 204800,
+			"outputLimit": 131072,
+			"cost": {
+				"input": 1,
+				"output": 3.2,
+				"cacheRead": 0.2,
+				"cacheWrite": null
+			},
+			"monthlyBudgetUsd": null,
+			"estimatedRequests": null,
+			"budgetNotes": null,
+			"inLiveCatalog": true,
+			"plan": "zen",
+			"status": "active"
+		},
+		{
+			"id": "claude-opus-4-6",
+			"name": "Claude Opus 4.6",
+			"family": "claude-opus",
+			"lab": "Anthropic",
+			"description": "High-end Claude for difficult coding, planning, and slower expert reasoning",
+			"releaseDate": "2026-02-05",
+			"lastUpdated": "2026-03-13",
+			"openWeights": false,
+			"knowledgeCutoff": "2025-05-31",
+			"modalities": {
+				"input": [
+					"image",
+					"pdf",
+					"text"
+				],
+				"output": [
+					"text"
+				]
+			},
+			"capabilities": {
+				"reasoning": true,
+				"toolCall": true,
+				"structuredOutput": false,
+				"temperature": true,
+				"attachment": true
+			},
+			"context": 1000000,
+			"outputLimit": 128000,
+			"cost": {
+				"input": 5,
+				"output": 25,
+				"cacheRead": 0.5,
+				"cacheWrite": 6.25
+			},
+			"monthlyBudgetUsd": null,
+			"estimatedRequests": null,
+			"budgetNotes": null,
+			"inLiveCatalog": true,
+			"plan": "zen",
+			"status": "active"
+		},
+		{
+			"id": "kimi-k2.5",
+			"name": "Kimi K2.5",
+			"family": "kimi-k2",
+			"lab": "Moonshot AI",
+			"description": "Kimi multimodal agent model for visual understanding, coding, and planning",
+			"releaseDate": "2026-01-27",
+			"lastUpdated": "2026-01-27",
+			"openWeights": true,
+			"knowledgeCutoff": "2024-10",
+			"modalities": {
+				"input": [
+					"image",
+					"text",
+					"video"
+				],
+				"output": [
+					"text"
+				]
+			},
+			"capabilities": {
+				"reasoning": true,
+				"toolCall": true,
+				"structuredOutput": false,
+				"temperature": true,
+				"attachment": true
+			},
+			"context": 262144,
+			"outputLimit": 65536,
+			"cost": {
+				"input": 0.6,
+				"output": 3,
+				"cacheRead": 0.08,
+				"cacheWrite": null
+			},
+			"monthlyBudgetUsd": null,
+			"estimatedRequests": null,
+			"budgetNotes": null,
+			"inLiveCatalog": true,
+			"plan": "zen",
+			"status": "active"
+		},
+		{
+			"id": "gpt-5.2-codex",
+			"name": "GPT-5.2 Codex",
+			"family": "gpt-codex",
+			"lab": "OpenAI",
+			"description": "Coding-optimized GPT model for repository edits, reviews, and agentic software work",
+			"releaseDate": "2026-01-14",
+			"lastUpdated": "2026-01-14",
+			"openWeights": false,
+			"knowledgeCutoff": "2025-08-31",
+			"modalities": {
+				"input": [
+					"image",
+					"pdf",
+					"text"
+				],
+				"output": [
+					"text"
+				]
+			},
+			"capabilities": {
+				"reasoning": true,
+				"toolCall": true,
+				"structuredOutput": true,
+				"temperature": false,
+				"attachment": true
+			},
+			"context": 400000,
+			"outputLimit": 128000,
+			"cost": {
+				"input": 1.75,
+				"output": 14,
+				"cacheRead": 0.175,
+				"cacheWrite": null
+			},
+			"monthlyBudgetUsd": null,
+			"estimatedRequests": null,
+			"budgetNotes": null,
+			"inLiveCatalog": true,
+			"plan": "zen",
+			"status": "active"
+		},
+		{
+			"id": "gemini-3-flash",
+			"name": "Gemini 3 Flash",
+			"family": "gemini-flash",
+			"lab": "Google",
+			"description": "Fast Gemini model balancing multimodal reasoning, tool use, and cost",
+			"releaseDate": "2025-12-17",
+			"lastUpdated": "2025-12-17",
+			"openWeights": false,
+			"knowledgeCutoff": "2025-01",
+			"modalities": {
+				"input": [
+					"audio",
+					"image",
+					"pdf",
+					"text",
+					"video"
+				],
+				"output": [
+					"text"
+				]
+			},
+			"capabilities": {
+				"reasoning": true,
+				"toolCall": true,
+				"structuredOutput": true,
+				"temperature": true,
+				"attachment": true
+			},
+			"context": 1048576,
+			"outputLimit": 65536,
+			"cost": {
+				"input": 0.5,
+				"output": 3,
+				"cacheRead": 0.05,
+				"cacheWrite": null
+			},
+			"monthlyBudgetUsd": null,
+			"estimatedRequests": null,
+			"budgetNotes": null,
+			"inLiveCatalog": true,
+			"plan": "zen",
+			"status": "active"
+		},
+		{
+			"id": "gpt-5.2",
+			"name": "GPT-5.2",
+			"family": "gpt",
+			"lab": "OpenAI",
+			"description": "GPT model for general reasoning, writing, coding, and tool-assisted tasks",
+			"releaseDate": "2025-12-11",
+			"lastUpdated": "2025-12-11",
+			"openWeights": false,
+			"knowledgeCutoff": "2025-08-31",
+			"modalities": {
+				"input": [
+					"image",
+					"text"
+				],
+				"output": [
+					"text"
+				]
+			},
+			"capabilities": {
+				"reasoning": true,
+				"toolCall": true,
+				"structuredOutput": true,
+				"temperature": false,
+				"attachment": true
+			},
+			"context": 400000,
+			"outputLimit": 128000,
+			"cost": {
+				"input": 1.75,
+				"output": 14,
+				"cacheRead": 0.175,
+				"cacheWrite": null
+			},
+			"monthlyBudgetUsd": null,
+			"estimatedRequests": null,
+			"budgetNotes": null,
+			"inLiveCatalog": true,
+			"plan": "zen",
+			"status": "active"
+		},
+		{
+			"id": "claude-opus-4-5",
+			"name": "Claude Opus 4.5",
+			"family": "claude-opus",
+			"lab": "Anthropic",
+			"description": "Flagship Claude model for deep reasoning, coding, and long-horizon agents",
+			"releaseDate": "2025-11-24",
+			"lastUpdated": "2025-11-24",
+			"openWeights": false,
+			"knowledgeCutoff": "2025-03-31",
+			"modalities": {
+				"input": [
+					"image",
+					"pdf",
+					"text"
+				],
+				"output": [
+					"text"
+				]
+			},
+			"capabilities": {
+				"reasoning": true,
+				"toolCall": true,
+				"structuredOutput": false,
+				"temperature": true,
+				"attachment": true
+			},
+			"context": 200000,
+			"outputLimit": 64000,
+			"cost": {
+				"input": 5,
+				"output": 25,
+				"cacheRead": 0.5,
+				"cacheWrite": 6.25
+			},
+			"monthlyBudgetUsd": null,
+			"estimatedRequests": null,
+			"budgetNotes": null,
+			"inLiveCatalog": true,
+			"plan": "zen",
+			"status": "active"
+		},
+		{
+			"id": "gpt-5.1",
+			"name": "GPT-5.1",
+			"family": "gpt",
+			"lab": "OpenAI",
+			"description": "GPT model for general reasoning, writing, coding, and tool-assisted tasks",
+			"releaseDate": "2025-11-13",
+			"lastUpdated": "2025-11-13",
+			"openWeights": false,
+			"knowledgeCutoff": "2024-09-30",
+			"modalities": {
+				"input": [
+					"image",
+					"text"
+				],
+				"output": [
+					"text"
+				]
+			},
+			"capabilities": {
+				"reasoning": true,
+				"toolCall": true,
+				"structuredOutput": true,
+				"temperature": false,
+				"attachment": true
+			},
+			"context": 400000,
+			"outputLimit": 128000,
+			"cost": {
+				"input": 1.07,
+				"output": 8.5,
+				"cacheRead": 0.107,
+				"cacheWrite": null
+			},
+			"monthlyBudgetUsd": null,
+			"estimatedRequests": null,
+			"budgetNotes": null,
+			"inLiveCatalog": true,
+			"plan": "zen",
+			"status": "active"
+		},
+		{
+			"id": "gpt-5.1-codex",
+			"name": "GPT-5.1 Codex",
+			"family": "gpt-codex",
+			"lab": "OpenAI",
+			"description": "Coding-optimized GPT model for repository edits, reviews, and agentic software work",
+			"releaseDate": "2025-11-13",
+			"lastUpdated": "2025-11-13",
+			"openWeights": false,
+			"knowledgeCutoff": "2024-09-30",
+			"modalities": {
+				"input": [
+					"image",
+					"text"
+				],
+				"output": [
+					"text"
+				]
+			},
+			"capabilities": {
+				"reasoning": true,
+				"toolCall": true,
+				"structuredOutput": true,
+				"temperature": false,
+				"attachment": true
+			},
+			"context": 400000,
+			"outputLimit": 128000,
+			"cost": {
+				"input": 1.07,
+				"output": 8.5,
+				"cacheRead": 0.107,
+				"cacheWrite": null
+			},
+			"monthlyBudgetUsd": null,
+			"estimatedRequests": null,
+			"budgetNotes": null,
+			"inLiveCatalog": true,
+			"plan": "zen",
+			"status": "active"
+		},
+		{
+			"id": "gpt-5.1-codex-max",
+			"name": "GPT-5.1 Codex Max",
+			"family": "gpt-codex",
+			"lab": "OpenAI",
+			"description": "Coding-optimized GPT model for repository edits, reviews, and agentic software work",
+			"releaseDate": "2025-11-13",
+			"lastUpdated": "2025-11-13",
+			"openWeights": false,
+			"knowledgeCutoff": "2024-09-30",
+			"modalities": {
+				"input": [
+					"image",
+					"text"
+				],
+				"output": [
+					"text"
+				]
+			},
+			"capabilities": {
+				"reasoning": true,
+				"toolCall": true,
+				"structuredOutput": true,
+				"temperature": false,
+				"attachment": true
+			},
+			"context": 400000,
+			"outputLimit": 128000,
+			"cost": {
+				"input": 1.25,
+				"output": 10,
+				"cacheRead": 0.125,
+				"cacheWrite": null
+			},
+			"monthlyBudgetUsd": null,
+			"estimatedRequests": null,
+			"budgetNotes": null,
+			"inLiveCatalog": true,
+			"plan": "zen",
+			"status": "active"
+		},
+		{
+			"id": "gpt-5.1-codex-mini",
+			"name": "GPT-5.1 Codex Mini",
+			"family": "gpt-codex",
+			"lab": "OpenAI",
+			"description": "Coding-optimized GPT model for repository edits, reviews, and agentic software work",
+			"releaseDate": "2025-11-13",
+			"lastUpdated": "2025-11-13",
+			"openWeights": false,
+			"knowledgeCutoff": "2024-09-30",
+			"modalities": {
+				"input": [
+					"image",
+					"text"
+				],
+				"output": [
+					"text"
+				]
+			},
+			"capabilities": {
+				"reasoning": true,
+				"toolCall": true,
+				"structuredOutput": true,
+				"temperature": false,
+				"attachment": true
+			},
+			"context": 400000,
+			"outputLimit": 128000,
+			"cost": {
+				"input": 0.25,
+				"output": 2,
+				"cacheRead": 0.025,
+				"cacheWrite": null
+			},
+			"monthlyBudgetUsd": null,
+			"estimatedRequests": null,
+			"budgetNotes": null,
+			"inLiveCatalog": true,
+			"plan": "zen",
+			"status": "active"
+		},
+		{
+			"id": "claude-haiku-4-5",
+			"name": "Claude Haiku 4.5",
+			"family": "claude-haiku",
+			"lab": "Anthropic",
+			"description": "Fast Claude model for responsive assistance, classification, and lightweight agents",
+			"releaseDate": "2025-10-15",
+			"lastUpdated": "2025-10-15",
+			"openWeights": false,
+			"knowledgeCutoff": "2025-02-28",
+			"modalities": {
+				"input": [
+					"image",
+					"pdf",
+					"text"
+				],
+				"output": [
+					"text"
+				]
+			},
+			"capabilities": {
+				"reasoning": true,
+				"toolCall": true,
+				"structuredOutput": false,
+				"temperature": true,
+				"attachment": true
+			},
+			"context": 200000,
+			"outputLimit": 64000,
+			"cost": {
+				"input": 1,
+				"output": 5,
+				"cacheRead": 0.1,
+				"cacheWrite": 1.25
+			},
+			"monthlyBudgetUsd": null,
+			"estimatedRequests": null,
+			"budgetNotes": null,
+			"inLiveCatalog": true,
+			"plan": "zen",
+			"status": "active"
+		},
+		{
+			"id": "claude-sonnet-4-5",
+			"name": "Claude Sonnet 4.5",
+			"family": "claude-sonnet",
+			"lab": "Anthropic",
+			"description": "Balanced Claude model for coding, analysis, agent workflows, and cost control",
+			"releaseDate": "2025-09-29",
+			"lastUpdated": "2025-09-29",
+			"openWeights": false,
+			"knowledgeCutoff": "2025-07-31",
+			"modalities": {
+				"input": [
+					"image",
+					"pdf",
+					"text"
+				],
+				"output": [
+					"text"
+				]
+			},
+			"capabilities": {
+				"reasoning": true,
+				"toolCall": true,
+				"structuredOutput": false,
+				"temperature": true,
+				"attachment": true
+			},
+			"context": 1000000,
+			"outputLimit": 64000,
+			"cost": {
+				"input": 3,
+				"output": 15,
+				"cacheRead": 0.3,
+				"cacheWrite": 3.75
+			},
+			"monthlyBudgetUsd": null,
+			"estimatedRequests": null,
+			"budgetNotes": null,
+			"inLiveCatalog": true,
+			"plan": "zen",
+			"status": "active"
+		},
+		{
+			"id": "gpt-5-codex",
+			"name": "GPT-5 Codex",
+			"family": "gpt-codex",
+			"lab": "OpenAI",
+			"description": "Coding-optimized GPT model for repository edits, reviews, and agentic software work",
+			"releaseDate": "2025-09-15",
+			"lastUpdated": "2025-09-15",
+			"openWeights": false,
+			"knowledgeCutoff": "2024-09-30",
+			"modalities": {
+				"input": [
+					"image",
+					"text"
+				],
+				"output": [
+					"text"
+				]
+			},
+			"capabilities": {
+				"reasoning": true,
+				"toolCall": true,
+				"structuredOutput": true,
+				"temperature": false,
+				"attachment": true
+			},
+			"context": 400000,
+			"outputLimit": 128000,
+			"cost": {
+				"input": 1.07,
+				"output": 8.5,
+				"cacheRead": 0.107,
+				"cacheWrite": null
+			},
+			"monthlyBudgetUsd": null,
+			"estimatedRequests": null,
+			"budgetNotes": null,
+			"inLiveCatalog": true,
+			"plan": "zen",
+			"status": "active"
+		},
+		{
+			"id": "gpt-5",
+			"name": "GPT-5",
+			"family": "gpt",
+			"lab": "OpenAI",
+			"description": "GPT model for general reasoning, writing, coding, and tool-assisted tasks",
+			"releaseDate": "2025-08-07",
+			"lastUpdated": "2025-08-07",
+			"openWeights": false,
+			"knowledgeCutoff": "2024-09-30",
+			"modalities": {
+				"input": [
+					"image",
+					"text"
+				],
+				"output": [
+					"text"
+				]
+			},
+			"capabilities": {
+				"reasoning": true,
+				"toolCall": true,
+				"structuredOutput": true,
+				"temperature": false,
+				"attachment": true
+			},
+			"context": 400000,
+			"outputLimit": 128000,
+			"cost": {
+				"input": 1.07,
+				"output": 8.5,
+				"cacheRead": 0.107,
+				"cacheWrite": null
+			},
+			"monthlyBudgetUsd": null,
+			"estimatedRequests": null,
+			"budgetNotes": null,
+			"inLiveCatalog": true,
+			"plan": "zen",
+			"status": "active"
+		},
+		{
+			"id": "gpt-5-nano",
+			"name": "GPT-5 Nano",
+			"family": "gpt-nano",
+			"lab": "OpenAI",
+			"description": "Compact GPT model for low-latency assistance and high-volume workloads",
+			"releaseDate": "2025-08-07",
+			"lastUpdated": "2025-08-07",
+			"openWeights": false,
+			"knowledgeCutoff": "2024-05-30",
+			"modalities": {
+				"input": [
+					"image",
+					"text"
+				],
+				"output": [
+					"text"
+				]
+			},
+			"capabilities": {
+				"reasoning": true,
+				"toolCall": true,
+				"structuredOutput": true,
+				"temperature": false,
+				"attachment": true
+			},
+			"context": 400000,
+			"outputLimit": 128000,
+			"cost": {
+				"input": 0.05,
+				"output": 0.4,
+				"cacheRead": 0.005,
+				"cacheWrite": null
+			},
+			"monthlyBudgetUsd": null,
+			"estimatedRequests": null,
+			"budgetNotes": null,
+			"inLiveCatalog": true,
+			"plan": "zen",
+			"status": "active"
+		},
+		{
+			"id": "claude-sonnet-4",
+			"name": "Claude Sonnet 4",
+			"family": "claude-sonnet",
+			"lab": "Anthropic",
+			"description": "Balanced Claude model for coding, analysis, agent workflows, and cost control",
+			"releaseDate": "2025-05-22",
+			"lastUpdated": "2025-05-22",
+			"openWeights": false,
+			"knowledgeCutoff": "2025-03-31",
+			"modalities": {
+				"input": [
+					"image",
+					"pdf",
+					"text"
+				],
+				"output": [
+					"text"
+				]
+			},
+			"capabilities": {
+				"reasoning": true,
+				"toolCall": true,
+				"structuredOutput": false,
+				"temperature": true,
+				"attachment": true
+			},
+			"context": 1000000,
+			"outputLimit": 64000,
+			"cost": {
+				"input": 3,
+				"output": 15,
+				"cacheRead": 0.3,
+				"cacheWrite": 3.75
+			},
+			"monthlyBudgetUsd": null,
+			"estimatedRequests": null,
+			"budgetNotes": null,
+			"inLiveCatalog": true,
+			"plan": "zen",
+			"status": "active"
+		},
+		{
 			"id": "muse-spark-1.3-contributor-free",
 			"name": "Muse Spark 1.3 Free",
 			"family": "muse-free",
@@ -1400,8 +3977,16 @@
 			"openWeights": false,
 			"knowledgeCutoff": null,
 			"modalities": {
-				"input": ["audio", "image", "pdf", "text", "video"],
-				"output": ["text"]
+				"input": [
+					"audio",
+					"image",
+					"pdf",
+					"text",
+					"video"
+				],
+				"output": [
+					"text"
+				]
 			},
 			"capabilities": {
 				"reasoning": true,
@@ -1421,7 +4006,7 @@
 			"monthlyBudgetUsd": null,
 			"estimatedRequests": null,
 			"budgetNotes": null,
-			"inLiveCatalog": false,
+			"inLiveCatalog": true,
 			"plan": "free",
 			"status": "active"
 		},
@@ -1429,15 +4014,19 @@
 			"id": "ling-3.0-flash-fin-free",
 			"name": "Ling 3.0 Flash Fin Free",
 			"family": "ling",
-			"lab": "ling",
+			"lab": "Ant Group",
 			"description": "Finance-enhanced model for financial research, multi-step investment workflows, and long-horizon planning and execution",
 			"releaseDate": "2026-08-27",
 			"lastUpdated": "2026-08-27",
 			"openWeights": false,
 			"knowledgeCutoff": null,
 			"modalities": {
-				"input": ["text"],
-				"output": ["text"]
+				"input": [
+					"text"
+				],
+				"output": [
+					"text"
+				]
 			},
 			"capabilities": {
 				"reasoning": true,
@@ -1457,7 +4046,7 @@
 			"monthlyBudgetUsd": null,
 			"estimatedRequests": null,
 			"budgetNotes": null,
-			"inLiveCatalog": false,
+			"inLiveCatalog": true,
 			"plan": "free",
 			"status": "active"
 		},
@@ -1465,15 +4054,19 @@
 			"id": "nemotron-3.5-lightning-free",
 			"name": "Nemotron 3.5 Lightning Free",
 			"family": "nemotron-free",
-			"lab": "nemotron-free",
+			"lab": "NVIDIA",
 			"description": "Fast NVIDIA Nemotron MoE for reliable agentic tasks across enterprise workloads",
 			"releaseDate": "2026-08-11",
 			"lastUpdated": "2026-08-11",
 			"openWeights": true,
 			"knowledgeCutoff": null,
 			"modalities": {
-				"input": ["text"],
-				"output": ["text"]
+				"input": [
+					"text"
+				],
+				"output": [
+					"text"
+				]
 			},
 			"capabilities": {
 				"reasoning": true,
@@ -1493,7 +4086,7 @@
 			"monthlyBudgetUsd": null,
 			"estimatedRequests": null,
 			"budgetNotes": null,
-			"inLiveCatalog": false,
+			"inLiveCatalog": true,
 			"plan": "free",
 			"status": "active"
 		},
@@ -1508,8 +4101,16 @@
 			"openWeights": false,
 			"knowledgeCutoff": null,
 			"modalities": {
-				"input": ["audio", "image", "pdf", "text", "video"],
-				"output": ["text"]
+				"input": [
+					"audio",
+					"image",
+					"pdf",
+					"text",
+					"video"
+				],
+				"output": [
+					"text"
+				]
 			},
 			"capabilities": {
 				"reasoning": true,
@@ -1529,7 +4130,7 @@
 			"monthlyBudgetUsd": null,
 			"estimatedRequests": null,
 			"budgetNotes": null,
-			"inLiveCatalog": false,
+			"inLiveCatalog": true,
 			"plan": "free",
 			"status": "active"
 		},
@@ -1537,15 +4138,19 @@
 			"id": "nemotron-3-ultra-free",
 			"name": "Nemotron 3 Ultra Free",
 			"family": "nemotron-free",
-			"lab": "nemotron-free",
+			"lab": "NVIDIA",
 			"description": "Largest Nemotron 3 model for maximum open-weight reasoning and agent accuracy",
 			"releaseDate": "2026-06-04",
 			"lastUpdated": "2026-06-04",
 			"openWeights": true,
 			"knowledgeCutoff": "2026-02",
 			"modalities": {
-				"input": ["text"],
-				"output": ["text"]
+				"input": [
+					"text"
+				],
+				"output": [
+					"text"
+				]
 			},
 			"capabilities": {
 				"reasoning": true,
@@ -1565,7 +4170,7 @@
 			"monthlyBudgetUsd": null,
 			"estimatedRequests": null,
 			"budgetNotes": null,
-			"inLiveCatalog": false,
+			"inLiveCatalog": true,
 			"plan": "free",
 			"status": "active"
 		},
@@ -1580,8 +4185,15 @@
 			"openWeights": true,
 			"knowledgeCutoff": "2024-12",
 			"modalities": {
-				"input": ["audio", "image", "text", "video"],
-				"output": ["text"]
+				"input": [
+					"audio",
+					"image",
+					"text",
+					"video"
+				],
+				"output": [
+					"text"
+				]
 			},
 			"capabilities": {
 				"reasoning": true,
@@ -1601,7 +4213,7 @@
 			"monthlyBudgetUsd": null,
 			"estimatedRequests": null,
 			"budgetNotes": null,
-			"inLiveCatalog": false,
+			"inLiveCatalog": true,
 			"plan": "free",
 			"status": "active"
 		},
@@ -1609,15 +4221,19 @@
 			"id": "big-pickle",
 			"name": "Big Pickle",
 			"family": "big-pickle",
-			"lab": "big-pickle",
+			"lab": "Stealth",
 			"description": "Reasoning model for deliberate analysis, multi-step problem solving, and tool use",
 			"releaseDate": "2025-10-17",
 			"lastUpdated": "2025-10-17",
 			"openWeights": false,
 			"knowledgeCutoff": "2025-01",
 			"modalities": {
-				"input": ["text"],
-				"output": ["text"]
+				"input": [
+					"text"
+				],
+				"output": [
+					"text"
+				]
 			},
 			"capabilities": {
 				"reasoning": true,
@@ -1637,7 +4253,7 @@
 			"monthlyBudgetUsd": null,
 			"estimatedRequests": null,
 			"budgetNotes": null,
-			"inLiveCatalog": false,
+			"inLiveCatalog": true,
 			"plan": "free",
 			"status": "active"
 		}

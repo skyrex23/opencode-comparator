@@ -6,6 +6,7 @@
  * Sources:
  *   - https://models.dev/api.json                       (model specs, pricing, capabilities)
  *   - https://opencode.ai/zen/go/v1/models              (live Go catalog, created timestamps)
+ *   - https://opencode.ai/zen/v1/models                 (live Zen catalog, pay-as-you-go gateway)
  *   - data/budgets.json                                 (Go per-model monthly allocations)
  */
 
@@ -19,6 +20,7 @@ const OUT = resolve(ROOT, "data", "models.json");
 
 const MODELS_DEV_API = "https://models.dev/api.json";
 const OPENCODE_GO_MODELS = "https://opencode.ai/zen/go/v1/models";
+const OPENCODE_ZEN_MODELS = "https://opencode.ai/zen/v1/models";
 const BUDGETS_FILE = resolve(ROOT, "data", "budgets.json");
 
 const FETCH_TIMEOUT_MS = 20000;
@@ -42,6 +44,7 @@ async function fetchJson(url) {
 
 function labFromFamily(family, modelId) {
 	const f = (family || "").toLowerCase();
+	const id = (modelId || "").toLowerCase();
 	if (f.startsWith("kimi")) return "Moonshot AI";
 	if (f.startsWith("qwen")) return "Alibaba";
 	if (f.startsWith("glm")) return "Zhipu AI";
@@ -50,10 +53,14 @@ function labFromFamily(family, modelId) {
 	if (f.startsWith("deepseek")) return "DeepSeek";
 	if (f.startsWith("longcat")) return "Meituan";
 	if (f.startsWith("hy")) return "Tencent";
-	if (f.startsWith("grok")) return "xAI";
-	if (f.startsWith("gpt") || modelId.includes("gpt-")) return "OpenAI";
+	if (f.startsWith("grok") || f.startsWith("ox")) return "xAI";
+	if (f.startsWith("gpt") || id.startsWith("gpt-") || f.startsWith("gpt-")) return "OpenAI";
 	if (f.startsWith("muse")) return "Meta";
-	if (f.startsWith("ox")) return "xAI";
+	if (f.startsWith("claude") || id.startsWith("claude-")) return "Anthropic";
+	if (f.startsWith("gemini")) return "Google";
+	if (f.startsWith("nemotron")) return "NVIDIA";
+	if (f.startsWith("ling")) return "Ant Group";
+	if (f.startsWith("big-pickle") || id === "big-pickle") return "Stealth";
 	return family || "Unknown";
 }
 
@@ -76,6 +83,7 @@ function buildSnapshot() {
 		sources: [
 			{ name: "models.dev (api.json)", url: MODELS_DEV_API },
 			{ name: "OpenCode Go catalog", url: OPENCODE_GO_MODELS },
+			{ name: "OpenCode Zen catalog", url: OPENCODE_ZEN_MODELS },
 			{ name: "data/budgets.json", url: "internal/curated" }
 		],
 		subscription: {
@@ -84,6 +92,10 @@ function buildSnapshot() {
 			billing: "Dollar-metered; per-model monthly allocation may be lower than the $60 cap.",
 			docs: "https://opencode.ai/docs/go/"
 		},
+		zen: {
+			billing: "Pay-as-you-go at the listed per-1M-token rates; optional monthly limits and auto-reload.",
+			docs: "https://opencode.ai/docs/zen/"
+		},
 		models: []
 	};
 }
@@ -91,6 +103,10 @@ function buildSnapshot() {
 function isFree(m) {
 	const cost = m.cost || {};
 	return (cost.input === 0 || cost.input == null) && (cost.output === 0 || cost.output == null);
+}
+
+function isPaid(m) {
+	return !isFree(m);
 }
 
 function buildModel(m, opts) {
@@ -111,8 +127,10 @@ function buildModel(m, opts) {
 
 	let status = m.status || null;
 	if (plan === "go") {
-		if (inLiveCatalog && status !== "deprecated") status = "active";
-		else if (inLiveCatalog) status = "active";
+		if (inLiveCatalog) status = "active";
+		else status = status || "preview-or-removed";
+	} else if (plan === "zen") {
+		if (inLiveCatalog) status = "active";
 		else status = status || "preview-or-removed";
 	} else {
 		status = status || "active";
@@ -150,9 +168,10 @@ function buildModel(m, opts) {
 async function main() {
 	const out = buildSnapshot();
 
-	const [apiAll, ocCatalog, budgetsRaw] = await Promise.all([
+	const [apiAll, ocCatalog, zenCatalog, budgetsRaw] = await Promise.all([
 		fetchJson(MODELS_DEV_API),
 		fetchJson(OPENCODE_GO_MODELS),
+		fetchJson(OPENCODE_ZEN_MODELS),
 		import(BUDGETS_FILE, { with: { type: "json" } }).then((m) => m.default)
 	]);
 
@@ -160,25 +179,30 @@ async function main() {
 	if (!goProvider || !goProvider.models) {
 		throw new Error('models.dev api.json is missing the "opencode-go" provider.');
 	}
-	const freeProvider = apiAll["opencode"];
-	const liveIds = new Set(ocCatalog.data.map((m) => m.id));
+	const zenProvider = apiAll["opencode"];
+	const liveGoIds = new Set(ocCatalog.data.map((m) => m.id));
+	const liveZenIds = new Set(zenCatalog.data.map((m) => m.id));
 
 	const budgets = budgetsRaw.models || {};
 
 	const models = [];
 	for (const [id, m] of Object.entries(goProvider.models)) {
-		models.push(buildModel(m, { plan: "go", inLiveCatalog: liveIds.has(id), budget: budgets[id] || {} }));
+		models.push(buildModel(m, { plan: "go", inLiveCatalog: liveGoIds.has(id), budget: budgets[id] || {} }));
 	}
-	if (freeProvider && freeProvider.models) {
-		for (const [id, m] of Object.entries(freeProvider.models)) {
-			if (!isFree(m)) continue;
+	if (zenProvider && zenProvider.models) {
+		for (const [id, m] of Object.entries(zenProvider.models)) {
 			if (m.status === "deprecated") continue;
-			models.push(buildModel(m, { plan: "free", inLiveCatalog: false, budget: {} }));
+			const inLive = liveZenIds.has(id);
+			if (isFree(m)) {
+				models.push(buildModel(m, { plan: "free", inLiveCatalog: inLive, budget: {} }));
+			} else if (inLive || m.status === "active") {
+				models.push(buildModel(m, { plan: "zen", inLiveCatalog: inLive, budget: {} }));
+			}
 		}
 	}
 
 	models.sort((a, b) => {
-		const planOrder = { go: 0, free: 1 };
+		const planOrder = { go: 0, zen: 1, free: 2 };
 		if (planOrder[a.plan] !== planOrder[b.plan]) return planOrder[a.plan] - planOrder[b.plan];
 		const statusOrder = { active: 0, legacy: 1, "preview-or-removed": 2, deprecated: 3 };
 		const sa = statusOrder[a.status] ?? 9;

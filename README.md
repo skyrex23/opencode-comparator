@@ -1,7 +1,8 @@
-# OpenCode Go Comparator
+# OpenCode Comparator
 
-A static web app to compare every model in the [OpenCode Go](https://opencode.ai/docs/go/) $10/month subscription, with
-pricing, context window, capabilities and value-for-money metrics for coding tasks.
+A static web app to compare every model in the [OpenCode Go](https://opencode.ai/docs/go/) $10/month subscription and
+the [OpenCode Zen](https://opencode.ai/docs/zen/) pay-as-you-go gateway, with pricing, context window, capabilities and
+value-for-money metrics for coding tasks.
 
 The app ships with a snapshot of the current catalog under `data/models.json` so it works offline, and pulls a fresh
 snapshot from public sources on demand (the `Refresh data` button) or via `npm run refresh`.
@@ -15,8 +16,8 @@ snapshot from public sources on demand (the `Refresh data` button) or via `npm r
   side-by-side selection.
 - **Per-model tier.** Each row is tagged with its OpenCode Go monthly allocation (`$15` premium, `$30` mid, `$60`
   standard) plus the official request counts per 5-hour, weekly and monthly windows.
-- **Filters.** Search by name/lab, filter by subscription (Go models vs free tier), lab, status, capability (reasoning,
-  tool calls, structured output, attachments, open weights), minimum context, and maximum output price.
+- **Filters.** Search by name/lab, filter by subscription (Go, Zen, free tier), lab, status, capability (reasoning, tool
+  calls, structured output, attachments, open weights), minimum context, and maximum output price.
 - **Quick picks.** One-click presets: `Premium quality`, `High-volume workhorse`, `Long context (1M+)`,
   `Cheapest per request`, `Balanced all-rounder`.
 - **Detail drawer.** Click any model for description, modalities, capabilities, release date and a value score.
@@ -44,12 +45,14 @@ and not by double-clicking `src/index.html` — browsers block `fetch()` from `f
 
 ## Update the data
 
-The snapshot is the merge of three sources:
+The snapshot is the merge of four sources:
 
 | Source                                                 | What it provides                                                                               |
 | ------------------------------------------------------ | ---------------------------------------------------------------------------------------------- |
 | `https://models.dev/api.json` (provider `opencode-go`) | Pricing per 1M tokens, context/output limits, modalities, capabilities, release dates, weights |
+| `https://models.dev/api.json` (provider `opencode`)    | Zen gateway specs (Claude, Gemini, GPT, Grok, Muse, etc.)                                      |
 | `https://opencode.ai/zen/go/v1/models`                 | Live Go catalog (used to mark active vs legacy)                                                |
+| `https://opencode.ai/zen/v1/models`                    | Live Zen catalog (used to mark active vs legacy)                                               |
 | `data/budgets.json`                                    | Per-model OpenCode Go monthly allocation and official estimated request counts                 |
 
 Edit `data/budgets.json` when the OpenCode Go lineup changes (new model, new tier, new limits). Re-run `npm run refresh`

@@ -11,6 +11,8 @@
 
 const ORIGIN = typeof window !== "undefined" ? window.location.origin : "";
 
+const MAX_OUTPUT_PRICE = 200;
+
 function snapshotUrl() {
 	return `${ORIGIN}/data/models.json`;
 }
@@ -20,7 +22,8 @@ function budgetsUrl() {
 }
 
 const LIVE = {
-	models: "https://opencode.ai/zen/go/v1/models",
+	goModels: "https://opencode.ai/zen/go/v1/models",
+	zenModels: "https://opencode.ai/zen/v1/models",
 	modelsDev: "https://models.dev/api.json"
 };
 
@@ -30,12 +33,12 @@ const STATE = {
 	selected: new Set(),
 	filters: {
 		search: "",
-		plans: new Set(["go", "free"]),
+		plans: new Set(["go", "zen", "free"]),
 		activeOnly: true,
 		includeLegacy: false,
 		labs: new Set(),
 		minContext: 0,
-		maxOutputPrice: 15,
+		maxOutputPrice: MAX_OUTPUT_PRICE,
 		reasoning: false,
 		tools: false,
 		structured: false,
@@ -110,6 +113,7 @@ function valueTier(score) {
 
 function labFromFamily(family, modelId) {
 	const f = (family || "").toLowerCase();
+	const id = (modelId || "").toLowerCase();
 	if (f.startsWith("kimi")) return "Moonshot AI";
 	if (f.startsWith("qwen")) return "Alibaba";
 	if (f.startsWith("glm")) return "Zhipu AI";
@@ -118,10 +122,14 @@ function labFromFamily(family, modelId) {
 	if (f.startsWith("deepseek")) return "DeepSeek";
 	if (f.startsWith("longcat")) return "Meituan";
 	if (f.startsWith("hy")) return "Tencent";
-	if (f.startsWith("grok")) return "xAI";
-	if (f.startsWith("gpt") || modelId.includes("gpt-")) return "OpenAI";
+	if (f.startsWith("grok") || f.startsWith("ox")) return "xAI";
+	if (f.startsWith("gpt") || id.startsWith("gpt-") || f.startsWith("gpt-")) return "OpenAI";
 	if (f.startsWith("muse")) return "Meta";
-	if (f.startsWith("ox")) return "xAI";
+	if (f.startsWith("claude") || id.startsWith("claude-")) return "Anthropic";
+	if (f.startsWith("gemini")) return "Google";
+	if (f.startsWith("nemotron")) return "NVIDIA";
+	if (f.startsWith("ling")) return "Ant Group";
+	if (f.startsWith("big-pickle") || id === "big-pickle") return "Stealth";
 	return family || "Unknown";
 }
 
@@ -147,9 +155,13 @@ function tierTag(m) {
 }
 
 function planTag(m) {
-	return m.plan === "go"
-		? `<span class="tag tag--go" title="Included in the $10/mo OpenCode Go subscription">Go</span>`
-		: `<span class="tag tag--free" title="Available without a Go subscription">Free</span>`;
+	if (m.plan === "go") {
+		return `<span class="tag tag--go" title="Included in the $10/mo OpenCode Go subscription">Go</span>`;
+	}
+	if (m.plan === "zen") {
+		return `<span class="tag tag--zen" title="OpenCode Zen gateway, pay-as-you-go per 1M tokens">Zen</span>`;
+	}
+	return `<span class="tag tag--free" title="Available without a Go or Zen subscription">Free</span>`;
 }
 
 function capabilityIcons(m) {
@@ -324,7 +336,7 @@ function applyFilters() {
 		}
 		if (f.labs.size > 0 && !f.labs.has(m.lab)) return false;
 		if (f.minContext > 0 && (m.context || 0) < f.minContext) return false;
-		if (f.maxOutputPrice < 15 && (m.cost?.output ?? 0) > f.maxOutputPrice) return false;
+		if (f.maxOutputPrice < MAX_OUTPUT_PRICE && (m.cost?.output ?? 0) > f.maxOutputPrice) return false;
 		if (f.reasoning && !m.capabilities?.reasoning) return false;
 		if (f.tools && !m.capabilities?.toolCall) return false;
 		if (f.structured && !m.capabilities?.structuredOutput) return false;
@@ -394,14 +406,17 @@ function renderPills() {
 	const f = STATE.filters;
 	const pills = [];
 	if (f.search) pills.push({ k: "search", label: `q: ${f.search}` });
-	if (f.plans.size === 1 && f.plans.has("go")) pills.push({ k: "plan:free", label: "Go only" });
-	else if (f.plans.size === 1 && f.plans.has("free")) pills.push({ k: "plan:go", label: "Free only" });
-	else if (f.plans.size === 0) pills.push({ k: "plans", label: "no plans selected" });
+	const singlePlanLabels = { go: "Go only", zen: "Zen only", free: "Free only" };
+	const planKeys = Array.from(f.plans);
+	if (planKeys.length === 1 && singlePlanLabels[planKeys[0]]) {
+		const k = planKeys[0] === "go" ? "plan:zen,plan:free" : planKeys[0] === "zen" ? "plan:go,plan:free" : "plan:go,plan:zen";
+		pills.push({ k, label: singlePlanLabels[planKeys[0]] });
+	} else if (f.plans.size === 0) pills.push({ k: "plans", label: "no plans selected" });
 	if (!f.activeOnly) pills.push({ k: "activeOnly", label: "show all" });
 	if (f.includeLegacy) pills.push({ k: "includeLegacy", label: "+ deprecated" });
 	for (const lab of f.labs) pills.push({ k: `lab:${lab}`, label: lab });
 	if (f.minContext > 0) pills.push({ k: "context", label: `ctx ≥ ${fmt.tokens(f.minContext)}` });
-	if (f.maxOutputPrice < 15) pills.push({ k: "outputPrice", label: `out ≤ ${fmt.money(f.maxOutputPrice)}` });
+	if (f.maxOutputPrice < MAX_OUTPUT_PRICE) pills.push({ k: "outputPrice", label: `out ≤ ${fmt.money(f.maxOutputPrice)}` });
 	if (f.reasoning) pills.push({ k: "reasoning", label: "reasoning" });
 	if (f.tools) pills.push({ k: "tools", label: "tools" });
 	if (f.structured) pills.push({ k: "structured", label: "structured" });
@@ -596,7 +611,7 @@ function renderLabs() {
 
 function renderKpis() {
 	const active = STATE.data.models.filter((m) => m.status === "active");
-	const totalReqMonth = active.reduce((sum, m) => sum + (m.estimatedRequests?.monthly || 0), 0);
+	const zenActive = active.filter((m) => m.plan === "zen");
 	const cheapest = active
 		.filter((m) => m.cost?.output != null)
 		.reduce((min, m) => (m.cost.output < min.cost.output ? m : min), active[0] || {});
@@ -605,16 +620,20 @@ function renderKpis() {
 
 	const kpis = [
 		{
-			label: "Subscription",
-			value: `$${monthlyUsd}`,
-			sub: `${usageUsd / monthlyUsd}× value in included usage`,
+			label: "Go subscription",
+			value: `$${monthlyUsd}/mo`,
+			sub: `$${usageUsd} of reusable usage included`,
 			accent: true
 		},
-		{ label: "Active models", value: String(active.length), sub: `${STATE.data.models.length} total in catalog` },
 		{
-			label: "Reusable usage",
-			value: `$${usageUsd}`,
-			sub: "of OpenCode Go credit per month"
+			label: "Active models",
+			value: String(active.length),
+			sub: `${STATE.data.models.length} total in catalog`
+		},
+		{
+			label: "Zen models",
+			value: String(zenActive.length),
+			sub: STATE.data.zen?.billing ? "pay-as-you-go, no monthly cap" : "pay-as-you-go per 1M tokens"
 		},
 		{
 			label: "Cheapest output",
@@ -637,8 +656,9 @@ function renderKpis() {
 
 function renderBrand() {
 	const active = STATE.data.models.filter((m) => m.status === "active").length;
+	const zenActive = STATE.data.models.filter((m) => m.status === "active" && m.plan === "zen").length;
 	$("#brand-sub").textContent =
-		`${active} active models · $${STATE.data.subscription.monthlyUsd}/mo · updated ${fmt.datetime(STATE.data.fetchedAt)}`;
+		`${active} active models (${zenActive} Zen) · $${STATE.data.subscription.monthlyUsd}/mo Go · updated ${fmt.datetime(STATE.data.fetchedAt)}`;
 	$("#footer-time").textContent = fmt.datetime(STATE.data.fetchedAt);
 }
 
@@ -868,6 +888,10 @@ function bindFilters() {
 		togglePlan("go", e.target.checked);
 		applyAndRender();
 	});
+	$("#f-plan-zen").addEventListener("change", (e) => {
+		togglePlan("zen", e.target.checked);
+		applyAndRender();
+	});
 	$("#f-plan-free").addEventListener("change", (e) => {
 		togglePlan("free", e.target.checked);
 		applyAndRender();
@@ -887,8 +911,8 @@ function bindFilters() {
 	});
 	$("#f-max-output-price").addEventListener("input", (e) => {
 		const v = Number(e.target.value);
-		STATE.filters.maxOutputPrice = v >= 15 ? 15 : v;
-		$("#f-max-output-price-out").textContent = v >= 15 ? "any" : `$${v.toFixed(2)}`;
+		STATE.filters.maxOutputPrice = v >= MAX_OUTPUT_PRICE ? MAX_OUTPUT_PRICE : v;
+		$("#f-max-output-price-out").textContent = v >= MAX_OUTPUT_PRICE ? "any" : `$${v.toFixed(2)}`;
 		applyAndRender();
 	});
 	for (const id of ["reasoning", "tools", "structured", "attachment", "open"]) {
@@ -947,12 +971,12 @@ function bindFilters() {
 function resetFilters() {
 	STATE.filters = {
 		search: "",
-		plans: new Set(["go", "free"]),
+		plans: new Set(["go", "zen", "free"]),
 		activeOnly: true,
 		includeLegacy: false,
 		labs: new Set(),
 		minContext: 0,
-		maxOutputPrice: 15,
+		maxOutputPrice: MAX_OUTPUT_PRICE,
 		reasoning: false,
 		tools: false,
 		structured: false,
@@ -963,12 +987,13 @@ function resetFilters() {
 	};
 	$("#f-search").value = "";
 	$("#f-plan-go").checked = true;
+	$("#f-plan-zen").checked = true;
 	$("#f-plan-free").checked = true;
 	$("#f-active").checked = true;
 	$("#f-legacy").checked = false;
 	$("#f-context").value = 0;
 	$("#f-context-out").textContent = "any";
-	$("#f-max-output-price").value = 15;
+	$("#f-max-output-price").value = MAX_OUTPUT_PRICE;
 	$("#f-max-output-price-out").textContent = "any";
 	$("#f-reasoning").checked = false;
 	$("#f-tools").checked = false;
@@ -989,14 +1014,24 @@ function clearFilter(k) {
 		STATE.filters.search = "";
 		$("#f-search").value = "";
 	} else if (k === "plans") {
-		STATE.filters.plans = new Set(["go", "free"]);
+		STATE.filters.plans = new Set(["go", "zen", "free"]);
+		$("#f-plan-go").checked = true;
+		$("#f-plan-zen").checked = true;
+		$("#f-plan-free").checked = true;
+	} else if (k === "plan:go,plan:zen") {
+		togglePlan("go", true);
+		togglePlan("zen", true);
+		$("#f-plan-go").checked = true;
+		$("#f-plan-zen").checked = true;
+	} else if (k === "plan:go,plan:free") {
+		togglePlan("go", true);
+		togglePlan("free", true);
 		$("#f-plan-go").checked = true;
 		$("#f-plan-free").checked = true;
-	} else if (k === "plan:go") {
-		togglePlan("go", true);
-		$("#f-plan-go").checked = true;
-	} else if (k === "plan:free") {
+	} else if (k === "plan:zen,plan:free") {
+		togglePlan("zen", true);
 		togglePlan("free", true);
+		$("#f-plan-zen").checked = true;
 		$("#f-plan-free").checked = true;
 	} else if (k === "activeOnly") {
 		STATE.filters.activeOnly = true;
@@ -1009,8 +1044,8 @@ function clearFilter(k) {
 		$("#f-context").value = 0;
 		$("#f-context-out").textContent = "any";
 	} else if (k === "outputPrice") {
-		STATE.filters.maxOutputPrice = 15;
-		$("#f-max-output-price").value = 15;
+		STATE.filters.maxOutputPrice = MAX_OUTPUT_PRICE;
+		$("#f-max-output-price").value = MAX_OUTPUT_PRICE;
 		$("#f-max-output-price-out").textContent = "any";
 	} else if (k.startsWith("lab:")) {
 		const lab = k.slice(4);
@@ -1047,7 +1082,7 @@ function applyQuickPick(name) {
 				activeOnly: true,
 				reasoning: true,
 				openWeights: false,
-				maxOutputPrice: 15,
+				maxOutputPrice: MAX_OUTPUT_PRICE,
 				sort: { field: "valueScore", dir: "desc" }
 			});
 			STATE.filters.minContext = 500000;
@@ -1083,9 +1118,9 @@ function applyQuickPick(name) {
 	$("#f-open").checked = STATE.filters.openWeights;
 }
 
-async function tryFetchLiveCatalog() {
+async function tryFetchLiveCatalog(url) {
 	try {
-		const res = await fetch(LIVE.models);
+		const res = await fetch(url);
 		if (!res.ok) return null;
 		const json = await res.json();
 		const ids = Array.isArray(json?.data) ? json.data.map((m) => m?.id).filter(Boolean) : null;
@@ -1101,24 +1136,28 @@ function isFreeModel(m) {
 }
 
 async function fetchLiveSnapshot() {
-	const [api, budgetsRes, liveIds] = await Promise.all([
+	const [api, budgetsRes, liveGoIds, liveZenIds] = await Promise.all([
 		fetch(LIVE.modelsDev).then((r) => {
 			if (!r.ok) throw new Error(`HTTP ${r.status} from ${LIVE.modelsDev}`);
 			return r.json();
 		}),
 		fetch(budgetsUrl(), { cache: "no-store" }).then((r) => (r.ok ? r.json() : { models: {} })),
-		tryFetchLiveCatalog()
+		tryFetchLiveCatalog(LIVE.goModels),
+		tryFetchLiveCatalog(LIVE.zenModels)
 	]);
 	const goProvider = api["opencode-go"];
-	const freeProvider = api["opencode"];
+	const zenProvider = api["opencode"];
 	if (!goProvider?.models) throw new Error("models.dev response missing opencode-go");
 	const budgets = budgetsRes.models || {};
 
-	const models = [];
-	for (const [id, m] of Object.entries(goProvider.models)) {
-		const inLive = liveIds ? liveIds.has(id) : true;
-		const status = inLive ? "active" : "preview-or-removed";
-		models.push({
+	const buildLiveModel = (id, m, plan, inLive) => {
+		let status;
+		if (plan === "go" || plan === "zen") {
+			status = inLive ? "active" : "preview-or-removed";
+		} else {
+			status = m.status || "active";
+		}
+		return {
 			id,
 			name: m.name || id,
 			family: m.family || null,
@@ -1147,64 +1186,39 @@ async function fetchLiveSnapshot() {
 				cacheRead: m.cost?.cache_read ?? null,
 				cacheWrite: m.cost?.cache_write ?? null
 			},
-			monthlyBudgetUsd: budgets[id]?.monthlyBudgetUsd ?? null,
-			estimatedRequests: budgets[id]?.estimatedRequests || null,
-			budgetNotes: budgets[id]?.notes || null,
+			monthlyBudgetUsd: plan === "go" ? budgets[id]?.monthlyBudgetUsd ?? null : null,
+			estimatedRequests: plan === "go" ? budgets[id]?.estimatedRequests || null : null,
+			budgetNotes: plan === "go" ? budgets[id]?.notes || null : null,
 			inLiveCatalog: inLive,
-			plan: "go",
+			plan,
 			status
-		});
+		};
+	};
+
+	const models = [];
+	for (const [id, m] of Object.entries(goProvider.models)) {
+		const inLive = liveGoIds ? liveGoIds.has(id) : true;
+		models.push(buildLiveModel(id, m, "go", inLive));
 	}
-	if (freeProvider?.models) {
-		for (const [id, m] of Object.entries(freeProvider.models)) {
-			if (!isFreeModel(m)) continue;
+	if (zenProvider?.models) {
+		for (const [id, m] of Object.entries(zenProvider.models)) {
 			if (m.status === "deprecated") continue;
-			models.push({
-				id,
-				name: m.name || id,
-				family: m.family || null,
-				lab: labFromFamily(m.family, id),
-				description: m.description || null,
-				releaseDate: m.release_date || null,
-				lastUpdated: m.last_updated || null,
-				openWeights: !!m.open_weights,
-				knowledgeCutoff: m.knowledge || null,
-				modalities: {
-					input: Array.isArray(m.modalities?.input) ? [...m.modalities.input].sort() : [],
-					output: Array.isArray(m.modalities?.output) ? [...m.modalities.output].sort() : []
-				},
-				capabilities: {
-					reasoning: !!m.reasoning,
-					toolCall: !!m.tool_call,
-					structuredOutput: !!m.structured_output,
-					temperature: m.temperature !== false,
-					attachment: !!m.attachment
-				},
-				context: m.limit?.context ?? null,
-				outputLimit: m.limit?.output ?? null,
-				cost: {
-					input: m.cost?.input ?? null,
-					output: m.cost?.output ?? null,
-					cacheRead: m.cost?.cache_read ?? null,
-					cacheWrite: m.cost?.cache_write ?? null
-				},
-				monthlyBudgetUsd: null,
-				estimatedRequests: null,
-				budgetNotes: null,
-				inLiveCatalog: false,
-				plan: "free",
-				status: m.status || "active"
-			});
+			const inLive = liveZenIds ? liveZenIds.has(id) : false;
+			if (isFreeModel(m)) {
+				models.push(buildLiveModel(id, m, "free", inLive));
+			} else if (inLive || m.status === "active") {
+				models.push(buildLiveModel(id, m, "zen", inLive));
+			}
 		}
 	}
 	models.sort((a, b) => {
-		const planOrder = { go: 0, free: 1 };
+		const planOrder = { go: 0, zen: 1, free: 2 };
 		if (planOrder[a.plan] !== planOrder[b.plan]) return planOrder[a.plan] - planOrder[b.plan];
 		const order = { active: 0, legacy: 1, "preview-or-removed": 2, deprecated: 3 };
 		if (order[a.status] !== order[b.status]) return order[a.status] - order[b.status];
 		return (b.releaseDate || "").localeCompare(a.releaseDate || "");
 	});
-	return { models, liveCatalogReached: liveIds !== null };
+	return { models, liveCatalogReached: liveGoIds !== null, zenLiveCatalogReached: liveZenIds !== null };
 }
 
 async function refreshFromNetwork() {
@@ -1212,15 +1226,17 @@ async function refreshFromNetwork() {
 	btn.disabled = true;
 	btn.classList.add("skeleton");
 	try {
-		const { models, liveCatalogReached } = await fetchLiveSnapshot();
+		const { models, liveCatalogReached, zenLiveCatalogReached } = await fetchLiveSnapshot();
 		STATE.data = {
 			fetchedAt: new Date().toISOString(),
 			sources: [
 				{ name: "models.dev (api.json)", url: LIVE.modelsDev },
-				{ name: "OpenCode Go catalog", url: LIVE.models, ok: liveCatalogReached },
+				{ name: "OpenCode Go catalog", url: LIVE.goModels, ok: liveCatalogReached },
+				{ name: "OpenCode Zen catalog", url: LIVE.zenModels, ok: zenLiveCatalogReached },
 				{ name: "data/budgets.json", url: "internal/curated" }
 			],
 			subscription: STATE.data.subscription,
+			zen: STATE.data.zen,
 			models
 		};
 		renderLabs();
@@ -1251,17 +1267,22 @@ function showBootError(msg) {
 		btn.disabled = true;
 		btn.classList.add("skeleton");
 		try {
-			const { models, liveCatalogReached } = await fetchLiveSnapshot();
+			const { models, liveCatalogReached, zenLiveCatalogReached } = await fetchLiveSnapshot();
 			STATE.data = {
 				fetchedAt: new Date().toISOString(),
 				sources: [
 					{ name: "models.dev (api.json)", url: LIVE.modelsDev },
-					{ name: "OpenCode Go catalog", url: LIVE.models, ok: liveCatalogReached },
+					{ name: "OpenCode Go catalog", url: LIVE.goModels, ok: liveCatalogReached },
+					{ name: "OpenCode Zen catalog", url: LIVE.zenModels, ok: zenLiveCatalogReached },
 					{ name: "data/budgets.json", url: "internal/curated" }
 				],
 				subscription: {
 					monthlyUsd: 10,
 					limitUsd: { fiveHours: 12, weekly: 30, monthly: 60 }
+				},
+				zen: {
+					billing: "Pay-as-you-go at the listed per-1M-token rates; optional monthly limits and auto-reload.",
+					docs: "https://opencode.ai/docs/zen/"
 				},
 				models
 			};

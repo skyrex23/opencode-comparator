@@ -1002,6 +1002,11 @@ input[type="range"] {
 	color: var(--accent);
 }
 
+.tag--zen {
+	background: var(--info-soft);
+	color: var(--info);
+}
+
 .tag--free {
 	background: rgba(107, 124, 145, 0.18);
 	color: var(--text-dim);
