@@ -749,7 +749,7 @@ function openDetail(id) {
 		</div>
 		<div style="margin-top:16px;display:flex;flex-wrap:wrap;gap:6px;">${capHTML}</div>
 		${m.budgetNotes ? `<p style="margin-top:14px;font-size:12px;color:var(--warn);padding:10px 12px;background:var(--warn-soft);border-radius:6px;">⚠ ${m.budgetNotes}</p>` : ""}
-		${m.status === "deprecated" || m.status === "legacy" ? `<p style="margin-top:12px;font-size:12px;color:var(--text-dim);">This model is not in the curated "active" lineup — it may still work via the API but is not promoted on the official Go docs.</p>` : ""}
+		${m.status === "deprecated" || m.status === "legacy" ? `<p style="margin-top:12px;font-size:12px;color:var(--text-dim);">This model is not in the curated "active" lineup — it may still work via the API but is not promoted on the official docs.</p>` : ""}
 	`;
 	const cmpBox = $("#detail-compare");
 	cmpBox.checked = STATE.selected.has(id);

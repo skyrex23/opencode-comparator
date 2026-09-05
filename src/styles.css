@@ -276,7 +276,7 @@ code {
 	line-height: 1.6;
 	color: var(--text-dim);
 	margin: 0 0 24px;
-	max-width: 560px;
+	max-width: 600px;
 }
 
 .hero__lede strong {
