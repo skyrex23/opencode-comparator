@@ -1,5 +1,5 @@
 {
-	"fetchedAt": "2026-09-05T00:36:31.806Z",
+	"fetchedAt": "2026-09-05T18:29:11.891Z",
 	"sources": [
 		{
 			"name": "models.dev (api.json)",
@@ -1583,6 +1583,48 @@
 			"status": "deprecated"
 		},
 		{
+			"id": "gpt-6-astra",
+			"name": "GPT-6 Astra",
+			"family": "gpt-astra",
+			"lab": "OpenAI",
+			"description": "GPT-6 Astra is OpenAI's most capable model for complex reasoning, coding, computer use, research, and document creation.",
+			"releaseDate": "2026-09-04",
+			"lastUpdated": "2026-09-04",
+			"openWeights": false,
+			"knowledgeCutoff": null,
+			"modalities": {
+				"input": [
+					"image",
+					"pdf",
+					"text"
+				],
+				"output": [
+					"text"
+				]
+			},
+			"capabilities": {
+				"reasoning": true,
+				"toolCall": true,
+				"structuredOutput": true,
+				"temperature": false,
+				"attachment": true
+			},
+			"context": 1050000,
+			"outputLimit": 128000,
+			"cost": {
+				"input": 10,
+				"output": 50,
+				"cacheRead": 1,
+				"cacheWrite": 12.5
+			},
+			"monthlyBudgetUsd": null,
+			"estimatedRequests": null,
+			"budgetNotes": null,
+			"inLiveCatalog": true,
+			"plan": "zen",
+			"status": "active"
+		},
+		{
 			"id": "gemini-3.8-flash",
 			"name": "Gemini 3.8 Flash",
 			"family": "gemini-flash",
@@ -1627,6 +1669,50 @@
 			"status": "active"
 		},
 		{
+			"id": "muse-spark-1.3",
+			"name": "Muse Spark 1.3",
+			"family": "muse",
+			"lab": "Meta",
+			"description": "Muse Spark 1.3 is a multimodal reasoning model from Meta for long-running agentic, multi-agent, and coding workflows. It improves long-horizon agent collaboration, instruction following, and coding efficiency relative to Muse Spark 1.2.",
+			"releaseDate": "2026-09-02",
+			"lastUpdated": "2026-09-02",
+			"openWeights": false,
+			"knowledgeCutoff": null,
+			"modalities": {
+				"input": [
+					"audio",
+					"image",
+					"pdf",
+					"text",
+					"video"
+				],
+				"output": [
+					"text"
+				]
+			},
+			"capabilities": {
+				"reasoning": true,
+				"toolCall": true,
+				"structuredOutput": true,
+				"temperature": true,
+				"attachment": true
+			},
+			"context": 1048576,
+			"outputLimit": 131072,
+			"cost": {
+				"input": 1.25,
+				"output": 4.25,
+				"cacheRead": 0.15,
+				"cacheWrite": null
+			},
+			"monthlyBudgetUsd": null,
+			"estimatedRequests": null,
+			"budgetNotes": null,
+			"inLiveCatalog": true,
+			"plan": "zen",
+			"status": "active"
+		},
+		{
 			"id": "claude-fable-5-1",
 			"name": "Claude Fable 5.1",
 			"family": "claude-fable",
@@ -1660,6 +1746,130 @@
 				"output": 50,
 				"cacheRead": 0.25,
 				"cacheWrite": 12.5
+			},
+			"monthlyBudgetUsd": null,
+			"estimatedRequests": null,
+			"budgetNotes": null,
+			"inLiveCatalog": true,
+			"plan": "zen",
+			"status": "active"
+		},
+		{
+			"id": "glm-5.3-flash",
+			"name": "GLM-5.3-Flash",
+			"family": "glm",
+			"lab": "Zhipu AI",
+			"description": "Native multimodal GLM model for efficient coding and long-horizon agent tasks",
+			"releaseDate": "2026-08-26",
+			"lastUpdated": "2026-08-26",
+			"openWeights": false,
+			"knowledgeCutoff": null,
+			"modalities": {
+				"input": [
+					"image",
+					"pdf",
+					"text",
+					"video"
+				],
+				"output": [
+					"text"
+				]
+			},
+			"capabilities": {
+				"reasoning": true,
+				"toolCall": true,
+				"structuredOutput": true,
+				"temperature": true,
+				"attachment": true
+			},
+			"context": 1000000,
+			"outputLimit": 131072,
+			"cost": {
+				"input": 0.15,
+				"output": 0.5,
+				"cacheRead": 0.03,
+				"cacheWrite": null
+			},
+			"monthlyBudgetUsd": null,
+			"estimatedRequests": null,
+			"budgetNotes": null,
+			"inLiveCatalog": true,
+			"plan": "zen",
+			"status": "active"
+		},
+		{
+			"id": "deepseek-v4-flash-vision-exp",
+			"name": "DeepSeek V4 Flash Vision Exp",
+			"family": "deepseek-flash",
+			"lab": "DeepSeek",
+			"description": "Experimental multimodal DeepSeek V4 Flash model for image understanding, coding, and agentic work",
+			"releaseDate": "2026-08-21",
+			"lastUpdated": "2026-08-21",
+			"openWeights": false,
+			"knowledgeCutoff": null,
+			"modalities": {
+				"input": [
+					"image",
+					"text"
+				],
+				"output": [
+					"text"
+				]
+			},
+			"capabilities": {
+				"reasoning": true,
+				"toolCall": true,
+				"structuredOutput": true,
+				"temperature": true,
+				"attachment": true
+			},
+			"context": 1000000,
+			"outputLimit": 384000,
+			"cost": {
+				"input": 0.14,
+				"output": 0.28,
+				"cacheRead": 0.028,
+				"cacheWrite": null
+			},
+			"monthlyBudgetUsd": null,
+			"estimatedRequests": null,
+			"budgetNotes": null,
+			"inLiveCatalog": true,
+			"plan": "zen",
+			"status": "active"
+		},
+		{
+			"id": "glm-5.3",
+			"name": "GLM-5.3",
+			"family": "glm",
+			"lab": "Zhipu AI",
+			"description": "Flagship GLM model for long-horizon coding, agents, and complex project delivery",
+			"releaseDate": "2026-08-14",
+			"lastUpdated": "2026-08-14",
+			"openWeights": true,
+			"knowledgeCutoff": null,
+			"modalities": {
+				"input": [
+					"text"
+				],
+				"output": [
+					"text"
+				]
+			},
+			"capabilities": {
+				"reasoning": true,
+				"toolCall": true,
+				"structuredOutput": true,
+				"temperature": true,
+				"attachment": false
+			},
+			"context": 1000000,
+			"outputLimit": 131072,
+			"cost": {
+				"input": 1.4,
+				"output": 4.4,
+				"cacheRead": 0.26,
+				"cacheWrite": null
 			},
 			"monthlyBudgetUsd": null,
 			"estimatedRequests": null,
