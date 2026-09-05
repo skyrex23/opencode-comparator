@@ -1,5 +1,5 @@
 {
-	"$schema": "Subscription tiers and request estimates from the official OpenCode Go documentation (https://opencode.ai/docs/go/). Update when the lineup or limits change.",
+	"description": "Subscription tiers and request estimates from the official OpenCode Go documentation (https://opencode.ai/docs/go/). Update when the lineup or limits change.",
 	"notes": "OpenCode Go bills in dollars. The hard caps are $12 / 5h, $30 / week, $60 / month, but each model is also capped to a per-model monthly allocation: $15 for premium models, $30 for select mid-tier, $60 for standard open coders. Request counts come from the official docs and assume a typical agent-coding request mix.",
 	"models": {
 		"grok-4.6": {
