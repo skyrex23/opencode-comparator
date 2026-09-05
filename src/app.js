@@ -58,14 +58,16 @@ const fmt = {
 	money(n) {
 		if (n == null) return "—";
 		if (n === 0) return "$0";
-		if (n < 0.01) return `$${n.toFixed(4)}`;
-		if (n < 1) return `$${n.toFixed(3)}`;
-		return `$${n.toFixed(2)}`;
+		const digits = n < 0.01 ? 4 : n < 1 ? 3 : 2;
+		return `$${n.toLocaleString(undefined, { minimumFractionDigits: digits, maximumFractionDigits: digits })}`;
 	},
 	tokens(n) {
 		if (n == null) return "—";
-		if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(n % 1_000_000 === 0 ? 0 : 2)}M`;
-		if (n >= 1000) return `${Math.round(n / 1000)}K`;
+		if (n >= 1_000_000) {
+			const v = n / 1_000_000;
+			return `${v.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })}M`;
+		}
+		if (n >= 1000) return `${Math.round(n / 1000).toLocaleString()}K`;
 		return String(n);
 	},
 	date(d) {
