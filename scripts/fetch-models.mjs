@@ -192,10 +192,10 @@ async function main() {
 	if (zenProvider && zenProvider.models) {
 		for (const [id, m] of Object.entries(zenProvider.models)) {
 			if (m.status === "deprecated") continue;
-			const inLive = liveZenIds.has(id);
+			const inLive = liveZenIds ? liveZenIds.has(id) : true;
 			if (isFree(m)) {
 				models.push(buildModel(m, { plan: "free", inLiveCatalog: inLive, budget: {} }));
-			} else if (inLive || m.status === "active") {
+			} else {
 				models.push(buildModel(m, { plan: "zen", inLiveCatalog: inLive, budget: {} }));
 			}
 		}
@@ -219,8 +219,13 @@ async function main() {
 	await mkdir(dirname(OUT), { recursive: true });
 	await writeFile(OUT, `${JSON.stringify(out, null, "\t")}\n`, "utf8");
 
-	const counts = models.reduce((acc, m) => ((acc[`${m.plan}:${m.status}`] = (acc[`${m.plan}:${m.status}`] || 0) + 1), acc), {});
-	console.log(`Wrote ${OUT}\n` + `  models total: ${models.length}\n` + `  plan:status counts: ${JSON.stringify(counts)}`);
+	const counts = models.reduce(
+		(acc, m) => ((acc[`${m.plan}:${m.status}`] = (acc[`${m.plan}:${m.status}`] || 0) + 1), acc),
+		{}
+	);
+	console.log(
+		`Wrote ${OUT}\n` + `  models total: ${models.length}\n` + `  plan:status counts: ${JSON.stringify(counts)}`
+	);
 }
 
 main().catch((err) => {

@@ -1191,11 +1191,17 @@ async function fetchLiveSnapshot() {
 	const budgets = budgetsRes.models || {};
 
 	const buildLiveModel = (id, m, plan, inLive) => {
-		let status;
+		let status = m.status || null;
 		if (plan === "go" || plan === "zen") {
-			status = inLive ? "active" : "preview-or-removed";
+			if (inLive === true) {
+				status = "active";
+			} else if (inLive === false) {
+				status = status || "preview-or-removed";
+			} else {
+				status = status || "active";
+			}
 		} else {
-			status = m.status || "active";
+			status = status || "active";
 		}
 		return {
 			id,
@@ -1237,16 +1243,16 @@ async function fetchLiveSnapshot() {
 
 	const models = [];
 	for (const [id, m] of Object.entries(goProvider.models)) {
-		const inLive = liveGoIds ? liveGoIds.has(id) : true;
+		const inLive = liveGoIds ? liveGoIds.has(id) : null;
 		models.push(buildLiveModel(id, m, "go", inLive));
 	}
 	if (zenProvider?.models) {
 		for (const [id, m] of Object.entries(zenProvider.models)) {
 			if (m.status === "deprecated") continue;
-			const inLive = liveZenIds ? liveZenIds.has(id) : false;
+			const inLive = liveZenIds ? liveZenIds.has(id) : null;
 			if (isFreeModel(m)) {
 				models.push(buildLiveModel(id, m, "free", inLive));
-			} else if (inLive || m.status === "active") {
+			} else {
 				models.push(buildLiveModel(id, m, "zen", inLive));
 			}
 		}
@@ -1267,6 +1273,11 @@ async function refreshFromNetwork() {
 	btn.classList.add("skeleton");
 	try {
 		const { models, liveCatalogReached, zenLiveCatalogReached } = await fetchLiveSnapshot();
+		if (!liveCatalogReached || !zenLiveCatalogReached) {
+			await loadSnapshot({ liveCatalogReached, zenLiveCatalogReached });
+			toast(`Live catalog unavailable — using cached snapshot (${STATE.data.models.length} models)`, "warn");
+			return;
+		}
 		STATE.data = {
 			fetchedAt: new Date().toISOString(),
 			sources: [
@@ -1283,8 +1294,7 @@ async function refreshFromNetwork() {
 		renderKpis();
 		renderBrand();
 		applyAndRender();
-		const note = liveCatalogReached ? "" : " · live catalog unavailable, trusted models.dev provider";
-		toast(`Refreshed · ${models.length} models${note}`, "ok");
+		toast(`Refreshed · ${models.length} models`, "ok");
 	} catch (e) {
 		console.error(e);
 		toast(`Refresh failed: ${e.message}. Using cached snapshot.`, "error");
@@ -1345,19 +1355,36 @@ function boot() {
 	$("#btn-refresh").addEventListener("click", refreshFromNetwork);
 }
 
-async function init() {
+async function loadSnapshot(meta) {
 	const url = snapshotUrl();
+	const res = await fetch(url, { cache: "no-store" });
+	if (!res.ok) throw new Error(`HTTP ${res.status} from ${url}`);
+	const json = await res.json();
+	if (!json?.models || !Array.isArray(json.models)) {
+		throw new Error("snapshot is missing the models array");
+	}
+	if (meta) {
+		json.sources = (json.sources || []).map((s) =>
+			s.name === "OpenCode Go catalog"
+				? { ...s, ok: meta.liveCatalogReached }
+				: s.name === "OpenCode Zen catalog"
+					? { ...s, ok: meta.zenLiveCatalogReached }
+					: s
+		);
+	}
+	STATE.data = json;
+	renderLabs();
+	renderKpis();
+	renderBrand();
+	applyAndRender();
+}
+
+async function init() {
 	try {
-		const res = await fetch(url, { cache: "no-store" });
-		if (!res.ok) throw new Error(`HTTP ${res.status} from ${url}`);
-		const json = await res.json();
-		if (!json?.models || !Array.isArray(json.models)) {
-			throw new Error("snapshot is missing the models array");
-		}
-		STATE.data = json;
+		await loadSnapshot();
 	} catch (e) {
 		console.error(e);
-		showBootError(`Could not load ${url}: ${e.message}`);
+		showBootError(`Could not load ${snapshotUrl()}: ${e.message}`);
 		return;
 	}
 	boot();
