@@ -405,7 +405,7 @@ code {
 
 .explainer__grid {
 	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+	grid-template-columns: repeat(4, minmax(0, 1fr));
 	gap: 16px;
 }
 
@@ -414,6 +414,7 @@ code {
 	background: var(--bg);
 	border: 1px solid var(--line-soft);
 	border-radius: var(--radius);
+	height: 100%;
 }
 
 .explainer__card h3 {
@@ -431,6 +432,18 @@ code {
 
 .explainer__card strong {
 	color: var(--text);
+}
+
+@media (max-width: 1100px) {
+	.explainer__grid {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+}
+
+@media (max-width: 640px) {
+	.explainer__grid {
+		grid-template-columns: 1fr;
+	}
 }
 
 /* --- Layout --- */
