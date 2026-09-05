@@ -38,6 +38,8 @@ const STATE = {
 		includeLegacy: false,
 		labs: new Set(),
 		minContext: 0,
+		maxContext: null,
+		minOutputPrice: 0,
 		maxOutputPrice: MAX_OUTPUT_PRICE,
 		reasoning: false,
 		tools: false,
@@ -62,10 +64,9 @@ const fmt = {
 	},
 	tokens(n) {
 		if (n == null) return "—";
-		const r = Math.round(n / 50000) * 50000;
-		if (r >= 1_000_000) return `${(r / 1_000_000).toFixed(r % 1_000_000 === 0 ? 0 : 2)}M`;
-		if (r >= 1000) return `${Math.round(r / 1000)}K`;
-		return String(r);
+		if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(n % 1_000_000 === 0 ? 0 : 2)}M`;
+		if (n >= 1000) return `${Math.round(n / 1000)}K`;
+		return String(n);
 	},
 	date(d) {
 		if (!d) return "—";
@@ -336,7 +337,10 @@ function applyFilters() {
 		}
 		if (f.labs.size > 0 && !f.labs.has(m.lab)) return false;
 		if (f.minContext > 0 && (m.context || 0) < f.minContext) return false;
-		if (f.maxOutputPrice < MAX_OUTPUT_PRICE && (m.cost?.output ?? 0) > f.maxOutputPrice) return false;
+		if (f.maxContext != null && (m.context || 0) > f.maxContext) return false;
+		const outCost = m.cost?.output ?? 0;
+		if (f.minOutputPrice > 0 && outCost < f.minOutputPrice) return false;
+		if (f.maxOutputPrice < MAX_OUTPUT_PRICE && outCost > f.maxOutputPrice) return false;
 		if (f.reasoning && !m.capabilities?.reasoning) return false;
 		if (f.tools && !m.capabilities?.toolCall) return false;
 		if (f.structured && !m.capabilities?.structuredOutput) return false;
@@ -409,14 +413,22 @@ function renderPills() {
 	const singlePlanLabels = { go: "Go only", zen: "Zen only", free: "Free only" };
 	const planKeys = Array.from(f.plans);
 	if (planKeys.length === 1 && singlePlanLabels[planKeys[0]]) {
-		const k = planKeys[0] === "go" ? "plan:zen,plan:free" : planKeys[0] === "zen" ? "plan:go,plan:free" : "plan:go,plan:zen";
+		const k =
+			planKeys[0] === "go"
+				? "plan:zen,plan:free"
+				: planKeys[0] === "zen"
+					? "plan:go,plan:free"
+					: "plan:go,plan:zen";
 		pills.push({ k, label: singlePlanLabels[planKeys[0]] });
 	} else if (f.plans.size === 0) pills.push({ k: "plans", label: "no plans selected" });
 	if (!f.activeOnly) pills.push({ k: "activeOnly", label: "show all" });
 	if (f.includeLegacy) pills.push({ k: "includeLegacy", label: "+ deprecated" });
 	for (const lab of f.labs) pills.push({ k: `lab:${lab}`, label: lab });
-	if (f.minContext > 0) pills.push({ k: "context", label: `ctx ≥ ${fmt.tokens(f.minContext)}` });
-	if (f.maxOutputPrice < MAX_OUTPUT_PRICE) pills.push({ k: "outputPrice", label: `out ≤ ${fmt.money(f.maxOutputPrice)}` });
+	if (f.minContext > 0) pills.push({ k: "contextMin", label: `ctx ≥ ${fmt.tokens(f.minContext)}` });
+	if (f.maxContext != null) pills.push({ k: "contextMax", label: `ctx ≤ ${fmt.tokens(f.maxContext)}` });
+	if (f.minOutputPrice > 0) pills.push({ k: "outputPriceMin", label: `out ≥ ${fmt.money(f.minOutputPrice)}` });
+	if (f.maxOutputPrice < MAX_OUTPUT_PRICE)
+		pills.push({ k: "outputPrice", label: `out ≤ ${fmt.money(f.maxOutputPrice)}` });
 	if (f.reasoning) pills.push({ k: "reasoning", label: "reasoning" });
 	if (f.tools) pills.push({ k: "tools", label: "tools" });
 	if (f.structured) pills.push({ k: "structured", label: "structured" });
@@ -904,15 +916,34 @@ function bindFilters() {
 		STATE.filters.includeLegacy = e.target.checked;
 		applyAndRender();
 	});
-	$("#f-context").addEventListener("input", (e) => {
-		STATE.filters.minContext = Number(e.target.value);
-		$("#f-context-out").textContent = STATE.filters.minContext ? fmt.tokens(STATE.filters.minContext) : "any";
+	$("#f-context-min").addEventListener("change", (e) => {
+		STATE.filters.minContext = Number(e.target.value) || 0;
 		applyAndRender();
 	});
-	$("#f-max-output-price").addEventListener("input", (e) => {
-		const v = Number(e.target.value);
-		STATE.filters.maxOutputPrice = v >= MAX_OUTPUT_PRICE ? MAX_OUTPUT_PRICE : v;
-		$("#f-max-output-price-out").textContent = v >= MAX_OUTPUT_PRICE ? "any" : `$${v.toFixed(2)}`;
+	$("#f-context-max").addEventListener("change", (e) => {
+		const v = e.target.value;
+		STATE.filters.maxContext = v ? Number(v) : null;
+		applyAndRender();
+	});
+	$("#f-output-min").addEventListener("input", (e) => {
+		const raw = e.target.value.trim();
+		if (raw === "") {
+			STATE.filters.minOutputPrice = 0;
+		} else {
+			const v = Number(raw);
+			STATE.filters.minOutputPrice = Number.isFinite(v) && v >= 0 ? v : 0;
+		}
+		applyAndRender();
+	});
+	$("#f-output-max").addEventListener("input", (e) => {
+		const raw = e.target.value.trim();
+		if (raw === "") {
+			STATE.filters.maxOutputPrice = MAX_OUTPUT_PRICE;
+		} else {
+			const v = Number(raw);
+			STATE.filters.maxOutputPrice =
+				Number.isFinite(v) && v >= 0 ? Math.min(v, MAX_OUTPUT_PRICE) : MAX_OUTPUT_PRICE;
+		}
 		applyAndRender();
 	});
 	for (const id of ["reasoning", "tools", "structured", "attachment", "open"]) {
@@ -976,6 +1007,8 @@ function resetFilters() {
 		includeLegacy: false,
 		labs: new Set(),
 		minContext: 0,
+		maxContext: null,
+		minOutputPrice: 0,
 		maxOutputPrice: MAX_OUTPUT_PRICE,
 		reasoning: false,
 		tools: false,
@@ -991,10 +1024,10 @@ function resetFilters() {
 	$("#f-plan-free").checked = true;
 	$("#f-active").checked = true;
 	$("#f-legacy").checked = false;
-	$("#f-context").value = 0;
-	$("#f-context-out").textContent = "any";
-	$("#f-max-output-price").value = MAX_OUTPUT_PRICE;
-	$("#f-max-output-price-out").textContent = "any";
+	$("#f-context-min").value = "0";
+	$("#f-context-max").value = "";
+	$("#f-output-min").value = "";
+	$("#f-output-max").value = "";
 	$("#f-reasoning").checked = false;
 	$("#f-tools").checked = false;
 	$("#f-structured").checked = false;
@@ -1039,14 +1072,18 @@ function clearFilter(k) {
 	} else if (k === "includeLegacy") {
 		STATE.filters.includeLegacy = false;
 		$("#f-legacy").checked = false;
-	} else if (k === "context") {
+	} else if (k === "contextMin") {
 		STATE.filters.minContext = 0;
-		$("#f-context").value = 0;
-		$("#f-context-out").textContent = "any";
+		$("#f-context-min").value = "0";
+	} else if (k === "contextMax") {
+		STATE.filters.maxContext = null;
+		$("#f-context-max").value = "";
+	} else if (k === "outputPriceMin") {
+		STATE.filters.minOutputPrice = 0;
+		$("#f-output-min").value = "";
 	} else if (k === "outputPrice") {
 		STATE.filters.maxOutputPrice = MAX_OUTPUT_PRICE;
-		$("#f-max-output-price").value = MAX_OUTPUT_PRICE;
-		$("#f-max-output-price-out").textContent = "any";
+		$("#f-output-max").value = "";
 	} else if (k.startsWith("lab:")) {
 		const lab = k.slice(4);
 		STATE.filters.labs.delete(lab);
@@ -1063,7 +1100,9 @@ function applyQuickPick(name) {
 		for (const [k, v] of Object.entries(patch)) STATE.filters[k] = v;
 	};
 	clearFilter("search");
-	clearFilter("context");
+	clearFilter("contextMin");
+	clearFilter("contextMax");
+	clearFilter("outputPriceMin");
 	clearFilter("outputPrice");
 	clearFilter("activeOnly");
 	clearFilter("includeLegacy");
@@ -1082,27 +1121,31 @@ function applyQuickPick(name) {
 				activeOnly: true,
 				reasoning: true,
 				openWeights: false,
+				minOutputPrice: 0,
 				maxOutputPrice: MAX_OUTPUT_PRICE,
 				sort: { field: "valueScore", dir: "desc" }
 			});
-			STATE.filters.minContext = 500000;
-			$("#f-context").value = 500000;
-			$("#f-context-out").textContent = "500K";
+			STATE.filters.minContext = 512000;
+			$("#f-context-min").value = "512000";
 			break;
 		case "workhorse":
-			set({ activeOnly: true, maxOutputPrice: 1.5, sort: { field: "requestsMonth", dir: "desc" } });
+			set({
+				activeOnly: true,
+				minOutputPrice: 0,
+				maxOutputPrice: 1.5,
+				sort: { field: "requestsMonth", dir: "desc" }
+			});
+			$("#f-output-max").value = "1.5";
 			break;
 		case "longctx":
 			set({ activeOnly: true, sort: { field: "context", dir: "desc" } });
 			STATE.filters.minContext = 1000000;
-			$("#f-context").value = 1000000;
-			$("#f-context-out").textContent = "1M";
+			$("#f-context-min").value = "1000000";
 			break;
 		case "budget":
 			set({ activeOnly: true, sort: { field: "outputCost", dir: "asc" } });
 			STATE.filters.maxOutputPrice = 1;
-			$("#f-max-output-price").value = 1;
-			$("#f-max-output-price-out").textContent = "$1.00";
+			$("#f-output-max").value = "1";
 			break;
 		case "allround":
 			set({ activeOnly: true, reasoning: true, tools: true, sort: { field: "valueScore", dir: "desc" } });
@@ -1186,7 +1229,7 @@ async function fetchLiveSnapshot() {
 				cacheRead: m.cost?.cache_read ?? null,
 				cacheWrite: m.cost?.cache_write ?? null
 			},
-			monthlyBudgetUsd: plan === "go" ? budgets[id]?.monthlyBudgetUsd ?? null : null,
+			monthlyBudgetUsd: plan === "go" ? (budgets[id]?.monthlyBudgetUsd ?? null) : null,
 			estimatedRequests: plan === "go" ? budgets[id]?.estimatedRequests || null : null,
 			budgetNotes: plan === "go" ? budgets[id]?.notes || null : null,
 			inLiveCatalog: inLive,

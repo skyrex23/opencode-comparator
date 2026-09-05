@@ -512,6 +512,7 @@ code {
 
 input[type="search"],
 input[type="text"],
+input[type="number"],
 select {
 	background: var(--bg);
 	border: 1px solid var(--line);
@@ -526,6 +527,7 @@ select {
 
 input[type="search"]:focus,
 input[type="text"]:focus,
+input[type="number"]:focus,
 select:focus {
 	outline: none;
 	border-color: var(--accent);

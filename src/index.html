@@ -198,26 +198,53 @@
 
 					<div class="filters__row filters__row--split">
 						<label class="field">
-							<span class="field__label">Context &ge;</span>
-							<div class="range">
-								<input id="f-context" type="range" min="0" max="1000000" step="50000" value="0" />
-								<div class="range__labels">
-									<span>0</span>
-									<output id="f-context-out">any</output>
-									<span>1M</span>
-								</div>
-							</div>
+							<span class="field__label">Min context</span>
+							<select id="f-context-min">
+								<option value="0">Any</option>
+								<option value="128000">128K</option>
+								<option value="256000">256K</option>
+								<option value="512000">512K</option>
+								<option value="1000000">1M</option>
+								<option value="1050000">1.05M</option>
+							</select>
 						</label>
 						<label class="field">
-							<span class="field__label">Output $/1M &le;</span>
-							<div class="range">
-								<input id="f-max-output-price" type="range" min="0" max="200" step="0.1" value="200" />
-								<div class="range__labels">
-									<span>$0</span>
-									<output id="f-max-output-price-out">any</output>
-									<span>$200</span>
-								</div>
-							</div>
+							<span class="field__label">Max context</span>
+							<select id="f-context-max">
+								<option value="">Any</option>
+								<option value="128000">128K</option>
+								<option value="256000">256K</option>
+								<option value="512000">512K</option>
+								<option value="1000000">1M</option>
+								<option value="1050000">1.05M</option>
+							</select>
+						</label>
+					</div>
+
+					<div class="filters__row filters__row--split">
+						<label class="field">
+							<span class="field__label">Min output $/1M</span>
+							<input
+								id="f-output-min"
+								type="number"
+								inputmode="decimal"
+								min="0"
+								max="200"
+								step="0.01"
+								placeholder="Any"
+							/>
+						</label>
+						<label class="field">
+							<span class="field__label">Max output $/1M</span>
+							<input
+								id="f-output-max"
+								type="number"
+								inputmode="decimal"
+								min="0"
+								max="200"
+								step="0.01"
+								placeholder="Any"
+							/>
 						</label>
 					</div>
 
