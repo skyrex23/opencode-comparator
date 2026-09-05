@@ -984,15 +984,21 @@ function bindFilters() {
 	});
 	$("#cmp-open").addEventListener("click", openCompare);
 
-	$("#cta-explore").addEventListener("click", () => {
-		$("#lineup").scrollIntoView({ behavior: "smooth", block: "start" });
-	});
 	$("#cta-how").addEventListener("click", () => {
+		$("#explainer-zen").hidden = true;
 		$("#explainer").hidden = false;
 		$("#explainer").scrollIntoView({ behavior: "smooth", block: "start" });
 	});
+	$("#cta-how-zen").addEventListener("click", () => {
+		$("#explainer").hidden = true;
+		$("#explainer-zen").hidden = false;
+		$("#explainer-zen").scrollIntoView({ behavior: "smooth", block: "start" });
+	});
 	$("#explainer-close").addEventListener("click", () => {
 		$("#explainer").hidden = true;
+	});
+	$("#explainer-zen-close").addEventListener("click", () => {
+		$("#explainer-zen").hidden = true;
 	});
 
 	$("#f-reset").addEventListener("click", resetFilters);
