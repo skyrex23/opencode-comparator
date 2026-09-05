@@ -43,7 +43,8 @@ const STATE = {
 		structured: false,
 		attachment: false,
 		openWeights: false,
-		sort: "requestsMonth-desc"
+		sort: { field: "requestsMonth", dir: "desc" },
+		hiddenColumns: new Set()
 	}
 };
 
@@ -191,32 +192,122 @@ function valueCell(m) {
 	</div>`;
 }
 
+const COLUMNS = [
+	{
+		id: "name",
+		label: "Model",
+		thClass: "th-model",
+		sortable: true,
+		hideable: false,
+		defaultDir: "asc",
+		sortKey: (m) => m.name.toLowerCase(),
+		cellHtml: (m) => `
+			<div class="model-cell">
+				<span class="model-cell__name" data-detail="${m.id}">${m.name}</span>
+				<span class="model-cell__meta">
+					${planTag(m)} ${statusTag(m)} ${weightsTag(m)}
+					<span class="dot">·</span>
+					<span>${m.lab || "—"}</span>
+					${m.releaseDate ? `<span class="dot">·</span><span>${fmt.date(m.releaseDate)}</span>` : ""}
+				</span>
+			</div>`
+	},
+	{
+		id: "inputCost",
+		label: "In $/1M",
+		thClass: "th-cost num",
+		sortable: true,
+		defaultDir: "asc",
+		sortKey: (m) => (m.cost?.input != null ? m.cost.input : Infinity),
+		cellHtml: (m) => `<span class="${m.cost?.input != null ? "" : "num--dim"}">${fmt.money(m.cost?.input)}</span>`
+	},
+	{
+		id: "outputCost",
+		label: "Out $/1M",
+		thClass: "th-cost num",
+		sortable: true,
+		defaultDir: "asc",
+		sortKey: (m) => (m.cost?.output != null ? m.cost.output : Infinity),
+		cellHtml: (m) => `<span class="${m.cost?.output != null ? "" : "num--dim"}">${fmt.money(m.cost?.output)}</span>`
+	},
+	{
+		id: "cacheRead",
+		label: "Cache read",
+		thClass: "th-cost num",
+		sortable: false,
+		cellHtml: (m) =>
+			`<span class="${m.cost?.cacheRead != null ? "" : "num--dim"}">${fmt.money(m.cost?.cacheRead)}</span>`
+	},
+	{
+		id: "context",
+		label: "Context",
+		thClass: "th-context",
+		sortable: true,
+		defaultDir: "desc",
+		sortKey: (m) => m.context ?? 0,
+		cellHtml: (m) => contextBar(m)
+	},
+	{
+		id: "tier",
+		label: "Tier",
+		thClass: "th-budget",
+		sortable: false,
+		cellHtml: (m) => tierTag(m)
+	},
+	{
+		id: "requestsMonth",
+		label: "Req / mo",
+		thClass: "th-requests num",
+		sortable: true,
+		defaultDir: "desc",
+		sortKey: (m) => m.estimatedRequests?.monthly ?? 0,
+		cellHtml: (m) => {
+			const monthly = m.estimatedRequests?.monthly;
+			return `<span class="${monthly ? "num--strong" : "num--dim"}">${monthly?.toLocaleString() ?? "—"}</span>`;
+		}
+	},
+	{
+		id: "caps",
+		label: "Caps",
+		thClass: "th-caps",
+		sortable: false,
+		cellHtml: (m) => `<div class="caps">${capabilityIcons(m)}</div>`
+	},
+	{
+		id: "releaseDate",
+		label: "Released",
+		thClass: "th-date",
+		sortable: true,
+		defaultDir: "desc",
+		sortKey: (m) => m.releaseDate || "",
+		cellHtml: (m) => `<span class="${m.releaseDate ? "" : "num--dim"}">${fmt.date(m.releaseDate)}</span>`
+	},
+	{
+		id: "valueScore",
+		label: "Value",
+		thClass: "th-score",
+		sortable: true,
+		defaultDir: "desc",
+		sortKey: (m) => valueScore(m),
+		cellHtml: (m) => valueCell(m)
+	}
+];
+
+const COL_BY_ID = Object.fromEntries(COLUMNS.map((c) => [c.id, c]));
+
 function rowHTML(m) {
 	const req = m.estimatedRequests || {};
 	const selected = STATE.selected.has(m.id) ? "is-selected" : "";
 	const legacyCls = m.status === "legacy" ? "is-legacy" : m.status === "deprecated" ? "is-deprecated" : "";
+	const cells = COLUMNS.map((c) => {
+		const hidden = STATE.filters.hiddenColumns.has(c.id) ? " is-hidden" : "";
+		const cls = c.thClass ? ` class="${c.thClass}${hidden}"` : ` class="${hidden.trim()}"`;
+		return `<td data-col="${c.id}"${cls}>${c.cellHtml(m)}</td>`;
+	}).join("");
 	return `
 		<tr class="${selected} ${legacyCls}" data-id="${m.id}">
 			<td class="th-check"><input type="checkbox" data-cmp="${m.id}" ${STATE.selected.has(m.id) ? "checked" : ""} /></td>
-			<td class="th-model">
-				<div class="model-cell">
-					<span class="model-cell__name" data-detail="${m.id}">${m.name}</span>
-					<span class="model-cell__meta">
-						${planTag(m)} ${statusTag(m)} ${weightsTag(m)}
-						<span class="dot">·</span>
-						<span>${m.lab || "—"}</span>
-						${m.releaseDate ? `<span class="dot">·</span><span>${fmt.date(m.releaseDate)}</span>` : ""}
-					</span>
-				</div>
-			</td>
-			<td class="num ${m.cost?.input != null ? "" : "num--dim"}">${fmt.money(m.cost?.input)}</td>
-			<td class="num ${m.cost?.output != null ? "" : "num--dim"}">${fmt.money(m.cost?.output)}</td>
-			<td class="num ${m.cost?.cacheRead != null ? "" : "num--dim"}">${fmt.money(m.cost?.cacheRead)}</td>
-			<td>${contextBar(m)}</td>
-			<td>${tierTag(m)}</td>
-			<td class="num ${req.monthly ? "num--strong" : "num--dim"}">${req.monthly?.toLocaleString() ?? "—"}</td>
-			<td><div class="caps">${capabilityIcons(m)}</div></td>
-			<td>${valueCell(m)}</td>
+			${cells}
 		</tr>`;
 }
 
@@ -290,43 +381,21 @@ function applyFilters() {
 		return true;
 	});
 
-	const [field, dir] = f.sort.split("-");
-	const sign = dir === "asc" ? 1 : -1;
-	arr.sort((a, b) => {
-		let va, vb;
-		switch (field) {
-			case "outputCost":
-				va = a.cost?.output ?? Infinity;
-				vb = b.cost?.output ?? Infinity;
-				break;
-			case "inputCost":
-				va = a.cost?.input ?? Infinity;
-				vb = b.cost?.input ?? Infinity;
-				break;
-			case "context":
-				va = a.context ?? 0;
-				vb = b.context ?? 0;
-				break;
-			case "releaseDate":
-				va = a.releaseDate || "";
-				vb = b.releaseDate || "";
-				break;
-			case "requestsMonth":
-				va = a.estimatedRequests?.monthly ?? 0;
-				vb = b.estimatedRequests?.monthly ?? 0;
-				break;
-			case "valueScore":
-				va = valueScore(a);
-				vb = valueScore(b);
-				break;
-			default:
-				va = a.id;
-				vb = b.id;
-		}
-		if (va < vb) return -1 * sign;
-		if (va > vb) return 1 * sign;
-		return a.id.localeCompare(b.id);
-	});
+	const s = f.sort;
+	const col = s && COL_BY_ID[s.field];
+	const sign = s?.dir === "asc" ? 1 : -1;
+	if (col && col.sortKey) {
+		arr.sort((a, b) => {
+			const va = col.sortKey(a);
+			const vb = col.sortKey(b);
+			if (va == null && vb == null) return a.id.localeCompare(b.id);
+			if (va == null) return 1;
+			if (vb == null) return -1;
+			if (va < vb) return -1 * sign;
+			if (va > vb) return 1 * sign;
+			return a.id.localeCompare(b.id);
+		});
+	}
 
 	STATE.filtered = arr;
 }
@@ -356,15 +425,25 @@ function render() {
 	renderPills();
 	renderCompareBar();
 	updateSortHeader();
+	applyColumnVisibility();
 	bindRowEvents();
 }
 
 function updateSortHeader() {
 	const current = STATE.filters.sort;
 	$$("th[data-sort]").forEach((th) => {
-		const v = th.getAttribute("data-sort");
-		th.classList.toggle("is-sorted", v === current);
-		th.classList.toggle("is-asc", v === current && v.endsWith("-asc"));
+		const field = th.getAttribute("data-sort");
+		const isActive = current && current.field === field;
+		th.classList.toggle("is-sorted", !!isActive);
+		th.classList.toggle("is-asc", !!isActive && current.dir === "asc");
+		th.classList.toggle("is-desc", !!isActive && current.dir === "desc");
+	});
+}
+
+function applyColumnVisibility() {
+	$$(".table th[data-col], .table td[data-col]").forEach((el) => {
+		const id = el.getAttribute("data-col");
+		el.classList.toggle("is-hidden", isHideable(id) && STATE.filters.hiddenColumns.has(id));
 	});
 }
 
@@ -440,6 +519,116 @@ function bindRowEvents() {
 			openDetail(el.getAttribute("data-detail"));
 		});
 	});
+}
+
+const HIDDEN_COLUMNS_KEY = "ai-comparator.hiddenColumns";
+
+function loadHiddenColumns() {
+	try {
+		const raw = localStorage.getItem(HIDDEN_COLUMNS_KEY);
+		if (!raw) return;
+		const arr = JSON.parse(raw);
+		if (Array.isArray(arr)) STATE.filters.hiddenColumns = new Set(arr.filter((id) => isHideable(id)));
+	} catch (_) {
+		// ignore corrupted storage
+	}
+}
+
+function saveHiddenColumns() {
+	try {
+		localStorage.setItem(HIDDEN_COLUMNS_KEY, JSON.stringify([...STATE.filters.hiddenColumns]));
+	} catch (_) {
+		// ignore quota errors
+	}
+}
+
+function isHideable(id) {
+	const col = COL_BY_ID[id];
+	return !!col && col.hideable !== false;
+}
+
+function bindSortHeaders() {
+	$$("th[data-sort]").forEach((th) => {
+		th.addEventListener("click", () => {
+			const field = th.getAttribute("data-sort");
+			const col = COL_BY_ID[field];
+			if (!col || !col.sortable) return;
+			const current = STATE.filters.sort;
+			let next;
+			if (current && current.field === field) {
+				if (current.dir === col.defaultDir) {
+					next = { field, dir: col.defaultDir === "asc" ? "desc" : "asc" };
+				} else {
+					next = null;
+				}
+			} else {
+				next = { field, dir: col.defaultDir };
+			}
+			STATE.filters.sort = next;
+			applyAndRender();
+		});
+	});
+}
+
+function bindColumnsToggle() {
+	const btn = $("#btn-columns");
+	const pop = $("#columns-popover");
+	if (!btn || !pop) return;
+	const close = () => {
+		pop.hidden = true;
+		btn.setAttribute("aria-expanded", "false");
+	};
+	const open = () => {
+		renderColumnsList();
+		pop.hidden = false;
+		btn.setAttribute("aria-expanded", "true");
+	};
+	btn.addEventListener("click", (e) => {
+		e.stopPropagation();
+		if (pop.hidden) open();
+		else close();
+	});
+	document.addEventListener("click", (e) => {
+		if (pop.hidden) return;
+		if (pop.contains(e.target) || btn.contains(e.target)) return;
+		close();
+	});
+	document.addEventListener("keydown", (e) => {
+		if (e.key === "Escape" && !pop.hidden) close();
+	});
+	pop.addEventListener("change", (e) => {
+		const cb = e.target.closest("input[data-col-toggle]");
+		if (!cb) return;
+		const id = cb.getAttribute("data-col-toggle");
+		if (!isHideable(id)) {
+			cb.checked = true;
+			return;
+		}
+		if (cb.checked) STATE.filters.hiddenColumns.delete(id);
+		else STATE.filters.hiddenColumns.add(id);
+		saveHiddenColumns();
+		applyAndRender();
+	});
+}
+
+function renderColumnsList() {
+	const pop = $("#columns-popover");
+	if (!pop) return;
+	const hidden = STATE.filters.hiddenColumns;
+	pop.innerHTML = `
+		<div class="col-popover__head">Columns</div>
+		<div class="col-popover__list">
+			${COLUMNS.map((c) => {
+				const locked = c.hideable === false;
+				const checked = locked || !hidden.has(c.id);
+				const disabledAttr = locked ? "disabled" : "";
+				return `
+				<label class="col-popover__item ${locked ? "is-locked" : ""}">
+					<input type="checkbox" data-col-toggle="${c.id}" ${checked ? "checked" : ""} ${disabledAttr} />
+					<span>${c.label}${locked ? ` <em>(always shown)</em>` : ""}</span>
+				</label>`;
+			}).join("")}
+		</div>`;
 }
 
 function renderLabs() {
@@ -766,10 +955,9 @@ function bindFilters() {
 			applyAndRender();
 		});
 	}
-	$("#f-sort").addEventListener("change", (e) => {
-		STATE.filters.sort = e.target.value;
-		applyAndRender();
-	});
+
+	bindSortHeaders();
+	bindColumnsToggle();
 
 	$$("[data-clear]").forEach((btn) => {
 		btn.addEventListener("click", () => {
@@ -801,17 +989,6 @@ function bindFilters() {
 				b.setAttribute("aria-pressed", String(active));
 			});
 			render();
-		});
-	});
-
-	$$("th[data-sort]").forEach((th) => {
-		th.addEventListener("click", () => {
-			const v = th.getAttribute("data-sort");
-			const [field, dir] = v.split("-");
-			const newDir = dir === "asc" ? "desc" : "asc";
-			STATE.filters.sort = `${field}-${newDir}`;
-			$("#f-sort").value = STATE.filters.sort;
-			applyAndRender();
 		});
 	});
 
@@ -850,7 +1027,8 @@ function resetFilters() {
 		structured: false,
 		attachment: false,
 		openWeights: false,
-		sort: "requestsMonth-desc"
+		sort: { field: "requestsMonth", dir: "desc" },
+		hiddenColumns: new Set()
 	};
 	$("#f-search").value = "";
 	$("#f-plan-go").checked = true;
@@ -866,7 +1044,6 @@ function resetFilters() {
 	$("#f-structured").checked = false;
 	$("#f-attachment").checked = false;
 	$("#f-open").checked = false;
-	$("#f-sort").value = STATE.filters.sort;
 	$$("[data-lab]").forEach((b) => b.setAttribute("aria-pressed", "false"));
 	applyAndRender();
 }
@@ -935,28 +1112,34 @@ function applyQuickPick(name) {
 
 	switch (name) {
 		case "premium":
-			set({ activeOnly: true, reasoning: true, openWeights: false, maxOutputPrice: 15, sort: "valueScore-desc" });
+			set({
+				activeOnly: true,
+				reasoning: true,
+				openWeights: false,
+				maxOutputPrice: 15,
+				sort: { field: "valueScore", dir: "desc" }
+			});
 			STATE.filters.minContext = 500000;
 			$("#f-context").value = 500000;
 			$("#f-context-out").textContent = "500K";
 			break;
 		case "workhorse":
-			set({ activeOnly: true, maxOutputPrice: 1.5, sort: "requestsMonth-desc" });
+			set({ activeOnly: true, maxOutputPrice: 1.5, sort: { field: "requestsMonth", dir: "desc" } });
 			break;
 		case "longctx":
-			set({ activeOnly: true, sort: "context-desc" });
+			set({ activeOnly: true, sort: { field: "context", dir: "desc" } });
 			STATE.filters.minContext = 1000000;
 			$("#f-context").value = 1000000;
 			$("#f-context-out").textContent = "1M";
 			break;
 		case "budget":
-			set({ activeOnly: true, sort: "outputCost-asc" });
+			set({ activeOnly: true, sort: { field: "outputCost", dir: "asc" } });
 			STATE.filters.maxOutputPrice = 1;
 			$("#f-max-output-price").value = 1;
 			$("#f-max-output-price-out").textContent = "$1.00";
 			break;
 		case "allround":
-			set({ activeOnly: true, reasoning: true, tools: true, sort: "valueScore-desc" });
+			set({ activeOnly: true, reasoning: true, tools: true, sort: { field: "valueScore", dir: "desc" } });
 			break;
 	}
 
@@ -967,7 +1150,6 @@ function applyQuickPick(name) {
 	$("#f-structured").checked = STATE.filters.structured;
 	$("#f-attachment").checked = STATE.filters.attachment;
 	$("#f-open").checked = STATE.filters.openWeights;
-	$("#f-sort").value = STATE.filters.sort;
 }
 
 async function tryFetchLiveCatalog() {
@@ -1162,6 +1344,7 @@ function showBootError(msg) {
 }
 
 function boot() {
+	loadHiddenColumns();
 	renderLabs();
 	renderKpis();
 	renderBrand();

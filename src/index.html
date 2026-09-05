@@ -285,18 +285,24 @@
 							</button>
 							<button class="seg__btn" data-view="cards" type="button" aria-pressed="false">Cards</button>
 						</div>
-						<label class="field field--inline">
-							<span class="field__label">Sort</span>
-							<select id="f-sort">
-								<option value="requestsMonth-desc">Requests / month (high to low)</option>
-								<option value="outputCost-asc">Output $/1M (low to high)</option>
-								<option value="outputCost-desc">Output $/1M (high to low)</option>
-								<option value="inputCost-asc">Input $/1M (low to high)</option>
-								<option value="context-desc">Context (high to low)</option>
-								<option value="releaseDate-desc">Release date (newest)</option>
-								<option value="valueScore-desc">Value score (best value)</option>
-							</select>
-						</label>
+						<div class="col-toggle">
+							<button
+								id="btn-columns"
+								class="btn btn--ghost btn--small"
+								type="button"
+								aria-haspopup="dialog"
+								aria-expanded="false"
+							>
+								Columns
+							</button>
+							<div
+								id="columns-popover"
+								class="col-popover"
+								role="dialog"
+								aria-label="Toggle columns"
+								hidden
+							></div>
+						</div>
 					</div>
 				</div>
 
@@ -318,15 +324,22 @@
 								<th class="th-check" scope="col">
 									<input id="cmp-all" type="checkbox" title="Add all visible" />
 								</th>
-								<th scope="col" class="th-model" data-sort="name">Model</th>
-								<th scope="col" class="th-cost" data-sort="inputCost-asc">In $/1M</th>
-								<th scope="col" class="th-cost" data-sort="outputCost-asc">Out $/1M</th>
-								<th scope="col" class="th-cost">Cache read</th>
-								<th scope="col" class="th-context" data-sort="context-desc">Context</th>
-								<th scope="col" class="th-budget">Tier</th>
-								<th scope="col" class="th-requests" data-sort="requestsMonth-desc">Req / mo</th>
-								<th scope="col" class="th-caps">Caps</th>
-								<th scope="col" class="th-score" data-sort="valueScore-desc">Value</th>
+								<th scope="col" class="th-model" data-col="name" data-sort="name">Model</th>
+								<th scope="col" class="th-cost" data-col="inputCost" data-sort="inputCost">In $/1M</th>
+								<th scope="col" class="th-cost" data-col="outputCost" data-sort="outputCost">
+									Out $/1M
+								</th>
+								<th scope="col" class="th-cost" data-col="cacheRead">Cache read</th>
+								<th scope="col" class="th-context" data-col="context" data-sort="context">Context</th>
+								<th scope="col" class="th-budget" data-col="tier">Tier</th>
+								<th scope="col" class="th-requests" data-col="requestsMonth" data-sort="requestsMonth">
+									Req / mo
+								</th>
+								<th scope="col" class="th-caps" data-col="caps">Caps</th>
+								<th scope="col" class="th-date" data-col="releaseDate" data-sort="releaseDate">
+									Released
+								</th>
+								<th scope="col" class="th-score" data-col="valueScore" data-sort="valueScore">Value</th>
 							</tr>
 						</thead>
 						<tbody id="models-body"></tbody>
