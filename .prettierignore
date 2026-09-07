@@ -1,0 +1,4 @@
+# Generated snapshot from `scripts/fetch-models.mjs`. It is rewritten verbatim by `npm run refresh`
+# (and the in-browser "Refresh data" button), so Prettier should not touch it — otherwise every
+# refresh produces ~600 lines of cosmetic churn from the `printWidth: 120` array collapse.
+data/models.json
