@@ -1,5 +1,5 @@
 {
-	"fetchedAt": "2026-09-05T18:29:11.891Z",
+	"fetchedAt": "2026-09-07T15:35:29.415Z",
 	"sources": [
 		{
 			"name": "models.dev (api.json)",
@@ -1591,7 +1591,7 @@
 			"releaseDate": "2026-09-04",
 			"lastUpdated": "2026-09-04",
 			"openWeights": false,
-			"knowledgeCutoff": null,
+			"knowledgeCutoff": "2026-04-30",
 			"modalities": {
 				"input": [
 					"image",
