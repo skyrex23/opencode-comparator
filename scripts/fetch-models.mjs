@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 /**
- * Fetch OpenCode Go model metadata from public sources and merge it with the
- * curated subscription-budget data in data/budgets.json. Output: data/models.json
+ * Fetch OpenCode model metadata (free tier, Go subscription and Zen
+ * pay-as-you-go) from public sources and merge it with the curated
+ * subscription-budget data in data/budgets.json. Output: data/models.json
  *
  * Sources:
  *   - https://models.dev/api.json                       (model specs, pricing, capabilities)
@@ -31,7 +32,7 @@ async function fetchJson(url) {
 	try {
 		const res = await fetch(url, {
 			signal: ctrl.signal,
-			headers: { Accept: "application/json", "User-Agent": "opencode-go-comparator/0.1" }
+			headers: { Accept: "application/json", "User-Agent": "opencode-comparator/0.1" }
 		});
 		if (!res.ok) {
 			throw new Error(`HTTP ${res.status} ${res.statusText} for ${url}`);

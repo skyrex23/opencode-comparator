@@ -1,8 +1,8 @@
 {
-	"name": "opencode-go-comparator",
+	"name": "opencode-comparator",
 	"version": "0.1.0",
 	"private": true,
-	"description": "Compare OpenCode Go models, pricing, and value for coding tasks.",
+	"description": "Compare coding models available through OpenCode Go, Zen and the free tier — pricing, context, capabilities and value for money.",
 	"type": "module",
 	"scripts": {
 		"refresh": "node scripts/fetch-models.mjs",

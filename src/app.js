@@ -1,12 +1,13 @@
 /**
- * OpenCode Go Comparator
+ * OpenCode Comparator
  *
  * Loads the snapshot from data/models.json and renders a sortable, filterable
- * table of every Go model with its price, context, capabilities and value for
- * coding. Up to 4 rows can be pinned for a side-by-side comparison.
+ * table of every coding model across the free tier, Go subscription and Zen
+ * pay-as-you-go gateway — price, context, capabilities and value for coding.
+ * Up to 4 rows can be pinned for a side-by-side comparison.
  *
- * The header "Refresh data" button re-fetches the live OpenCode Go catalog and
- * models.dev metadata in the browser and rebuilds the UI without a reload.
+ * The header "Refresh data" button re-fetches the OpenCode Go and Zen catalogs
+ * plus models.dev metadata in the browser and rebuilds the UI without a reload.
  */
 
 const ORIGIN = typeof window !== "undefined" ? window.location.origin : "";
