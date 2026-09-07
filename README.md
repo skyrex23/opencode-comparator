@@ -1,89 +1,59 @@
 # OpenCode Comparator
 
-A static web app to compare every model in the [OpenCode Go](https://opencode.ai/docs/go/) $10/month subscription and
-the [OpenCode Zen](https://opencode.ai/docs/zen/) pay-as-you-go gateway, with pricing, context window, capabilities and
-value-for-money metrics for coding tasks.
+A single-page web app to compare the coding models available through [OpenCode Go](https://opencode.ai/docs/go/) (flat
+$10/month), [OpenCode Zen](https://opencode.ai/docs/zen/) (pay-as-you-go) and the free tier: price per 1M tokens,
+context window, capabilities and a value-for-money score.
 
-The app ships with a snapshot of the current catalog under `data/models.json` so it works offline, and pulls a fresh
-snapshot from public sources on demand (the `Refresh data` button) or via `npm run refresh`.
+The page loads a snapshot bundled in [`data/models.json`](./data/models.json), so it works offline; click **Refresh
+data** in the header or run `npm run refresh` to pull fresh data from public sources.
 
-## What it shows
+## Features
 
-- **Hero & KPI cards.** Subscription price, active models count, reusable usage, and cheapest output price at a glance.
-- **"How OpenCode Go works" explainer.** Collapsible panel that explains the dollar caps, per-model tiers and what
-  request counts really mean.
-- **Sortable/filterable table.** At-a-glance comparison of every Go model with toggleable columns, sticky header and
-  side-by-side selection.
-- **Per-model tier.** Each row is tagged with its OpenCode Go monthly allocation (`$15` premium, `$30` mid, `$60`
-  standard) plus the official request counts per 5-hour, weekly and monthly windows.
-- **Filters.** Search by name/lab, filter by subscription (Go, Zen, free tier), lab, status, capability (reasoning, tool
-  calls, structured output, attachments, open weights), minimum context, and maximum output price.
-- **Quick picks.** One-click presets: `Premium quality`, `High-volume workhorse`, `Long context (1M+)`,
-  `Cheapest per request`, `Balanced all-rounder`.
-- **Detail drawer.** Click any model for description, modalities, capabilities, release date and a score.
-- **Side-by-side comparison.** Tick up to 4 rows to pin them in the comparison bar; the comparison view highlights
-  best/worst values across pricing, context, requests and capabilities.
-- **Boot error screen.** If the snapshot fails to load, you get a clear error message and a "try again" / "refresh from
-  network" button instead of a blank page.
-- **Dark UI.** Single static page, vanilla JS, no framework. Easy to deploy on GitHub Pages, Cloudflare Pages, Netlify
-  or any static host.
+- **Hero KPIs** with plan counts you can click to filter the table.
+- **Sortable, filterable table** with some features like toggleable columns and quick-pick presets.
+- **Detail drawer** for the full model breakdown and a **side-by-side comparison** for up to 4 models.
+
+### Where the model data comes from
+
+`data/models.json` is built by merging four sources:
+
+- `models.dev/api.json` (provider `opencode-go`) — pricing, context, modalities, capabilities, release dates, weights.
+- `models.dev/api.json` (provider `opencode`) — Zen gateway specs (Claude, Gemini, GPT, Grok, Muse, …).
+- `opencode.ai/zen/go/v1/models` — live Go catalog, used to mark active vs legacy.
+- `opencode.ai/zen/v1/models` — live Zen catalog, used to mark active vs legacy.
+- [`data/budgets.json`](./data/budgets.json) — curated per-model monthly Go allocation (`$15` / `$30` / `$60`) and
+  estimated request counts.
+
+Edit `data/budgets.json` when the Go lineup changes (new model, new tier, new limits) and re-run `npm run refresh` to
+rebuild the snapshot.
+
+### How the Score works
+
+The **Score** column combines three signals into a 0–100-ish number, with a `1.25x` bonus when the model supports
+reasoning:
+
+```
+score = (1_000_000 / outputCost) * 0.0006
+      + log10(context) / 6 * 30
+      + log10(monthlyRequests) / 5 * 40
+```
+
+Lower output price, longer context and a bigger monthly request budget all raise the score.
+
+Use it to spot outliers, not as a definitive ranking.
 
 ## Run locally
 
-Requires Node.js >= 20 (only for the refresh and serve scripts).
+Requires Node.js >= 20.
 
 ```bash
+npm run start     # refresh + serve in one go
+npm run serve     # http://127.0.0.1:5173/
 npm run refresh   # regenerate data/models.json from public sources
-npm run serve     # serve at http://127.0.0.1:5173/
+npm run format    # prettier over .md, .html, .css, .mjs, .js, .json
 ```
 
-Open `http://127.0.0.1:5173/` in your browser. The page loads `data/models.json` first; the `Refresh data` button
-re-fetches from the network.
-
-If the page shows "Could not load the snapshot", make sure you opened it via the server URL (`http://127.0.0.1:5173/`)
-and not by double-clicking `src/index.html` — browsers block `fetch()` from `file://`.
-
-## Update the data
-
-The snapshot is the merge of four sources:
-
-| Source                                                 | What it provides                                                                               |
-| ------------------------------------------------------ | ---------------------------------------------------------------------------------------------- |
-| `https://models.dev/api.json` (provider `opencode-go`) | Pricing per 1M tokens, context/output limits, modalities, capabilities, release dates, weights |
-| `https://models.dev/api.json` (provider `opencode`)    | Zen gateway specs (Claude, Gemini, GPT, Grok, Muse, etc.)                                      |
-| `https://opencode.ai/zen/go/v1/models`                 | Live Go catalog (used to mark active vs legacy)                                                |
-| `https://opencode.ai/zen/v1/models`                    | Live Zen catalog (used to mark active vs legacy)                                               |
-| `data/budgets.json`                                    | Per-model OpenCode Go monthly allocation and official estimated request counts                 |
-
-Edit `data/budgets.json` when the OpenCode Go lineup changes (new model, new tier, new limits). Re-run `npm run refresh`
-to rebuild `data/models.json`.
-
-## Repository layout
-
-```
-.
-├── data/
-│   ├── budgets.json         curated per-model tiers + request estimates
-│   └── models.json          snapshot used by the web (generated)
-├── scripts/
-│   ├── fetch-models.mjs     regenerates data/models.json from the public APIs
-│   └── serve.mjs            tiny static file server for local dev
-├── src/
-│   ├── index.html           page markup (hero, KPIs, filters, table)
-│   ├── styles.css           dark dashboard theme
-│   └── app.js               table, filters, detail drawer, comparison
-├── package.json
-├── README.md
-└── ...
-```
-
-## How the score works
-
-`score = (1_000_000 / outputCost) * 0.0006 + log10(context) / 6 * 30 + log10(monthlyRequests) / 5 * 40`
-
-with a `1.25x` boost when the model supports `reasoning`. It is a rough heuristic designed to fit on a 0-100-ish scale;
-it favours models with low output price, long context and a high monthly request budget. Use it to spot outliers, not as
-a definitive ranking.
+Open the page via the server URL — `fetch()` is blocked if you double-click `src/index.html`.
 
 ## Contributing
 
