@@ -14,6 +14,96 @@ const LIVE_DATA_REACHED = { value: false };
 
 const MAX_OUTPUT_PRICE = 200;
 
+// Manual refresh cooldown policy. The "Refresh data" button hits three public endpoints
+// (models.dev, OpenCode Go/Zen via the CORS worker) on every click; left ungated, a user
+// hammering the button can easily DoS the upstream APIs from the browser. We persist the
+// timestamp of the last user-triggered refresh in localStorage so the cooldown survives
+// tab reloads — and apply a shorter lockout after a failure to allow quick retries.
+const REFRESH_COOLDOWN_OK_MS = 30_000;
+const REFRESH_COOLDOWN_FAIL_MS = 5_000;
+const REFRESH_LAST_KEY = "occ.refreshLast";
+
+const REFRESH_LOCK = { tickHandle: null };
+
+function readRefreshLast() {
+	try {
+		const raw = localStorage.getItem(REFRESH_LAST_KEY);
+		if (!raw) return null;
+		const obj = JSON.parse(raw);
+		return typeof obj?.ts === "number" && typeof obj?.ok === "boolean" ? obj : null;
+	} catch {
+		return null;
+	}
+}
+
+function writeRefreshLast(ok) {
+	try {
+		localStorage.setItem(REFRESH_LAST_KEY, JSON.stringify({ ts: Date.now(), ok }));
+	} catch {
+		// localStorage may be unavailable (private browsing, quota, etc.). The in-tab policy
+		// still works; we just lose persistence across reloads.
+	}
+}
+
+function refreshLockState(last = readRefreshLast()) {
+	if (!last) return { locked: false, msLeft: 0 };
+	const cooldown = last.ok ? REFRESH_COOLDOWN_OK_MS : REFRESH_COOLDOWN_FAIL_MS;
+	const msLeft = cooldown - (Date.now() - last.ts);
+	return { locked: msLeft > 0, msLeft: Math.max(0, msLeft) };
+}
+
+function formatRefreshCountdown(ms) {
+	const s = Math.ceil(ms / 1000);
+	return `${s}s`;
+}
+
+const REFRESH_LABEL_IDLE = "Refresh data";
+const REFRESH_LABEL_BUSY = "Refreshing…";
+
+function setRefreshLabel(text) {
+	const label = $("#btn-refresh-label");
+	if (label) label.textContent = text;
+}
+
+function applyRefreshButtonState() {
+	const btn = $("#btn-refresh");
+	if (!btn) return;
+	if (btn.dataset.busy === "1") return;
+
+	const { locked, msLeft } = refreshLockState();
+	btn.disabled = locked;
+	if (locked) {
+		setRefreshLabel(`${REFRESH_LABEL_IDLE} (${formatRefreshCountdown(msLeft)})`);
+		btn.title = `Cooldown — wait ${formatRefreshCountdown(msLeft)} before refreshing again`;
+		btn.setAttribute("aria-disabled", "true");
+	} else {
+		setRefreshLabel(REFRESH_LABEL_IDLE);
+		btn.title = "Re-fetch from public APIs";
+		btn.removeAttribute("aria-disabled");
+	}
+
+	if (REFRESH_LOCK.tickHandle) {
+		clearInterval(REFRESH_LOCK.tickHandle);
+		REFRESH_LOCK.tickHandle = null;
+	}
+	if (locked) {
+		REFRESH_LOCK.tickHandle = setInterval(() => {
+			const state = refreshLockState();
+			if (!state.locked) {
+				applyRefreshButtonState();
+				return;
+			}
+			if (!btn.isConnected || btn.dataset.busy === "1") {
+				clearInterval(REFRESH_LOCK.tickHandle);
+				REFRESH_LOCK.tickHandle = null;
+				return;
+			}
+			setRefreshLabel(`${REFRESH_LABEL_IDLE} (${formatRefreshCountdown(state.msLeft)})`);
+			btn.title = `Cooldown — wait ${formatRefreshCountdown(state.msLeft)} before refreshing again`;
+		}, 1000);
+	}
+}
+
 // Data paths are kept relative so the app works on any base — local dev (http://127.0.0.1:5173/),
 // GitHub Pages project page (https://<user>.github.io/<repo>/) or a custom domain root.
 function snapshotUrl() {
@@ -1384,6 +1474,10 @@ async function bootstrap({ silent = true, fromSnapshot = true } = {}) {
 	//   fromSnapshot=false : skip the snapshot, go straight to the live fetch.
 	//   silent=true        : no button feedback, no toast. Use for background refresh.
 	//   silent=false       : button shows loading state, toast on success or failure.
+	//
+	// User-triggered refreshes (silent=false) are gated by the cooldown policy: clicks
+	// inside the lockout window return early without firing a fetch or showing a toast.
+	// The background bootstrap on page load is never gated.
 
 	let snapshotOk = false;
 	if (fromSnapshot) {
@@ -1403,15 +1497,29 @@ async function bootstrap({ silent = true, fromSnapshot = true } = {}) {
 
 	const btn = $("#btn-refresh");
 	if (btn && !silent) {
+		const { locked } = refreshLockState();
+		if (locked) {
+			// Silent no-op — the disabled button + countdown label are the only feedback.
+			// We deliberately do not toast here so a user mashing the button does not get
+			// a stream of error messages; the button label already shows the wait.
+			applyRefreshButtonState();
+			return;
+		}
+		btn.dataset.busy = "1";
 		btn.disabled = true;
 		btn.classList.add("skeleton");
+		setRefreshLabel(REFRESH_LABEL_BUSY);
+		btn.title = "Refreshing…";
 	}
 
 	try {
 		const result = await fetchLiveSnapshot();
 		applyLiveData(result);
 		if (!snapshotOk) boot();
-		if (!silent) toast(`Refreshed · ${result.models.length} models`, "ok");
+		if (!silent) {
+			writeRefreshLast(true);
+			toast(`Refreshed · ${result.models.length} models`, "ok");
+		}
 		console.info(`[bootstrap] live refresh ok: ${result.models.length} models`);
 	} catch (e) {
 		LIVE_DATA_REACHED.value = false;
@@ -1421,11 +1529,15 @@ async function bootstrap({ silent = true, fromSnapshot = true } = {}) {
 			showBootError(`Could not load data: ${e.message}`);
 		}
 		console.warn(`[bootstrap] live refresh failed: ${e.message}`);
-		if (!silent && snapshotOk) toast(`Refresh failed: ${e.message}`, "error");
+		if (!silent) {
+			writeRefreshLast(false);
+			if (snapshotOk) toast(`Refresh failed: ${e.message}`, "error");
+		}
 	} finally {
 		if (btn && !silent) {
-			btn.disabled = false;
+			btn.dataset.busy = "";
 			btn.classList.remove("skeleton");
+			applyRefreshButtonState();
 		}
 	}
 }
@@ -1452,6 +1564,7 @@ function boot() {
 	bindKpis();
 	applyAndRender();
 	$("#btn-refresh").addEventListener("click", () => bootstrap({ silent: false, fromSnapshot: false }));
+	applyRefreshButtonState();
 }
 
 async function init() {

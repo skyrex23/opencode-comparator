@@ -199,6 +199,21 @@ code {
 	transform: translateY(0);
 }
 
+/* Disabled state (used by the refresh button during cooldown/busy): no hover lift,
+   no border/text colour swap, no pointer cursor — otherwise hovering a locked button
+   still feels interactive. */
+.btn:disabled,
+.btn[aria-disabled="true"] {
+	cursor: not-allowed;
+}
+
+.btn:disabled:hover,
+.btn[aria-disabled="true"]:hover {
+	border-color: var(--line);
+	color: var(--text);
+	transform: none;
+}
+
 .btn--primary {
 	background: var(--grad-1);
 	color: #001b10;
