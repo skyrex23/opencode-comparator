@@ -55,6 +55,19 @@ npm run format    # prettier over .md, .html, .css, .mjs, .js, .json
 
 Open the page via the server URL — `fetch()` is blocked if you double-click `src/index.html`.
 
+### Run with Docker
+
+If you don't have Node.js installed, the included `Dockerfile` lets you build and serve the page from a container:
+
+```bash
+docker build -t opencode-comparator .
+docker run --rm -p 5173:5173 opencode-comparator
+```
+
+Then open [http://localhost:5173/](http://localhost:5173/).
+
+Any change to the source requires rebuilding the image before re-running.
+
 ## Contributing
 
 See [CONTRIBUTING.md](./CONTRIBUTING.md). PR titles must follow Conventional Commits (enforced by CI).
