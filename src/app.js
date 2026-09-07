@@ -11,6 +11,7 @@
  */
 
 const ORIGIN = typeof window !== "undefined" ? window.location.origin : "";
+const LIVE_DATA_REACHED = { value: false };
 
 const MAX_OUTPUT_PRICE = 200;
 
@@ -717,7 +718,8 @@ function bindKpis() {
 }
 
 function renderBrand() {
-	$("#brand-sub").textContent = `Updated ${fmt.datetime(STATE.data.fetchedAt)}`;
+	$("#brand-sub").textContent =
+		`Updated ${fmt.datetime(STATE.data.fetchedAt)}${LIVE_DATA_REACHED.value ? "" : " (cached)"}`;
 	$("#footer-time").textContent = fmt.datetime(STATE.data.fetchedAt);
 }
 
@@ -1230,9 +1232,24 @@ function applyQuickPick(name) {
 	$("#f-open").checked = STATE.filters.openWeights;
 }
 
+function isFreeModel(m) {
+	const cost = m.cost || {};
+	return (cost.input === 0 || cost.input == null) && (cost.output === 0 || cost.output == null);
+}
+
+const DEFAULT_SUBSCRIPTION = {
+	monthlyUsd: 10,
+	limitUsd: { fiveHours: 12, weekly: 30, monthly: 60 }
+};
+
+const DEFAULT_ZEN = {
+	billing: "Pay-as-you-go at the listed per-1M-token rates; optional monthly limits and auto-reload.",
+	docs: "https://opencode.ai/docs/zen/"
+};
+
 async function tryFetchLiveCatalog(url) {
 	try {
-		const res = await fetch(url);
+		const res = await fetch(url, { cache: "no-store" });
 		if (!res.ok) return null;
 		const json = await res.json();
 		const ids = Array.isArray(json?.data) ? json.data.map((m) => m?.id).filter(Boolean) : null;
@@ -1242,14 +1259,9 @@ async function tryFetchLiveCatalog(url) {
 	}
 }
 
-function isFreeModel(m) {
-	const cost = m.cost || {};
-	return (cost.input === 0 || cost.input == null) && (cost.output === 0 || cost.output == null);
-}
-
 async function fetchLiveSnapshot() {
 	const [api, budgetsRes, liveGoIds, liveZenIds] = await Promise.all([
-		fetch(LIVE.modelsDev).then((r) => {
+		fetch(LIVE.modelsDev, { cache: "no-store" }).then((r) => {
 			if (!r.ok) throw new Error(`HTTP ${r.status} from ${LIVE.modelsDev}`);
 			return r.json();
 		}),
@@ -1265,13 +1277,9 @@ async function fetchLiveSnapshot() {
 	const buildLiveModel = (id, m, plan, inLive) => {
 		let status = m.status || null;
 		if (plan === "go" || plan === "zen") {
-			if (inLive === true) {
-				status = "active";
-			} else if (inLive === false) {
-				status = status || "preview-or-removed";
-			} else {
-				status = status || "active";
-			}
+			if (inLive === true) status = "active";
+			else if (inLive === false) status = status || "preview-or-removed";
+			else status = status || "active";
 		} else {
 			status = status || "active";
 		}
@@ -1315,8 +1323,7 @@ async function fetchLiveSnapshot() {
 
 	const models = [];
 	for (const [id, m] of Object.entries(goProvider.models)) {
-		const inLive = liveGoIds ? liveGoIds.has(id) : null;
-		models.push(buildLiveModel(id, m, "go", inLive));
+		models.push(buildLiveModel(id, m, "go", liveGoIds ? liveGoIds.has(id) : null));
 	}
 	if (zenProvider?.models) {
 		for (const [id, m] of Object.entries(zenProvider.models)) {
@@ -1336,43 +1343,89 @@ async function fetchLiveSnapshot() {
 		if (order[a.status] !== order[b.status]) return order[a.status] - order[b.status];
 		return (b.releaseDate || "").localeCompare(a.releaseDate || "");
 	});
-	return { models, liveCatalogReached: liveGoIds !== null, zenLiveCatalogReached: liveZenIds !== null };
+	return { models, liveGoIds, liveZenIds };
 }
 
-async function refreshFromNetwork() {
-	const btn = $("#btn-refresh");
-	btn.disabled = true;
-	btn.classList.add("skeleton");
-	try {
-		const { models, liveCatalogReached, zenLiveCatalogReached } = await fetchLiveSnapshot();
-		if (!liveCatalogReached || !zenLiveCatalogReached) {
-			await loadSnapshot({ liveCatalogReached, zenLiveCatalogReached });
-			toast(`Live catalog unavailable — using cached snapshot (${STATE.data.models.length} models)`, "warn");
-			return;
+function applySnapshotData(json) {
+	STATE.data = json;
+	LIVE_DATA_REACHED.value = false;
+	renderLabs();
+	renderKpis();
+	renderBrand();
+	applyAndRender();
+}
+
+function applyLiveData({ models, liveGoIds, liveZenIds }) {
+	STATE.data = {
+		fetchedAt: new Date().toISOString(),
+		sources: [
+			{ name: "models.dev (api.json)", url: LIVE.modelsDev },
+			{ name: "OpenCode Go catalog", url: LIVE.goModels, ok: liveGoIds !== null },
+			{ name: "OpenCode Zen catalog", url: LIVE.zenModels, ok: liveZenIds !== null },
+			{ name: "data/budgets.json", url: "internal/curated" }
+		],
+		subscription: STATE.data?.subscription || DEFAULT_SUBSCRIPTION,
+		zen: STATE.data?.zen || DEFAULT_ZEN,
+		models
+	};
+	LIVE_DATA_REACHED.value = true;
+	renderLabs();
+	renderKpis();
+	renderBrand();
+	applyAndRender();
+}
+
+async function bootstrap({ silent = true, fromSnapshot = true } = {}) {
+	// Unified entry point. Every reload path (page load, retry, manual refresh,
+	// network-only fallback) goes through here so reload behaviour is consistent.
+	//
+	//   fromSnapshot=true  : try the bundled snapshot first (fast, works offline).
+	//   fromSnapshot=false : skip the snapshot, go straight to the live fetch.
+	//   silent=true        : no button feedback, no toast. Use for background refresh.
+	//   silent=false       : button shows loading state, toast on success or failure.
+
+	let snapshotOk = false;
+	if (fromSnapshot) {
+		try {
+			const res = await fetch(snapshotUrl(), { cache: "no-store" });
+			if (!res.ok) throw new Error(`HTTP ${res.status} from ${snapshotUrl()}`);
+			const json = await res.json();
+			if (!json?.models || !Array.isArray(json.models)) throw new Error("snapshot missing models");
+			applySnapshotData(json);
+			snapshotOk = true;
+		} catch (e) {
+			console.warn(`[bootstrap] snapshot failed: ${e.message}`);
 		}
-		STATE.data = {
-			fetchedAt: new Date().toISOString(),
-			sources: [
-				{ name: "models.dev (api.json)", url: LIVE.modelsDev },
-				{ name: "OpenCode Go catalog", url: LIVE.goModels, ok: liveCatalogReached },
-				{ name: "OpenCode Zen catalog", url: LIVE.zenModels, ok: zenLiveCatalogReached },
-				{ name: "data/budgets.json", url: "internal/curated" }
-			],
-			subscription: STATE.data.subscription,
-			zen: STATE.data.zen,
-			models
-		};
-		renderLabs();
-		renderKpis();
-		renderBrand();
-		applyAndRender();
-		toast(`Refreshed · ${models.length} models`, "ok");
+	}
+
+	if (snapshotOk) boot();
+
+	const btn = $("#btn-refresh");
+	if (btn && !silent) {
+		btn.disabled = true;
+		btn.classList.add("skeleton");
+	}
+
+	try {
+		const result = await fetchLiveSnapshot();
+		applyLiveData(result);
+		if (!snapshotOk) boot();
+		if (!silent) toast(`Refreshed · ${result.models.length} models`, "ok");
+		console.info(`[bootstrap] live refresh ok: ${result.models.length} models`);
 	} catch (e) {
-		console.error(e);
-		toast(`Refresh failed: ${e.message}. Using cached snapshot.`, "error");
+		LIVE_DATA_REACHED.value = false;
+		if (snapshotOk) {
+			renderBrand();
+		} else {
+			showBootError(`Could not load data: ${e.message}`);
+		}
+		console.warn(`[bootstrap] live refresh failed: ${e.message}`);
+		if (!silent && snapshotOk) toast(`Refresh failed: ${e.message}`, "error");
 	} finally {
-		btn.disabled = false;
-		btn.classList.remove("skeleton");
+		if (btn && !silent) {
+			btn.disabled = false;
+			btn.classList.remove("skeleton");
+		}
 	}
 }
 
@@ -1381,39 +1434,11 @@ function showBootError(msg) {
 	$("#boot-error").hidden = false;
 	$("#boot-error-retry").onclick = () => {
 		$("#boot-error").hidden = true;
-		init();
+		bootstrap({ silent: true, fromSnapshot: true });
 	};
-	$("#boot-error-network").onclick = async () => {
+	$("#boot-error-network").onclick = () => {
 		$("#boot-error").hidden = true;
-		const btn = $("#btn-refresh");
-		btn.disabled = true;
-		btn.classList.add("skeleton");
-		try {
-			const { models, liveCatalogReached, zenLiveCatalogReached } = await fetchLiveSnapshot();
-			STATE.data = {
-				fetchedAt: new Date().toISOString(),
-				sources: [
-					{ name: "models.dev (api.json)", url: LIVE.modelsDev },
-					{ name: "OpenCode Go catalog", url: LIVE.goModels, ok: liveCatalogReached },
-					{ name: "OpenCode Zen catalog", url: LIVE.zenModels, ok: zenLiveCatalogReached },
-					{ name: "data/budgets.json", url: "internal/curated" }
-				],
-				subscription: {
-					monthlyUsd: 10,
-					limitUsd: { fiveHours: 12, weekly: 30, monthly: 60 }
-				},
-				zen: {
-					billing: "Pay-as-you-go at the listed per-1M-token rates; optional monthly limits and auto-reload.",
-					docs: "https://opencode.ai/docs/zen/"
-				},
-				models
-			};
-			boot();
-		} catch (e) {
-			showBootError(`Network refresh failed: ${e.message}`);
-			btn.disabled = false;
-			btn.classList.remove("skeleton");
-		}
+		bootstrap({ silent: false, fromSnapshot: false });
 	};
 }
 
@@ -1425,42 +1450,11 @@ function boot() {
 	bindFilters();
 	bindKpis();
 	applyAndRender();
-	$("#btn-refresh").addEventListener("click", refreshFromNetwork);
-}
-
-async function loadSnapshot(meta) {
-	const url = snapshotUrl();
-	const res = await fetch(url, { cache: "no-store" });
-	if (!res.ok) throw new Error(`HTTP ${res.status} from ${url}`);
-	const json = await res.json();
-	if (!json?.models || !Array.isArray(json.models)) {
-		throw new Error("snapshot is missing the models array");
-	}
-	if (meta) {
-		json.sources = (json.sources || []).map((s) =>
-			s.name === "OpenCode Go catalog"
-				? { ...s, ok: meta.liveCatalogReached }
-				: s.name === "OpenCode Zen catalog"
-					? { ...s, ok: meta.zenLiveCatalogReached }
-					: s
-		);
-	}
-	STATE.data = json;
-	renderLabs();
-	renderKpis();
-	renderBrand();
-	applyAndRender();
+	$("#btn-refresh").addEventListener("click", () => bootstrap({ silent: false, fromSnapshot: false }));
 }
 
 async function init() {
-	try {
-		await loadSnapshot();
-	} catch (e) {
-		console.error(e);
-		showBootError(`Could not load ${snapshotUrl()}: ${e.message}`);
-		return;
-	}
-	boot();
+	await bootstrap({ silent: true, fromSnapshot: true });
 }
 
 init();
