@@ -15,6 +15,10 @@ tasks:
     desc: Refresh data and serve the page locally
     cmd: npm run start
 
+  setup:
+    desc: Install dependencies exactly as pinned in package-lock.json
+    cmd: npm ci
+
   docker:start:
     desc: Build and serve the page with refreshed data from a Docker container
     cmds:

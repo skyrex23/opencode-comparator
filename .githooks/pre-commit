@@ -13,6 +13,12 @@ if [[ ${#staged_files[@]} -eq 0 ]]; then
 	exit 0
 fi
 
+if [[ ! -x ./node_modules/.bin/prettier ]]; then
+	echo "pre-commit: Prettier is not installed locally." >&2
+	echo "pre-commit: Run 'npm ci' (or 'task setup') to install dependencies, then retry the commit." >&2
+	exit 1
+fi
+
 ./node_modules/.bin/prettier --write "${staged_files[@]}"
 
 git add "${staged_files[@]}"
