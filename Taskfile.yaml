@@ -1,0 +1,32 @@
+version: "3"
+
+vars:
+  IMAGE: opencode-comparator
+  PORT: "5173"
+
+tasks:
+  default:
+    desc: List available tasks
+    cmds:
+      - task --list
+    silent: true
+
+  start:
+    desc: Refresh data and serve the page locally
+    cmd: npm run start
+
+  docker:start:
+    desc: Build and serve the page with refreshed data from a Docker container
+    cmds:
+      - docker build -t {{.IMAGE}} .
+      - docker run --rm -p {{.PORT}}:{{.PORT}} {{.IMAGE}}
+
+  clean:
+    desc: Remove build artifacts and prune leftover Docker resources
+    cmds:
+      - rm -rf node_modules .cache *.log
+      - docker rm -f {{.IMAGE}}
+      - docker rmi {{.IMAGE}}
+      - docker container prune -f
+      - docker image prune -f
+    ignore_error: true

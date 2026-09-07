@@ -55,6 +55,10 @@ npm run format    # prettier over .md, .html, .css, .mjs, .js, .json
 
 Open the page via the server URL — `fetch()` is blocked if you double-click `src/index.html`.
 
+> [!TIP] If you use [Task](https://taskfile.dev/), [`Taskfile.yaml`](./Taskfile.yaml) exposes three convenience tasks —
+> `task start`, `task docker:start`, `task clean`. Run `task` to list them. Using the Taskfile is purely optional; the
+> `npm` scripts above remain the canonical entry points.
+
 ### Run with Docker
 
 If you don't have Node.js installed, the included `Dockerfile` lets you build and serve the page from a container:
