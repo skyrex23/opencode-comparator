@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+# ======================================================================================================================
+# This script is executed before each commit to auto-format staged files with Prettier
+# ======================================================================================================================
+
+set -euo pipefail
+
+# ----------------------------------------------------------------------------------------------------------------------
+
+mapfile -t staged_files < <(git diff --cached --name-only --diff-filter=ACMR | grep -E '\.(md|html|css|mjs|js|json)$' || true)
+
+if [[ ${#staged_files[@]} -eq 0 ]]; then
+	exit 0
+fi
+
+./node_modules/.bin/prettier --write "${staged_files[@]}"
+
+git add "${staged_files[@]}"

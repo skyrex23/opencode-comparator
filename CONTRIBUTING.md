@@ -3,6 +3,16 @@
 Thank you for considering contributing to our project! We welcome contributions from the community to help improve our
 project. Before you start, please take a moment to read these guidelines to ensure a smooth and effective collaboration.
 
+## Local setup
+
+After cloning the repository, install dependencies and enable the local git hooks so Prettier formats staged files on
+every commit and commit messages are validated against Conventional Commits:
+
+```bash
+npm install
+git config core.hooksPath .githooks
+```
+
 ## How to Contribute
 
 1. **Fork the Repository**: Start by forking this repository to your GitHub account.

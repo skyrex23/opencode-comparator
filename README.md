@@ -59,6 +59,9 @@ Open the page via the server URL — `fetch()` is blocked if you double-click `s
 
 See [CONTRIBUTING.md](./CONTRIBUTING.md). PR titles must follow Conventional Commits (enforced by CI).
 
+> [!NOTE] As described in [CONTRIBUTING.md](./CONTRIBUTING.md), it's recommended to configure `.githooks/` after cloning
+> to enable automatic formatting and validation on every commit.
+
 ## License
 
 [MIT](./LICENSE).
