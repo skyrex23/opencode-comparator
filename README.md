@@ -4,6 +4,8 @@ A single-page web app to compare the coding models available through [OpenCode G
 $10/month), [OpenCode Zen](https://opencode.ai/docs/zen/) (pay-as-you-go) and the free tier: price per 1M tokens,
 context window, capabilities and a value-for-money score.
 
+![OpenCode Comparator landing page](./assets/screenshot.png)
+
 The page loads a snapshot bundled in [`data/models.json`](./data/models.json), so it works offline; click **Refresh
 data** in the header or run `npm run refresh` to pull fresh data from public sources.
 
