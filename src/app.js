@@ -22,10 +22,16 @@ function budgetsUrl() {
 	return `${ORIGIN}/data/budgets.json`;
 }
 
+// Base URL of the Cloudflare Worker that proxies opencode.ai (see /worker). opencode.ai does not
+// send Access-Control-Allow-Origin headers, so the browser blocks direct fetches from any other
+// origin (GitHub Pages, localhost, etc.). The Worker mirrors the two catalog endpoints and adds
+// the CORS headers the browser needs.
+const CORS_PROXY_BASE = "https://opencode-comparator-cors.skyrex23.workers.dev";
+
 const LIVE = {
-	goModels: "https://opencode.ai/zen/go/v1/models",
-	zenModels: "https://opencode.ai/zen/v1/models",
-	modelsDev: "https://models.dev/api.json"
+	modelsDev: "https://models.dev/api.json",
+	goModels: `${CORS_PROXY_BASE}/go/models`,
+	zenModels: `${CORS_PROXY_BASE}/zen/models`
 };
 
 const STATE = {

@@ -1,5 +1,15 @@
+# Dependencies
 node_modules/
-.DS_Store
+
+# Tool caches
+.wrangler/
 .cache/
+
+# Logs
 *.log
+
+# OS metadata
+.DS_Store
+
+# Test scratch file
 test-render.mjs
