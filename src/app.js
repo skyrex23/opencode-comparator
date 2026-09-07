@@ -10,17 +10,18 @@
  * plus models.dev metadata in the browser and rebuilds the UI without a reload.
  */
 
-const ORIGIN = typeof window !== "undefined" ? window.location.origin : "";
 const LIVE_DATA_REACHED = { value: false };
 
 const MAX_OUTPUT_PRICE = 200;
 
+// Data paths are kept relative so the app works on any base — local dev (http://127.0.0.1:5173/),
+// GitHub Pages project page (https://<user>.github.io/<repo>/) or a custom domain root.
 function snapshotUrl() {
-	return `${ORIGIN}/data/models.json`;
+	return "./data/models.json";
 }
 
 function budgetsUrl() {
-	return `${ORIGIN}/data/budgets.json`;
+	return "./data/budgets.json";
 }
 
 // Base URL of the Cloudflare Worker that proxies opencode.ai (see /worker). opencode.ai does not

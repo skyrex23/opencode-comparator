@@ -76,6 +76,29 @@ Then open [http://localhost:5173/](http://localhost:5173/).
 
 Any change to the source requires rebuilding the image before re-running.
 
+## Deploy to GitHub Pages
+
+The site is published to GitHub Pages by [`deploy-pages.yml`](./.github/workflows/deploy-pages.yml). Every push to
+`main` that touches the app source, data or workflow refreshes the model snapshot, builds the deployable artifact and
+publishes it.
+
+Live URL: https://skyrex23.github.io/opencode-comparator/
+
+To enable it for the first time:
+
+1. Open the repo **Settings → Pages**.
+2. Under **Source**, pick **GitHub Actions** and save.
+
+To publish a local build manually:
+
+```bash
+npm run pages:build          # writes the artifact to ./dist
+npx http-server dist -p 5173 # preview it locally before pushing
+```
+
+The artifact is just the static site — `index.html`, `styles.css`, `app.js` and `data/*.json` — so it can be served from
+any static host (Cloudflare Pages, Netlify, S3, etc.) by uploading `dist/`.
+
 ## Contributing
 
 See [CONTRIBUTING.md](./CONTRIBUTING.md). PR titles must follow Conventional Commits (enforced by CI).

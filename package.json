@@ -8,6 +8,7 @@
 		"refresh": "node scripts/fetch-models.mjs",
 		"serve": "node scripts/serve.mjs",
 		"start": "npm run refresh && npm run serve",
+		"pages:build": "node scripts/build-pages.mjs",
 		"format": "prettier --write \"**/*.{md,html,css,mjs,js,json}\""
 	},
 	"engines": {
