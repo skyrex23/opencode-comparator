@@ -8,9 +8,12 @@
 		"refresh": "node scripts/fetch-models.mjs",
 		"serve": "node scripts/serve.mjs",
 		"start": "npm run refresh && npm run serve",
-		"format": "prettier --write --print-width 120 --prose-wrap always \"**/*.{md,html,css,mjs,js,json}\""
+		"format": "prettier --write \"**/*.{md,html,css,mjs,js,json}\""
 	},
 	"engines": {
 		"node": ">=20"
+	},
+	"devDependencies": {
+		"prettier": "^3.9.6"
 	}
 }
