@@ -4,3 +4,8 @@ compatibility_date = "2024-11-01"
 
 [observability]
 enabled = true
+
+# Per-IP refresh cooldown store (see docs/cors-proxy.md).
+[[kv_namespaces]]
+binding = "LIMITS"
+id = "3b7fb690fce84010ac36a2cd03b0677f"

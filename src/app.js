@@ -45,6 +45,21 @@ function writeRefreshLast(ok) {
 	}
 }
 
+// Sync the local cooldown to match what the Cloudflare Worker just reported. Called
+// when a fetch comes back with 429 — typically because the user bypassed the front-end
+// gate (cleared localStorage) but their IP is still in cooldown server-side.
+function applyServerCooldown(res) {
+	const retryAfter = parseInt(res?.headers?.get("Retry-After") || "", 10);
+	if (!Number.isFinite(retryAfter) || retryAfter < 1) return;
+	const msLeft = retryAfter * 1000;
+	const ts = Date.now() - Math.max(0, REFRESH_COOLDOWN_OK_MS - msLeft);
+	try {
+		localStorage.setItem(REFRESH_LAST_KEY, JSON.stringify({ ts, ok: true }));
+	} catch {
+		/* localStorage unavailable */
+	}
+}
+
 function refreshLockState(last = readRefreshLast()) {
 	if (!last) return { locked: false, msLeft: 0 };
 	const cooldown = last.ok ? REFRESH_COOLDOWN_OK_MS : REFRESH_COOLDOWN_FAIL_MS;
@@ -116,12 +131,13 @@ function budgetsUrl() {
 
 // Base URL of the Cloudflare Worker that proxies opencode.ai (see /worker). opencode.ai does not
 // send Access-Control-Allow-Origin headers, so the browser blocks direct fetches from any other
-// origin (GitHub Pages, localhost, etc.). The Worker mirrors the two catalog endpoints and adds
-// the CORS headers the browser needs.
+// origin (GitHub Pages, localhost, etc.). The Worker mirrors the three catalog endpoints and adds
+// the CORS headers the browser needs. It also enforces a per-IP refresh cooldown (KV-backed) that
+// mirrors the in-browser policy below, so the gate cannot be bypassed by clearing localStorage.
 const CORS_PROXY_BASE = "https://opencode-comparator-cors.skyrex23.workers.dev";
 
 const LIVE = {
-	modelsDev: "https://models.dev/api.json",
+	modelsDev: `${CORS_PROXY_BASE}/models-dev`,
 	goModels: `${CORS_PROXY_BASE}/go/models`,
 	zenModels: `${CORS_PROXY_BASE}/zen/models`
 };
@@ -1341,11 +1357,21 @@ const DEFAULT_ZEN = {
 async function tryFetchLiveCatalog(url) {
 	try {
 		const res = await fetch(url, { cache: "no-store" });
+		if (res.status === 429) {
+			// Surface server-side cooldown so the bootstrap can sync local state.
+			const err = new Error(`Refresh cooldown — ${res.headers.get("Retry-After") || 30}s`);
+			err.status = 429;
+			err.response = res;
+			throw err;
+		}
 		if (!res.ok) return null;
 		const json = await res.json();
 		const ids = Array.isArray(json?.data) ? json.data.map((m) => m?.id).filter(Boolean) : null;
 		return ids ? new Set(ids) : null;
-	} catch {
+	} catch (e) {
+		// 429s propagate; everything else stays a soft-fail so a missing catalog
+		// doesn't break the whole refresh.
+		if (e?.status === 429) throw e;
 		return null;
 	}
 }
@@ -1353,6 +1379,12 @@ async function tryFetchLiveCatalog(url) {
 async function fetchLiveSnapshot() {
 	const [api, budgetsRes, liveGoIds, liveZenIds] = await Promise.all([
 		fetch(LIVE.modelsDev, { cache: "no-store" }).then((r) => {
+			if (r.status === 429) {
+				const err = new Error(`Refresh cooldown — ${r.headers.get("Retry-After") || 30}s`);
+				err.status = 429;
+				err.response = r;
+				throw err;
+			}
 			if (!r.ok) throw new Error(`HTTP ${r.status} from ${LIVE.modelsDev}`);
 			return r.json();
 		}),
@@ -1530,8 +1562,16 @@ async function bootstrap({ silent = true, fromSnapshot = true } = {}) {
 		}
 		console.warn(`[bootstrap] live refresh failed: ${e.message}`);
 		if (!silent) {
-			writeRefreshLast(false);
-			if (snapshotOk) toast(`Refresh failed: ${e.message}`, "error");
+			if (e?.status === 429 && e.response) {
+				// Server-side cooldown — adopt its view so the button countdown stays
+				// in sync with what the Worker will enforce for subsequent requests.
+				applyServerCooldown(e.response);
+				const retryAfter = e.response.headers.get("Retry-After") || "30";
+				toast(`Cooldown — wait ${retryAfter}s before refreshing again`, "error");
+			} else {
+				writeRefreshLast(false);
+				if (snapshotOk) toast(`Refresh failed: ${e.message}`, "error");
+			}
 		}
 	} finally {
 		if (btn && !silent) {
