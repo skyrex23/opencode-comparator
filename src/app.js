@@ -1557,7 +1557,10 @@ async function bootstrap({ silent = true, fromSnapshot = true } = {}) {
 		LIVE_DATA_REACHED.value = false;
 		if (snapshotOk) {
 			renderBrand();
-		} else {
+		} else if (silent) {
+			// Initial boot failed (no snapshot AND live fetch failed) — show the recovery UI.
+			// User-triggered refreshes deliberately skip the snapshot, so a live failure
+			// there is not a boot condition; the !silent branch below handles their feedback.
 			showBootError(`Could not load data: ${e.message}`);
 		}
 		console.warn(`[bootstrap] live refresh failed: ${e.message}`);
