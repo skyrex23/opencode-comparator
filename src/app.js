@@ -430,7 +430,7 @@ function rowHTML(m) {
 	const cells = COLUMNS.map((c) => {
 		const hidden = STATE.filters.hiddenColumns.has(c.id) ? " is-hidden" : "";
 		const cls = c.thClass ? ` class="${c.thClass}${hidden}"` : ` class="${hidden.trim()}"`;
-		return `<td data-col="${c.id}"${cls}>${c.cellHtml(m)}</td>`;
+		return `<td data-col="${c.id}" data-label="${c.label}"${cls}>${c.cellHtml(m)}</td>`;
 	}).join("");
 	return `
 		<tr class="${selected} ${legacyCls}" data-id="${m.id}">
@@ -605,6 +605,14 @@ function bindRowEvents() {
 		el.addEventListener("click", (e) => {
 			e.stopPropagation();
 			openDetail(el.getAttribute("data-detail"));
+		});
+	});
+	$$("#models-body tr[data-id]").forEach((tr) => {
+		tr.addEventListener("click", (e) => {
+			if (e.target.closest("input, a, button")) return;
+			if (!window.matchMedia || !window.matchMedia("(max-width: 768px)").matches) return;
+			const id = tr.getAttribute("data-id");
+			if (id) openDetail(id);
 		});
 	});
 }

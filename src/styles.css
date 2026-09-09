@@ -1600,6 +1600,273 @@ input[type="range"] {
 	color: var(--text-faint);
 }
 
+/* --- Mobile (≤768px) --- */
+
+@media (max-width: 768px) {
+	/* Topbar: drop the subtitle and tighten buttons so brand + two CTAs fit
+	   on a 360px viewport without wrapping or clipping. */
+	.topbar__inner {
+		padding: 10px 14px;
+		gap: 10px;
+	}
+	.brand__sub {
+		display: none;
+	}
+	.topbar__actions {
+		gap: 6px;
+	}
+	.topbar__actions .btn {
+		padding: 6px 10px;
+		font-size: 12px;
+		gap: 4px;
+	}
+
+	/* Hero: tighter padding; CTAs become full-width stacked buttons so the
+	   tap target covers the thumb zone. */
+	.hero {
+		padding: 24px 16px 20px;
+	}
+	.hero__inner {
+		gap: 24px;
+	}
+	.hero__lede {
+		font-size: 15px;
+	}
+	.hero__cta {
+		flex-direction: column;
+		width: 100%;
+	}
+	.hero__cta .btn {
+		width: 100%;
+		justify-content: center;
+	}
+
+	/* Explainer cards padding. */
+	.explainer {
+		padding: 0 16px 16px;
+	}
+	.explainer__inner {
+		padding: 20px 16px;
+	}
+
+	/* Layout: extra bottom padding so content clears the fixed compare bar,
+	   which grows taller on mobile when chips wrap. */
+	.layout {
+		padding: 12px 16px 120px;
+		gap: 16px;
+	}
+
+	/* Filter card: smaller padding. */
+	.filters__card {
+		padding: 14px;
+		gap: 14px;
+	}
+
+	/* Content meta row: tighter gap, let the columns toggle sit on its own
+	   line if pills overflow. */
+	.content__meta {
+		gap: 8px;
+	}
+	.col-popover {
+		right: -8px;
+		min-width: 180px;
+		max-width: calc(100vw - 32px);
+	}
+
+	/* Table → stacked card layout. Hide the thead, break each <tr> out of
+	   table layout, and render each <td> as a flex row with a label
+	   (data-label) on the left and the cell value on the right. The model
+	   name cell becomes the card header; the checkbox sits absolutely in
+	   the top-right corner of the card. Less-essential columns (cache read,
+	   release date) are hidden on mobile — both still surface inside the
+	   model meta line and the detail dialog. */
+	.table-wrap {
+		background: transparent;
+		border: none;
+		box-shadow: none;
+		overflow: visible;
+	}
+	.table thead {
+		display: none;
+	}
+	.table,
+	.table tbody,
+	.table tr {
+		display: block;
+	}
+	.table tr {
+		position: relative;
+		background: var(--bg-elev);
+		border: 1px solid var(--line);
+		border-radius: var(--radius);
+		padding: 14px;
+		margin-bottom: 12px;
+		box-shadow: var(--shadow-sm);
+		transition:
+			border-color 0.15s ease,
+			transform 0.1s ease;
+	}
+	.table tr:active {
+		transform: scale(0.995);
+	}
+	.table tr.is-selected {
+		border-color: var(--accent);
+		background: linear-gradient(180deg, var(--bg-elev), var(--accent-soft));
+	}
+	.table td {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		gap: 12px;
+		padding: 6px 0;
+		border: none;
+		white-space: normal;
+		min-width: 0;
+	}
+	.table td::before {
+		content: attr(data-label);
+		font-size: 10px;
+		text-transform: uppercase;
+		letter-spacing: 0.06em;
+		color: var(--text-faint);
+		font-weight: 700;
+		flex: 0 0 auto;
+	}
+	/* Checkbox sits absolutely in the card corner; suppress its pseudo label. */
+	.table td.th-check {
+		position: absolute;
+		top: 12px;
+		right: 12px;
+		padding: 0;
+		border: none;
+		background: transparent;
+	}
+	.table td.th-check::before {
+		content: "";
+	}
+	.table td.th-check input {
+		width: 18px;
+		height: 18px;
+	}
+	/* Header cell: column layout, name + tags + meta, leaves room for the checkbox. */
+	.table td[data-col="name"] {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 6px;
+		padding: 0 40px 10px 0;
+		border-bottom: 1px solid var(--line-soft);
+		margin-bottom: 4px;
+	}
+	.table td[data-col="name"]::before {
+		content: "";
+	}
+	.table td[data-col="name"] .model-cell {
+		width: 100%;
+	}
+	/* Context and Score cells stack internally so the bar/score sits below the label. */
+	.table td[data-col="context"],
+	.table td[data-col="score"] {
+		flex-direction: column;
+		align-items: stretch;
+		gap: 4px;
+	}
+	.table td[data-col="context"]::before,
+	.table td[data-col="score"]::before {
+		align-self: flex-start;
+	}
+	/* Caps icons right-aligned next to the label. */
+	.table td[data-col="caps"] .caps {
+		justify-content: flex-end;
+	}
+	/* Hide the two lowest-priority standalone columns on mobile. */
+	.table td[data-col="cacheRead"],
+	.table td[data-col="releaseDate"] {
+		display: none;
+	}
+
+	/* Compare bar: wrap the head row so the count text and the Clear / Open
+	   buttons don't collide on narrow screens. */
+	.cmpbar__inner {
+		padding: 12px 16px;
+		padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+	}
+	.cmpbar__head {
+		flex-wrap: wrap;
+		gap: 8px;
+	}
+	.cmpbar__head h2 {
+		font-size: 11px;
+	}
+
+	/* Dialogs: tighter padding on mobile; let the compare grid scroll
+	   horizontally inside the body when 2+ models overflow the viewport. */
+	.dialog {
+		width: calc(100vw - 16px);
+		max-height: calc(100vh - 16px);
+	}
+	.dialog__head {
+		padding: 16px;
+		gap: 10px;
+		flex-wrap: wrap;
+	}
+	.dialog__body {
+		padding: 16px;
+		overflow-x: auto;
+		-webkit-overflow-scrolling: touch;
+	}
+	.boot-error {
+		padding: 16px;
+	}
+	.boot-error__inner {
+		padding: 22px 18px;
+	}
+
+	/* Detail dialog cards: tighter padding. */
+	.detail-card {
+		padding: 12px;
+	}
+	.detail-card .num-big {
+		font-size: 19px;
+	}
+
+	/* Footer: stack the two halves when narrow. */
+	.footer {
+		padding: 18px 16px;
+	}
+	.footer__inner {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 8px;
+	}
+
+	/* Toast sits higher so it never collides with the compare bar. */
+	.toast {
+		bottom: 140px;
+		font-size: 12px;
+		max-width: calc(100vw - 32px);
+	}
+}
+
+/* --- Very small phones (≤420px) --- */
+
+@media (max-width: 420px) {
+	.brand__title {
+		font-size: 13px;
+	}
+	.brand {
+		gap: 10px;
+	}
+	.topbar__actions .btn {
+		padding: 6px 8px;
+	}
+	.kpi {
+		padding: 14px;
+	}
+	.kpi__value {
+		font-size: 20px;
+	}
+}
+
 /* --- Misc --- */
 
 @keyframes pulse {
