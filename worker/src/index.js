@@ -30,6 +30,7 @@ const ROUTES = {
 const CORS_HEADERS = {
 	"Access-Control-Allow-Origin": "*",
 	"Access-Control-Allow-Methods": "GET, OPTIONS",
+	"Access-Control-Expose-Headers": "Retry-After",
 	"Access-Control-Max-Age": "86400",
 	"Cache-Control": "public, max-age=300"
 };
